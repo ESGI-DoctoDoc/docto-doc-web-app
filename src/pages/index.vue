@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import {useSession} from "~/composables/auth/useSession";
 
-definePageMeta({
-  middleware: 'auth-middleware',
-})
-
 const {logout} = useSession()
 
 </script>

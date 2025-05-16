@@ -15,6 +15,10 @@ export const passwordSchema = z
     .regex(/[0-9]/, "form.password.number")
     .regex(/[@\-_#$]/, "form.password.special");
 
+export const otpCodeSchema = z
+    .array(z.string())
+    .length(6, "form.otp-code.invalid")
+
 export const phoneSchema = z
     .string()
     .trim()
@@ -70,6 +74,11 @@ export const registerSchema = z.object({
     phone: phoneSchema,
 });
 export type RegisterForm = z.infer<typeof registerSchema>;
+
+export const otpVerificationSchema = z.object({
+    code: otpCodeSchema,
+})
+export type OtpVerificationForm = z.infer<typeof otpVerificationSchema>;
 
 export const forgotPasswordSchema = z.object({
     email: emailSchema,

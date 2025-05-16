@@ -18,8 +18,8 @@ interface RequestOptions<T extends ApiRequestBody> {
 
 export class ApiClient {
     private getAuthHeaders(): HeadersInit {
-        const session = useSession();
-        const token = session?.token;
+        const {getToken} = useSession();
+        const token = getToken();
 
         return token
             ? { Authorization: `Bearer ${token}` }

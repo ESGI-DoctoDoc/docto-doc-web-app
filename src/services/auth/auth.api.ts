@@ -8,7 +8,7 @@ export const useAuthApi = (apiClient = new ApiClient()) => {
 
     const login = async (loginDto: LoginRequest) => {
         isLoading.value = true
-        return apiClient.post<LoginResponse, LoginRequest>(`${AUTH_API_URL}/patients/login`, loginDto)
+        return apiClient.post<LoginResponse, LoginRequest>(`${AUTH_API_URL}/doctors/login`, loginDto)
             .then((response) => parseLoginResponse(response))
             .finally(() => (isLoading.value = false))
     }
@@ -20,5 +20,19 @@ export const useAuthApi = (apiClient = new ApiClient()) => {
     //         .finally(() => (isLoading.value = false))
     // }
 
-    return {login, isLoading}
+    const verifyOtp = async (otp: string[]) => {
+        isLoading.value = true
+        return apiClient.post(`${AUTH_API_URL}/doctors/validate-double-auth`, {
+            doubleAuthCode: otp.join(''),
+        })
+            .then((response) => response)
+            .finally(() => (isLoading.value = false))
+    }
+
+    return {
+        isLoading,
+        login,
+        // register,
+        verifyOtp,
+    }
 }

@@ -7,10 +7,6 @@ import PhoneInput from "~/components/inputs/PhoneInput.vue";
 import {type RegisterForm, registerSchema} from "~/components/inputs/validators/user-form.validator";
 import type {FormSubmitEvent} from "@nuxt/ui";
 
-definePageMeta({
-  middleware: 'auth-middleware',
-})
-
 const form = reactive<Partial<RegisterForm>>({
   email: '',
   password: '',

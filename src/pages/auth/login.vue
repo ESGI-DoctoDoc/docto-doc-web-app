@@ -9,20 +9,15 @@ import AppDivider from "~/components/AppDivider.vue";
 import {loginRequestSchema} from "~/services/auth/dto/login.dto";
 import {useSession} from "~/composables/auth/useSession";
 
-definePageMeta({
-  middleware: 'auth-middleware',
-})
-
+const toast = useToast()
 const {login, isLoading} = useAuthApi()
-const {token} = useSession()
+const {setToken} = useSession()
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
 
 const form = reactive<Partial<LoginForm>>({
   email: 'patient1@example.com',
   password: 'Abdcd76@'
 })
-
-const toast = useToast()
 
 async function onSubmit(event: FormSubmitEvent<LoginForm>) {
   try {
@@ -31,7 +26,7 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
       password: event.data.password
     }));
 
-    token.value = data.token;
+    setToken(data.token);
     navigateTo('/')
 
     toast.add({title: 'Success', description: 'Login successful.', color: 'success'})

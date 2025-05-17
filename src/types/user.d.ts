@@ -1,20 +1,24 @@
-import {z} from "zod";
-import {UserMapperException} from "~/exceptions/user.exception";
-
-export const UserSchema = z.object({
-    userId: z.string().uuid(),
-    firstname: z.string(),
-    lastname: z.string(),
-    email: z.string().email(),
-    phone: z.string().length(10),
-    role: z.enum(['doctor', 'admin']),
-});
-
-export type User = z.infer<typeof UserSchema>;
+export interface User {
+    userId: string;
+    hasOnBoardingDone: boolean;
+    firstname: string;
+    lastname: string;
+    email: string;
+    phone: string;
+    role: 'doctor' | 'admin';
+}
 
 export function mapToUser(data: unknown): User {
     try {
-        return UserSchema.parse(data);
+        const userParsed = UserSchema.parse(data);
+        return {
+            userId: userParsed.userId,
+            firstname: userParsed.firstname,
+            lastname: userParsed.lastname,
+            email: userParsed.email,
+            phone: userParsed.phone,
+            role: userParsed.role,
+        }
     } catch(e) {
         console.debug(e);
         throw new UserMapperException();

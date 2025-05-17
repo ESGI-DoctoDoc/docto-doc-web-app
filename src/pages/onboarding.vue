@@ -9,11 +9,25 @@ import AuthLayout from "~/layouts/AuthLayout.vue";
 import type {FormSubmitEvent} from "@nuxt/ui";
 import Placeholder from "~/components/utils/Placeholder.vue";
 import BirthDateInput from "~/components/inputs/BirthDateInput.vue";
+import {useSession} from "~/composables/auth/useSession";
 
+const {logoutUser} = useSession()
+const {translate} = useTranslate()
 
-const form = reactive<Partial<LoginForm>>({
-  email: 'patient1@example.com',
-  password: 'Abdcd76@'
+//todo abd: c'est juste pour le teste normalement il faut le type du schema
+const form = reactive({
+  "rpps": "12345678801    ",
+  "specialty": "Cardiology   ",
+  "experienceYears": 5,
+  "medicalConcerns": ["cardiology", "general"],
+  "acceptPublicCoverage": true,
+  "firstName": "John",
+  "lastName": "Doe",
+  "birthDate": "1980-05-12",
+  "bio": "Experienced cardiologist with 10 years of practice.",
+  "profilePictureUrl": "https://example.com/pic.jpg",
+  "languages": ["English", "French"],
+  "doctorDocuments": ["https://ex.com/2.pdf", "https://ex.com/1.pdf"]
 })
 
 const currentStep = ref(0)
@@ -140,6 +154,10 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
 
         </div>
       </div>
+      <p class="text-center text-xs" @click="logoutUser">
+        <NuxtLink class="text-primary" @click="logoutUser">{{ translate('Se deconnecter') }}</NuxtLink>
+        <span>.</span>
+      </p>
     </div>
   </AuthLayout>
 </template>

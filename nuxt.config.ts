@@ -26,14 +26,7 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxt/ui',
     '@nuxt/test-utils',
-    // '@nuxtjs/i18n'
     '@pinia/nuxt',
     // '@nuxt/image'
   ],
-  // i18n: {
-  //   defaultLocale: 'fr',
-  //   locales: [
-  //     { code: 'fr', name: 'Français', file: 'fr.locale.ts' },
-  //   ],
-  // }
 })

@@ -1,7 +1,7 @@
 import {useSession} from "~/composables/auth/useSession";
 
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-type ApiRequestBody = Record<string, unknown> | BodyInit | null | undefined;
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+export type ApiRequestBody = Record<string, unknown> | BodyInit | null | undefined;
 
 interface ApiResponse<T> {
     data: T;
@@ -11,7 +11,7 @@ interface ApiResponse<T> {
 
 interface RequestOptions<T extends ApiRequestBody> {
     method: HttpMethod;
-    path: string;
+    url: string;
     body?: T;
     query?: Record<string, unknown>;
 }
@@ -29,65 +29,28 @@ export class ApiClient {
     async request<TResponse, TBody extends ApiRequestBody = undefined>(
         options: RequestOptions<TBody>
     ): Promise<ApiResponse<TResponse>> {
-        const { method, path, body, query } = options;
+        const {method, url, body, query} = options;
 
         try {
-            const response = await $fetch<ApiResponse<TResponse>>(path, {
-                method,
+            const response = await $fetch<ApiResponse<TResponse>>(url, {
+                method: method,
                 headers: this.getAuthHeaders(),
-                body,
-                query,
+                body: body,
+                query: query,
             });
 
             console.group()
-            console.debug('Requête réussie :', method, path);
+            console.debug('Requête réussie :', method, url);
             console.debug('Corps de la requête :', body);
+            console.debug("Réponse de l'API :", response);
             console.groupEnd();
             return response;
         } catch (error) {
             console.group()
-            console.error('Erreur lors de la requête :', method, path);
+            console.error('Erreur lors de la requête :', method, url);
             console.error(error);
             console.groupEnd()
             throw error;
         }
-    }
-
-    get<T>(path: string, query?: Record<string, never>) {
-        return this.request<T>({
-            method: 'GET',
-            path,
-            query,
-        });
-    }
-
-    async post<T, TBody extends ApiRequestBody>(path: string, body: TBody) {
-        return this.request<T, TBody>({
-            method: 'POST',
-            path,
-            body,
-        }).then(response => {
-            if (response.success) {
-                console.debug(`POST ${path} successful. Data: `, response.data);
-                return response.data;
-            } else {
-                throw new Error(response.errorCode);
-            }
-        })
-    }
-
-    put<T, TBody extends ApiRequestBody>(path: string, body: TBody) {
-        return this.request<T, TBody>({
-            method: 'PUT',
-            path,
-            body,
-        });
-    }
-
-    delete<T>(path: string) {
-        return this.request<T>({
-            method: 'DELETE',
-            path,
-        });
     }
 }

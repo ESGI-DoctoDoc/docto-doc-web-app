@@ -1,3 +1,5 @@
+import type {User} from "~/types/user";
+
 class LocalStorageService {
     private readonly UserKey = 'user';
     private readonly TokenKey = 'token';
@@ -37,9 +39,16 @@ export const useSession = () => {
         localStorageService.setItem(localStorageService.keys.OtpValidatedKey, hasOtpValidated.toString());
     }
 
-    const setHasCompletedOnboarding = (hasCompletedOnboarding: boolean) => {
+    const setUser = (user: User) => {
         const localStorageService = new LocalStorageService();
-        localStorageService.setItem(localStorageService.keys.OnboardingKey, hasCompletedOnboarding.toString());
+        setHasOtpValidated(true);
+        localStorageService.setItem(localStorageService.keys.UserKey, JSON.stringify(user));
+    }
+
+    const getUser = () => {
+        const localStorageService = new LocalStorageService();
+        const user = localStorageService.getItem(localStorageService.keys.UserKey);
+        return user ? JSON.parse(user) : null;
     }
 
     const getToken = () => {
@@ -71,16 +80,18 @@ export const useSession = () => {
         localStorageService.removeItem(localStorageService.keys.TokenKey);
         localStorageService.removeItem(localStorageService.keys.OtpValidatedKey);
         localStorageService.removeItem(localStorageService.keys.OnboardingKey);
+        navigateTo('/auth/login');
     }
 
     return {
         setToken,
         setHasOtpValidated,
-        setHasCompletedOnboarding,
+        setUser,
         hasOtpValidated,
         hasCompletedOnboarding,
         isAuthenticated,
         getToken,
+        getUser,
         logoutUser
     }
 }

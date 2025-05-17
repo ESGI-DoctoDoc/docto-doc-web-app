@@ -6,10 +6,10 @@ import EmailInput from "~/components/inputs/EmailInput.vue";
 import PasswordInput from "~/components/inputs/PasswordInput.vue";
 import AuthLayout from "~/layouts/AuthLayout.vue";
 import AppDivider from "~/components/AppDivider.vue";
-import {loginRequestSchema} from "~/services/auth/dto/login.dto";
 import {useSession} from "~/composables/auth/useSession";
 
-const toast = useToast()
+const {showSuccess, showError} = useNotify()
+const {translate} = useTranslate()
 const {login, isLoading} = useAuthApi()
 const {setToken} = useSession()
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
@@ -21,18 +21,22 @@ const form = reactive<Partial<LoginForm>>({
 
 async function onSubmit(event: FormSubmitEvent<LoginForm>) {
   try {
-    const data = await login(loginRequestSchema.parse({
-      identifier: event.data.email,
+    const data = await login({
+      email: event.data.email,
       password: event.data.password
-    }));
+    })
 
     setToken(data.token);
     navigateTo('/')
 
-    toast.add({title: 'Success', description: 'Login successful.', color: 'success'})
+    showSuccess(
+        translate('auth.login.success.title'),
+        translate('auth.login.success.message')
+    )
   } catch (e) {
     console.error(e)
-    toast.add({title: 'Error', description: 'Login failed.', color: 'error'})
+    //todo abd: handle error
+    showError('Erreur', 'Connexion échouée.')
   }
 }
 </script>
@@ -44,20 +48,22 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
         <!-- Form     -->
         <div class="w-1/2 p-8 flex justify-center items-center bg-white">
           <div class="w-full text-center" style="">
-            <h1 class="text-2xl font-bold">Identifiez-vous</h1>
-            <p class="pt-1 pb-6">Connectez-vous à votre compte.</p>
+            <h1 class="text-2xl font-bold">{{ translate('auth.login.title') }}</h1>
+            <p class="pt-1 pb-6">{{ translate('auth.login.description') }}</p>
 
             <UForm :schema="loginSchema" :state="form" class="space-y-4" @submit.prevent="onSubmit">
               <EmailInput v-model="form.email"/>
               <PasswordInput v-model="form.password" forgot-password/>
-              <UButton :loading="isLoading" block color="primary" type="submit">Se connecter</UButton>
+              <UButton :loading="isLoading" block color="primary" type="submit">
+                {{ translate('auth.login.button') }}
+              </UButton>
             </UForm>
 
-            <AppDivider title="ou"/>
+            <AppDivider :title="translate('common.or')"/>
 
             <div class="text-xs">
-              <span class="pr-1">Vous n'avez pas de compte ?</span>
-              <NuxtLink class="text-primary" to="/auth/register">Inscrivez-vous</NuxtLink>
+              <span class="pr-1">{{ translate('auth.login.no_account') }}</span>
+              <NuxtLink class="text-primary" to="/auth/register">{{ translate('auth.login.register_link') }}</NuxtLink>
             </div>
           </div>
         </div>
@@ -67,10 +73,11 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
           <img :src="image" alt="patient" class="w-auto">
         </div>
       </div>
-      <p class="text-center text-xs">En vous connectant, vous acceptez nos
-        <NuxtLink class="text-primary" to="/terms">Conditions d'utilisation</NuxtLink>
-        <span class="px-1">et notre</span>
-        <NuxtLink class="text-primary" to="/privacy">Politique de confidentialité</NuxtLink>
+      <p class="text-center text-xs">
+        {{ translate('auth.login.terms_prefix') }}
+        <NuxtLink class="text-primary" to="/terms">{{ translate('auth.login.terms') }}</NuxtLink>
+        <span class="px-1">{{ translate('auth.login.and') }}</span>
+        <NuxtLink class="text-primary" to="/privacy">{{ translate('auth.login.privacy') }}</NuxtLink>
         <span>.</span>
       </p>
     </div>

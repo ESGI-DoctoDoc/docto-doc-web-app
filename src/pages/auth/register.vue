@@ -15,19 +15,9 @@ const form = reactive<Partial<RegisterForm>>({
 
 const image = new URL('@/assets/images/patient.png', import.meta.url).href
 
-const toast = useToast()
-
 async function onSubmit(event: FormSubmitEvent<RegisterForm>) {
-  toast.add({title: 'Success', description: 'The form has been submitted.', color: 'success'})
+  //todo abd: handle submit
   console.log(event.data)
-  try {
-    const {email, password, phone} = event.data
-    console.log(email, password, phone)
-    toast.add({title: 'Success', description: 'Login successful.', color: 'success'})
-  } catch (e) {
-    console.error(e)
-    toast.add({title: 'Error', description: 'Login failed.', color: 'error'})
-  }
 }
 
 </script>

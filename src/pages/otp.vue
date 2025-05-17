@@ -7,9 +7,8 @@ import {type OtpVerificationForm, otpVerificationSchema} from "~/components/inpu
 import type {FormSubmitEvent} from "@nuxt/ui";
 import {useSession} from "~/composables/auth/useSession";
 
-const toast = useToast()
 const {verifyOtp, isLoading} = useAuthApi()
-const {setToken, setHasCompletedOnboarding, setHasOtpValidated, logoutUser} = useSession()
+const {logoutUser, setUser} = useSession()
 
 const form = reactive<Partial<OtpVerificationForm>>({
   code: ['0', '0', '0', '0', '0', '0'],
@@ -17,21 +16,33 @@ const form = reactive<Partial<OtpVerificationForm>>({
 
 async function onSubmit(event: FormSubmitEvent<OtpVerificationForm>) {
   try {
-    console.log(event.data.code)
-    const data = await verifyOtp(event.data.code);
+    console.log(event.data)
 
-    if (data) {
-      setHasOtpValidated(true);
-      setToken(data.token);
-      setHasCompletedOnboarding(data.hasOnBoardingDone);
-      toast.add({title: 'Success', description: 'OTP validated successfully.', color: 'success'})
-      navigateTo('/')
-    } else {
-      toast.add({title: 'Error', description: 'Invalid OTP.', color: 'error'})
-    }
+    //todo abd:
+    await verifyOtp();
+    // setToken();
+    //todo temp
+    setUser({
+      email: 'c.lechene@myges.fr',
+      firstname: 'Céline',
+      lastname: 'Lechene',
+      phone: '0606060606',
+      role: 'doctor',
+      userId: '1234567890',
+      hasOnBoardingDone: false,
+    });
+    navigateTo('/')
+
+    // if () {
+    //   // setUser()
+    //   //todo abd: use i18n comme dans le login
+    //   toast.add({title: 'Success', description: 'OTP validated successfully.', color: 'success'})
+    //   navigateTo('/')
+    // } else {
+    //   toast.add({title: 'Error', description: 'Invalid OTP.', color: 'error'})
+    // }
   } catch (e) {
     console.error(e)
-    toast.add({title: 'Error', description: 'Validation failed.', color: 'error'})
   }
 }
 
@@ -43,12 +54,13 @@ async function onSubmit(event: FormSubmitEvent<OtpVerificationForm>) {
       <div class="flex flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden" style="min-width: 600px">
         <div class="w-full text-center p-8 bg-white" style="">
           <div class="m-auto w-72">
+            <!-- todo abd: oublie pas les i18n          -->
             <h1 class="text-2xl font-bold">Vérification du compte</h1>
             <p class="pt-1 pb-6">Nous vous avons envoyé un SMS avec un code de vérification.</p>
 
             <UForm :schema="otpVerificationSchema" :state="form" class="space-y-4" @submit.prevent="onSubmit">
-              <OtpInput v-model="form.code" />
-              <UButton :loading="isLoading" block class="px-6" type="submit" color="primary">
+              <OtpInput v-model="form.code"/>
+              <UButton :loading="isLoading" block class="px-6" color="primary" type="submit">
                 Vérifier le code
               </UButton>
             </UForm>

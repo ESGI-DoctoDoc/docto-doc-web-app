@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import {defineEmits, defineProps} from 'vue'
 
 defineProps<{
   modelValue: string

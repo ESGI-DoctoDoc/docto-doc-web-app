@@ -5,8 +5,6 @@ import EmailInput from "~/components/inputs/EmailInput.vue";
 import type {FormSubmitEvent} from "@nuxt/ui";
 import {type ForgotPasswordForm, forgotPasswordSchema} from "~/components/inputs/validators/user-form.validator";
 
-const toast = useToast()
-
 const image = new URL('@/assets/images/patient-pc.png', import.meta.url).href
 
 const form = reactive<Partial<ForgotPasswordForm>>({
@@ -14,16 +12,8 @@ const form = reactive<Partial<ForgotPasswordForm>>({
 })
 
 async function onSubmit(event: FormSubmitEvent<ForgotPasswordForm>) {
-  toast.add({title: 'Success', description: 'The form has been submitted.', color: 'success'})
-  console.log(event.data)
-  try {
-    const {email} = event.data
-    console.log(email)
-    toast.add({title: 'Success', description: 'Password reset link sent.', color: 'success'})
-  } catch (e) {
-    console.error(e)
-    toast.add({title: 'Error', description: 'Failed to send password reset link.', color: 'error'})
-  }
+  //todo abd:
+  console.log("event: ", event.data);
 }
 
 </script>

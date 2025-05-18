@@ -15,8 +15,8 @@ const {setToken} = useSession()
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
 
 const form = reactive<Partial<LoginForm>>({
-  email: 'patient1@example.com',
-  password: 'Abdcd76@'
+  email: 'slimane.abdallah75@gmail.com',
+  password: 'Abd1234$',
 })
 
 async function onSubmit(event: FormSubmitEvent<LoginForm>) {
@@ -35,7 +35,6 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
     )
   } catch (e) {
     console.error(e)
-    //todo abd: handle error
     showError('Erreur', 'Connexion échouée.')
   }
 }
@@ -75,9 +74,9 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
       </div>
       <p class="text-center text-xs">
         {{ translate('auth.login.terms_prefix') }}
-        <NuxtLink class="text-primary" to="/terms">{{ translate('auth.login.terms') }}</NuxtLink>
-        <span class="px-1">{{ translate('auth.login.and') }}</span>
-        <NuxtLink class="text-primary" to="/privacy">{{ translate('auth.login.privacy') }}</NuxtLink>
+        <NuxtLink class="text-primary" to="/terms">{{ translate('common.terms') }}</NuxtLink>
+        <span class="px-1">{{ translate('common.and') }}</span>
+        <NuxtLink class="text-primary" to="/privacy">{{ translate('common.privacy') }}</NuxtLink>
         <span>.</span>
       </p>
     </div>

@@ -12,7 +12,7 @@ const form = reactive<Partial<ForgotPasswordForm>>({
 })
 
 async function onSubmit(event: FormSubmitEvent<ForgotPasswordForm>) {
-  //todo abd:
+  //todo abd: (pas encore été fait côté api)
   console.log("event: ", event.data);
 }
 

@@ -6,6 +6,18 @@ import {
     type LoginResponse,
     loginResponseSchema
 } from "~/services/auth/dto/login.dto";
+import {
+    type RegisterDto,
+    type RegisterBody,
+    registerBodySchema,
+} from "~/services/auth/dto/register.dto";
+import {
+    type OtpDto,
+    type OtpBody,
+    otpBodySchema,
+    type OtpResponse,
+    otpResponseSchema
+} from "~/services/auth/dto/otp.dto";
 
 export const useAuthApi = () => {
     const config = useRuntimeConfig()
@@ -27,12 +39,33 @@ export const useAuthApi = () => {
             .finally(() => (isLoading.value = false))
     }
 
-    const register = async () => {
-        //todo abd:
+    const register = async (registerDto: RegisterDto) => {
+        isLoading.value = true
+        return new RequestBuilder(AUTH_API_URL)
+            .post('/doctors/register')
+            .withBody<RegisterBody>(registerBodySchema)
+            .execute({
+                body: {
+                    email: registerDto.email,
+                    password: registerDto.password,
+                    phoneNumber: registerDto.phoneNumber,
+                }
+            })
+            .finally(() => (isLoading.value = false))
     }
 
-    const verifyOtp = async () => {
-        //todo abd:
+    const verifyOtp = async (otpDto: OtpDto) => {
+        isLoading.value = true
+        return new RequestBuilder(AUTH_API_URL)
+            .post('/doctors/validate-double-auth')
+            .withBody<OtpBody>(otpBodySchema)
+            .withResponse<OtpResponse>(otpResponseSchema)
+            .execute({
+                body : {
+                    doubleAuthCode: otpDto.doubleAuthCode,
+                }
+            })
+            .finally(() => (isLoading.value = false))
     }
 
     return {

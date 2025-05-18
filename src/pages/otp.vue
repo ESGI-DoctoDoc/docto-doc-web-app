@@ -6,9 +6,13 @@ import {useAuthApi} from "~/services/auth/auth.api";
 import {type OtpVerificationForm, otpVerificationSchema} from "~/components/inputs/validators/user-form.validator";
 import type {FormSubmitEvent} from "@nuxt/ui";
 import {useSession} from "~/composables/auth/useSession";
+import AppDivider from "~/components/AppDivider.vue";
 
+const {showSuccess, showError} = useNotify()
+const {translate} = useTranslate()
 const {verifyOtp, isLoading} = useAuthApi()
 const {logoutUser, setUser} = useSession()
+const {setToken} = useSession()
 
 const form = reactive<Partial<OtpVerificationForm>>({
   code: ['0', '0', '0', '0', '0', '0'],
@@ -16,33 +20,28 @@ const form = reactive<Partial<OtpVerificationForm>>({
 
 async function onSubmit(event: FormSubmitEvent<OtpVerificationForm>) {
   try {
-    console.log(event.data)
-
-    //todo abd:
-    await verifyOtp();
-    // setToken();
-    //todo temp
+    const data = await verifyOtp({
+      doubleAuthCode: event.data.code.join(''),
+    });
+    setToken(data.token);
     setUser({
-      email: 'c.lechene@myges.fr',
-      firstname: 'Céline',
-      lastname: 'Lechene',
-      phone: '0606060606',
+      userId: data.id,
+      email: data.email,
+      firstname: data.firstName,
+      lastname: data.lastName,
+      phone: data.phoneNumber,
+      hasOnBoardingDone: data.hasOnBoardingDone,
       role: 'doctor',
-      userId: '1234567890',
-      hasOnBoardingDone: false,
     });
     navigateTo('/')
 
-    // if () {
-    //   // setUser()
-    //   //todo abd: use i18n comme dans le login
-    //   toast.add({title: 'Success', description: 'OTP validated successfully.', color: 'success'})
-    //   navigateTo('/')
-    // } else {
-    //   toast.add({title: 'Error', description: 'Invalid OTP.', color: 'error'})
-    // }
+    showSuccess(
+        translate('auth.otp.success.title'),
+        translate('auth.otp.success.message')
+    )
   } catch (e) {
     console.error(e)
+    showError('Erreur', 'Validation échouée.')
   }
 }
 
@@ -54,21 +53,20 @@ async function onSubmit(event: FormSubmitEvent<OtpVerificationForm>) {
       <div class="flex flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden" style="min-width: 600px">
         <div class="w-full text-center p-8 bg-white" style="">
           <div class="m-auto w-72">
-            <!-- todo abd: oublie pas les i18n          -->
-            <h1 class="text-2xl font-bold">Vérification du compte</h1>
-            <p class="pt-1 pb-6">Nous vous avons envoyé un SMS avec un code de vérification.</p>
+            <h1 class="text-2xl font-bold">{{ translate('auth.otp.title') }}</h1>
+            <p class="pt-1 pb-6">{{ translate('auth.otp.description') }}</p>
 
             <UForm :schema="otpVerificationSchema" :state="form" class="space-y-4" @submit.prevent="onSubmit">
               <OtpInput v-model="form.code"/>
               <UButton :loading="isLoading" block class="px-6" color="primary" type="submit">
-                Vérifier le code
+                {{ translate('auth.otp.button') }}
               </UButton>
             </UForm>
 
-            <AppDivider title="ou"/>
+            <AppDivider :title="translate('common.or')"/>
 
             <div class="text-sm">
-              <ULink class="text-primary" @click="logoutUser()">Se déconnecter</ULink>
+              <ULink class="text-primary" @click="logoutUser()">{{ translate('auth.logout.button') }}</ULink>
               <span>.</span>
             </div>
           </div>

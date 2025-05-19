@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-import {type LoginForm, loginSchema} from "~/components/inputs/validators/user-form.validator";
+import {type OnboardingForm, onboardingSchema} from "~/components/inputs/validators/user-form.validator";
 import AuthLayout from "~/layouts/AuthLayout.vue";
 import type {FormSubmitEvent} from "@nuxt/ui";
 import {useSession} from "~/composables/auth/useSession";
@@ -15,25 +15,27 @@ import YearExperienceInput from "~/components/inputs/YearExperienceInput.vue";
 import RPPSInput from "~/components/inputs/RPPSInput.vue";
 import IdentityCardInput from "~/components/inputs/IdentityCardInput.vue";
 import AddressInput from "~/components/inputs/AddressInput.vue";
+import {useOnboardingApi} from "~/services/onboarding/onboarding.api";
 
 const {logoutUser} = useSession()
 const {translate} = useTranslate()
+const {showSuccess, showError} = useNotify()
+const {process, isLoading} = useOnboardingApi()
 
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
 //todo abd: c'est juste pour le teste normalement il faut le type du schema
-const form = reactive({
-  "rpps": "12345678801    ",
-  "specialty": "Cardiology   ",
-  "experienceYears": 5,
-  "medicalConcerns": ["cardiology", "general"],
-  "acceptPublicCoverage": true,
-  "firstName": "John",
-  "lastName": "Doe",
-  "birthDate": "1980-05-12",
-  "bio": "Experienced cardiologist with 10 years of practice.",
-  "profilePictureUrl": "https://example.com/pic.jpg",
-  "languages": ["English", "French"],
-  "doctorDocuments": ["https://ex.com/2.pdf", "https://ex.com/1.pdf"]
+const form = reactive<Partial<OnboardingForm>>({
+  rpps: "12345678801    ",
+  speciality: "Cardiology   ",
+  experienceYears: 5,
+  acceptPublicCoverage: true,
+  firstName: "John",
+  lastName: "Doe",
+  birthDate: "1980-05-12",
+  bio: "Experienced cardiologist with 10 years of practice.",
+  profilePictureUrl: "https://example.com/pic.jpg",
+  languages: ["English", "French"],
+  doctorDocuments: ["https://ex.com/2.pdf", "https://ex.com/1.pdf"]
 })
 
 const currentStep = ref(0)
@@ -90,9 +92,33 @@ function redirectToStripeCheckout() {
   currentStep.value = 7;
 }
 
-async function onSubmit(event: FormSubmitEvent<LoginForm>) {
+async function onSubmit(event: FormSubmitEvent<OnboardingForm>) {
   //todo ici abd
   console.log(event.data)
+  try {
+    await process({
+      rpps: event.data.rpps,
+      specialty: event.data.speciality,
+      experienceYears: event.data.experienceYears,
+      acceptPublicCoverage: event.data.acceptPublicCoverage,
+      firstName: event.data.firstName,
+      lastName: event.data.lastName,
+      birthDate: event.data.birthDate,
+      bio: event.data.bio,
+      profilePictureUrl: event.data.profilePictureUrl,
+      languages: event.data.languages,
+      doctorDocuments: event.data.doctorDocuments // todo Corentino: mettre le storage en place
+    })
+    navigateTo('/')
+
+    showSuccess(
+        translate('auth.login.success.title'),
+        translate('auth.login.success.message')
+    )
+  }  catch (e) {
+    console.log(e)
+    showError('Erreur', 'Onboarding échoué.')
+  }
   isOnWaiting.value = true;
   currentStep.value = 3;
 
@@ -123,7 +149,7 @@ function validateAccount() {
               <p class="pt-4 pb-8">{{ steps[currentStep].formSubtitle }}</p>
             </div>
             <div class="h-4/6">
-              <UForm :schema="loginSchema" :state="form" @submit.prevent="onSubmit">
+              <UForm :schema="onboardingSchema" :state="form" @submit.prevent="onSubmit">
                 <!-- Step 1           -->
                 <div v-if="currentStep === 0" class="w-full text-center" style="">
                   <div class="space-y-4">

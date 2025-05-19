@@ -62,6 +62,24 @@ export const medicalConcernsSchema = z
     .min(1, "form.medical-concerns.required")
     .regex(/^[a-zA-ZÀ-ÿ '-]+$/, "form.medical-concerns.invalid");
 
+export const experienceYearsSchema = z
+    .number({ required_error: "form.experience-years.required" })
+
+export const acceptPublicCoverageSchema = z
+    .boolean({ required_error: "form.accept-public-coverage.required" });
+
+export const birthDateSchema = z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "form.birth-date.invalid") // yyyy-MM-dd
+
+export const languagesSchema = z
+    .array(z.string())
+    .nonempty("form.languages.required");
+
+export const doctorDocumentsSchema = z
+    .array(z.string().url())
+    .nonempty("form.doctor-documents.required");
+
 /* forms */
 export const loginSchema = z.object({
     email: emailSchema,
@@ -99,3 +117,19 @@ export const profileSchema = z.object({
     avatar: avatarSchema,
 })
 export type ProfileForm = z.infer<typeof profileSchema>;
+
+export const onboardingSchema = z.object({
+    rpps: rppsSchema,
+    speciality: specialitySchema,
+    experienceYears: experienceYearsSchema,
+    acceptPublicCoverage: acceptPublicCoverageSchema,
+    firstName: nameSchema,
+    lastName: nameSchema,
+    bio: bioSchema,
+    birthDate: birthDateSchema,
+    profilePictureUrl: avatarSchema,
+    languages: languagesSchema,
+    doctorDocuments: doctorDocumentsSchema
+})
+
+export type OnboardingForm = z.infer<typeof onboardingSchema>;

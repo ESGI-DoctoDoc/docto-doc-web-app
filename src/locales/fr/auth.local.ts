@@ -14,9 +14,6 @@ export default {
         no_account: "Vous n'avez pas de compte ?",
         register_link: "Inscrivez-vous",
         terms_prefix: "En vous connectant, vous acceptez nos",
-        terms: "Conditions d'utilisation",
-        and: "et notre",
-        privacy: "Politique de confidentialité"
     },
     register: {
         title: "Inscription",
@@ -28,8 +25,12 @@ export default {
         },
         error: {
             email_taken: "Cet email est déjà utilisé.",
-            password_mismatch: "Les mots de passe ne correspondent pas."
-        }
+            password_mismatch: "Les mots de passe ne correspondent pas.",
+            server_error: "Une erreur est survenue. Veuillez réessayer plus tard."
+        },
+        account_exist: "Vous avez déjà un compte ?",
+        login_link: "Se connecter",
+        terms_prefix: "En vous inscrivant, vous acceptez nos",
     },
     logout: {
         button: "Se déconnecter",
@@ -38,4 +39,13 @@ export default {
             message: "Vous êtes maintenant déconnecté."
         }
     },
+    otp: {
+        title: "Vérification du numéro de téléphone",
+        description: "Nous vous avons envoyé un SMS avec un code de vérification.",
+        button: "Vérifier le code",
+        success: {
+            title: "Vérification du numéro de téléphone réussie",
+            message: "Votre numéro de téléphone à été vérifié avec succès."
+        },
+    }
 }

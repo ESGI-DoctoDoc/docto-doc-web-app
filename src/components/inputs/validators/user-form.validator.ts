@@ -32,6 +32,7 @@ export const nameSchema = z
     .max(50, "form.firstname.invalid")
     .regex(/^[a-zA-ZÀ-ÿ '-]+$/, "form.firstname.invalid");
 
+
 export const bioSchema = z
     .string()
     .trim()

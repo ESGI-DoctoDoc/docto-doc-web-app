@@ -72,7 +72,7 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
           <img :src="image" alt="patient" class="w-auto">
         </div>
       </div>
-      <p class="text-center text-xs">
+      <p class="text-center text-xs mt-2 font-medium">
         {{ translate('auth.login.terms_prefix') }}
         <NuxtLink class="text-primary" to="/terms">{{ translate('common.terms') }}</NuxtLink>
         <span class="px-1">{{ translate('common.and') }}</span>

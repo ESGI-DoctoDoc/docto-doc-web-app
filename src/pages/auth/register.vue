@@ -77,7 +77,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterForm>) {
           <img :src="image" alt="patient" class="w-auto">
         </div>
       </div>
-      <p class="text-center text-xs">{{ translate('auth.register.terms_prefix') }}
+      <p class="text-center text-xs mt-2 font-medium">{{ translate('auth.register.terms_prefix') }}
         <NuxtLink class="text-primary" to="/terms">{{ translate('common.terms') }}</NuxtLink>
         <span class="px-1">et notre</span>
         <NuxtLink class="text-primary" to="/privacy">{{ translate('common.privacy') }}</NuxtLink>

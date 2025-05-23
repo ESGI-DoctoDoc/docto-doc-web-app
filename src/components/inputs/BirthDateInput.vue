@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 
 import InputDateBase from "~/components/inputs/base/InputDateBase.vue";
-import type {CalendarDate} from "@internationalized/date";
 
-const modelValue = defineModel<CalendarDate>('modelValue')
+const modelValue = defineModel<string>('modelValue')
 </script>
 
 <template>

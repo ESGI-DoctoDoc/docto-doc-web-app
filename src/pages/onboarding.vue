@@ -1,19 +1,25 @@
 <script lang="ts" setup>
 
 import {type LoginForm, loginSchema} from "~/components/inputs/validators/user-form.validator";
-import PictureInput from "~/components/inputs/PictureInput.vue";
-import FirstNameInput from "~/components/inputs/FirstNameInput.vue";
-import LastNameInput from "~/components/inputs/LastNameInput.vue";
-import BioInput from "~/components/inputs/BioInput.vue";
 import AuthLayout from "~/layouts/AuthLayout.vue";
 import type {FormSubmitEvent} from "@nuxt/ui";
-import Placeholder from "~/components/utils/Placeholder.vue";
-import BirthDateInput from "~/components/inputs/BirthDateInput.vue";
 import {useSession} from "~/composables/auth/useSession";
+import AvatarFileInput from "~/components/inputs/AvatarFileInput.vue";
+import FirstNameInput from "~/components/inputs/FirstNameInput.vue";
+import LastNameInput from "~/components/inputs/LastNameInput.vue";
+import BirthDateInput from "~/components/inputs/BirthDateInput.vue";
+import BioInput from "~/components/inputs/BioInput.vue";
+import DoctorSpecialitySelect from "~/components/inputs/DoctorSpecialitySelect.vue";
+import LanguageSelect from "~/components/inputs/LanguageSelect.vue";
+import YearExperienceInput from "~/components/inputs/YearExperienceInput.vue";
+import RPPSInput from "~/components/inputs/RPPSInput.vue";
+import IdentityCardInput from "~/components/inputs/IdentityCardInput.vue";
+import AddressInput from "~/components/inputs/AddressInput.vue";
 
 const {logoutUser} = useSession()
 const {translate} = useTranslate()
 
+const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
 //todo abd: c'est juste pour le teste normalement il faut le type du schema
 const form = reactive({
   "rpps": "12345678801    ",
@@ -31,6 +37,9 @@ const form = reactive({
 })
 
 const currentStep = ref(0)
+const isOnWaiting = ref(false)
+const isAccepted = ref(false)
+const hasPaid = ref(false)
 
 const steps = [
   {
@@ -43,7 +52,7 @@ const steps = [
     title: 'Étape 2',
     shortDescription: 'Décrivez votre parcours et vos compétences',
     formTitle: 'Votre parcours professionnel',
-    formSubtitle: 'Renseignez votre spécialité, vos expériences et préférences pour mieux vous connecter aux patients.',
+    formSubtitle: 'Renseignez votre spécialité, vos expériences et vos langues parlées.',
   },
   {
     title: 'Étape 3',
@@ -53,96 +62,156 @@ const steps = [
   },
   {
     title: 'Étape 4',
-    shortDescription: 'Vérification et résumé',
-    formTitle: 'Résumé de votre profil',
-    formSubtitle: 'Vérifiez les informations saisies avant de finaliser votre inscription.',
+    shortDescription: 'Vérification en cours',
+    formTitle: 'Vérification de votre compte',
+    formSubtitle: 'Nous vérifions vos informations, cela peut prendre quelques minutes.',
+  },
+  {
+    title: 'Étape 5',
+    shortDescription: 'Paiement de la licence',
+    formTitle: 'Paiement de la licence',
+    formSubtitle: 'Procédez au paiement de votre licence.',
+  },
+  {
+    title: 'Étape 6',
+    shortDescription: 'Confirmation d\'inscription',
+    formTitle: 'Inscription réussie !',
+    formSubtitle: 'Votre inscription est validée, accédez à votre tableau de bord.',
   }
 ]
+
+function goToDashboard() {
+  //redirection
+}
+
+function redirectToStripeCheckout() {
+  console.log("Redirecting to Stripe checkout...");
+  hasPaid.value = true;
+  currentStep.value = 7;
+}
 
 async function onSubmit(event: FormSubmitEvent<LoginForm>) {
   //todo ici abd
   console.log(event.data)
+  isOnWaiting.value = true;
+  currentStep.value = 3;
+
+  setTimeout(() => {
+    validateAccount();
+  }, 2000)
+}
+
+function validateAccount() {
+  console.log("Account validated");
+  isAccepted.value = true;
+  currentStep.value = 4;
 }
 
 </script>
 
 <template>
   <AuthLayout>
-    <div class="flex flex-col gap-2" style="width: 55vw; height: 65vh">
+    <div class="flex flex-col gap-2" style="width: 50vw; height: 68vh">
       <div
           class="flex flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden h-full"
           style="min-width: 600px">
         <!-- Left forms     -->
-        <div class="w-3/5 p-8 flex justify-center items-center bg-white">
-          <UForm :schema="loginSchema" :state="form" @submit.prevent="onSubmit">
-            <!-- Step 1           -->
-            <div v-if="currentStep === 0" class="w-full text-center" style="">
-              <h1 class="text-2xl font-bold">{{ steps[0].formTitle }}</h1>
-              <p class="pt-1 pb-6">{{ steps[0].formSubtitle }}</p>
-
-              <!-- Step 1           -->
-              <div class="space-y-4">
-                <div class="flex flex-row gap-2">
-                  <div class="w-auto">
-                    <PictureInput class="w-20 h-20"/>
-                  </div>
-                  <div class="w-5/6">
-                    <Placeholder class="h-full"/>
+        <div class="w-3/5 p-12 flex justify-center items-center bg-white">
+          <div class="w-full h-full">
+            <div class="h-2/6 text-center flex flex-col justify-center items-center">
+              <h1 class="text-2xl font-bold">{{ steps[currentStep].formTitle }}</h1>
+              <p class="pt-4 pb-8">{{ steps[currentStep].formSubtitle }}</p>
+            </div>
+            <div class="h-4/6">
+              <UForm :schema="loginSchema" :state="form" @submit.prevent="onSubmit">
+                <!-- Step 1           -->
+                <div v-if="currentStep === 0" class="w-full text-center" style="">
+                  <div class="space-y-4">
+                    <AvatarFileInput/>
+                    <div class="flex flex-row gap-6">
+                      <FirstNameInput class="w-1/2"/>
+                      <LastNameInput class="w-1/2"/>
+                    </div>
+                    <BirthDateInput/>
+                    <BioInput/>
                   </div>
                 </div>
-                <div class="flex flex-row gap-2">
-                  <FirstNameInput class="w-1/2"/>
-                  <LastNameInput class="w-1/2"/>
+
+                <!-- Step 2           -->
+                <div v-if="currentStep === 1" class="w-full text-center" style="">
+                  <div class="space-y-4">
+                    <DoctorSpecialitySelect/>
+                    <YearExperienceInput/>
+                    <LanguageSelect/>
+                  </div>
                 </div>
-                <BirthDateInput/>
-                <BioInput/>
-              </div>
+
+                <!-- Step 3           -->
+                <div v-if="currentStep === 2" class="w-full text-center" style="">
+                  <div class="space-y-4">
+                    <RPPSInput/>
+                    <IdentityCardInput/>
+                    <AddressInput/>
+                    <UButton block class="px-6" color="primary" type="submit" @click="onSubmit">
+                      Finaliser l'inscription
+                    </UButton>
+                  </div>
+                </div>
+
+                <!-- Step 4           -->
+                <div v-if="currentStep === 3 && isOnWaiting">
+                  <div class="space-y-4 text-gray-700 text-sm leading-6 text-left px-2">
+                    <p>
+                      Nos équipes examinent actuellement votre dossier afin de vérifier que vous êtes bien autorisé à
+                      exercer la médecine en France.
+                    </p>
+                    <p>
+                      Cette vérification inclut la validation de vos documents professionnels, votre numéro RPPS, ainsi
+                      que l'exactitude des informations fournies.
+                    </p>
+                    <p>
+                      Ce processus peut prendre jusqu’à <strong>trois jours ouvrés</strong>. Vous recevrez une
+                      notification dès que votre compte sera validé.
+                    </p>
+                  </div>
+                  <UButton v-if="isAccepted" block class="mt-6 px-6" color="primary" @click="validateAccount">
+                    Passer à l'étape suivante
+                  </UButton>
+                  <UButton v-else block class="mt-6 px-6" color="primary" disabled loading>
+                    En attente de validation
+                  </UButton>
+                </div>
+
+                <!-- Step 5           -->
+                <div v-if="currentStep === 4 && isAccepted">
+                  <div class="space-y-4 text-gray-700 text-sm leading-6 text-left px-2">
+                    <p>
+                      Votre compte a été validé avec succès ! Vous pouvez maintenant procéder au paiement de votre
+                      licence.
+                    </p>
+                    <p>
+                      Cliquez sur le bouton ci-dessous pour être redirigé vers la page de paiement sécurisé.
+                    </p>
+                  </div>
+                  <UButton block class="mt-6 px-6" color="primary" @click="redirectToStripeCheckout">
+                    Payer la licence
+                  </UButton>
+                </div>
+              </UForm>
             </div>
+          </div>
+        </div>
 
-            <!-- Step 2           -->
-            <div v-if="currentStep === 1" class="w-full text-center" style="">
-              <h1 class="text-2xl font-bold">{{ steps[1].formTitle }}</h1>
-              <p class="pt-1 pb-6">{{ steps[1].formSubtitle }}</p>
-
-              <div class="space-y-4">
-                <!--              <SpecialityInput />-->
-                <!--              <YearExperienceInput />-->
-                <!--              <MedicalConcernSelect />-->
-                <!--              <LanguageSelect />-->
-              </div>
-            </div>
-
-            <!-- Step 3           -->
-            <div v-if="currentStep === 2" class="w-full text-center" style="">
-              <h1 class="text-2xl font-bold">{{ steps[2].formTitle }}</h1>
-              <p class="pt-1 pb-6">{{ steps[2].formSubtitle }}</p>
-
-              <div class="space-y-4">
-                <!--              <RPPSInput />-->
-                <!--              <FileInput />-->
-                <!--              <FileInput />-->
-              </div>
-            </div>
-
-            <!-- Step 4           -->
-            <div v-if="currentStep === 3" class="w-full text-center" style="">
-              <h1 class="text-2xl font-bold">{{ steps[3].formTitle }}</h1>
-              <p class="pt-1 pb-6">{{ steps[3].formSubtitle }}</p>
-              <div class="space-y-4">
-
-                <!-- Liste toutes les données           -->
-                <UButton block class="px-6" color="primary" type="submit">Finaliser l'inscription</UButton>
-              </div>
-            </div>
-          </UForm>
+        <!-- Image     -->
+        <div v-if="isOnWaiting && !isAccepted || isAccepted" class="h-full w-1/2">
+          <img :src="image" alt="patient" class="w-auto object-contain">
         </div>
 
         <!-- Steps     -->
-        <div class="h-full w-2/5 border-l-2 border-l-gray-200 p-4 bg-white">
-
-          <div class="h-full flex flex-col gap-y-4">
+        <div v-else class="overflow-y-scroll h-full w-2/5 border-l-2 border-l-gray-200 p-4 bg-white">
+          <div v-if="!isOnWaiting && !isAccepted" class="flex flex-col gap-y-4">
             <div
-                v-for="(step, index) in steps" :key="index"
+                v-for="(step, index) in steps.slice(0, 3)" :key="index"
                 :class="currentStep === index ? 'bg-primary-100' : 'bg-white'"
                 class="flex flex-col border-2 border-gray-200 p-4 rounded-xl h-1/4"
                 @click="currentStep = index"
@@ -151,12 +220,11 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
               <div class="text-gray-600 text-sm" style="max-width: 180px">{{ step.shortDescription }}</div>
             </div>
           </div>
-
         </div>
       </div>
-      <p class="text-center text-xs" @click="logoutUser">
-        <NuxtLink class="text-primary" @click="logoutUser">{{ translate('Se deconnecter') }}</NuxtLink>
-        <span>.</span>
+      <p class="text-center text-xs mt-2 font-medium">
+        Vous avez fait une erreur ou souhaitez reprendre plus tard ?
+        <NuxtLink class="text-primary" @click="logoutUser">Se déconnecter</NuxtLink>
       </p>
     </div>
   </AuthLayout>

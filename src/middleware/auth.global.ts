@@ -10,7 +10,7 @@ export default defineNuxtRouteMiddleware((to) => {
     const publicPages = [
         '/auth/login',
         '/auth/register',
-        '/auth/reset-password',
+        '/auth/forgotPassword',
         '/auth/email-verified',
     ]
 

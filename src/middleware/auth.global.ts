@@ -10,14 +10,15 @@ export default defineNuxtRouteMiddleware((to) => {
     const publicPages = [
         '/auth/login',
         '/auth/register',
-        '/auth/reset-password',
+        '/auth/forgotPassword',
         '/auth/email-verified',
+        '/auth/resetPassword',
     ]
 
     const otpPage = '/otp'
     const onboardingPage = '/onboarding'
 
-    const isPublicPage = publicPages.includes(to.fullPath)
+    const isPublicPage = publicPages.includes(to.path)
     const isOtpPage = to.fullPath === otpPage
     const isOnboardingPage = to.fullPath === onboardingPage
 

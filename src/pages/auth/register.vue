@@ -66,7 +66,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterForm>) {
             <AppDivider :title="translate('common.or')"/>
 
             <div class="text-xs">
-              <span class="pr-1">Vous avez déjà un compte ?</span>
+              <span class="pr-1">{{ translate('auth.register.button') }}</span>
               <NuxtLink class="text-primary" to="/auth/login">Se connecter</NuxtLink>
             </div>
           </div>
@@ -77,7 +77,7 @@ async function onSubmit(event: FormSubmitEvent<RegisterForm>) {
           <img :src="image" alt="patient" class="w-auto">
         </div>
       </div>
-      <p class="text-center text-xs">{{ translate('auth.register.terms_prefix') }}
+      <p class="text-center text-xs">{{ translate('auth.register.account_exist') }}
         <NuxtLink class="text-primary" to="/terms">{{ translate('common.terms') }}</NuxtLink>
         <span class="px-1">et notre</span>
         <NuxtLink class="text-primary" to="/privacy">{{ translate('common.privacy') }}</NuxtLink>

@@ -47,5 +47,40 @@ export default {
             title: "Vérification du numéro de téléphone réussie",
             message: "Votre numéro de téléphone à été vérifié avec succès."
         },
-    }
+    },
+    reset_password: {
+        request: {
+            title: "Mot de passe oublié",
+            description: "Entrez votre adresse e-mail pour recevoir un lien de réinitialisation.",
+            button: "Envoyer le lien de réinitialisation",
+            success: {
+                title: "Email envoyé",
+                message: "L'email contenant le lien de réinitialisation a été envoyé avec succès."
+            },
+            error: {
+                email_not_found: "Aucun compte trouvé avec cette adresse e-mail.",
+                server_error: "Une erreur est survenue. Veuillez réessayer plus tard."
+            },
+            account_exist: "Vous avez un compte ?",
+            login_link: "Connectez-vous",
+        },
+        update: {
+            title: "Réinitialiser le mot de passe",
+            description: "Choisissez un nouveau mot de passe pour votre compte.",
+            button: "Mettre à jour le mot de passe",
+            new_password: "Nouveau mot de passe",
+            confirm_password: "Confirmer le mot de passe",
+            login_link: "Retour à la connexion",
+            success: {
+                title: "Mot de passe changé",
+                message: "Votre mot de passe a été mis à jour avec succès."
+            },
+            error: {
+                title: "Erreur",
+                message: "Une erreur est survenue lors de la réinitialisation du mot de passe.",
+                server_error: "Impossible de mettre à jour le mot de passe.",
+                invalid_token: "Le lien est invalide ou expiré."
+            }
+        }
+    },
 }

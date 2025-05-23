@@ -18,6 +18,16 @@ import {
     type OtpResponse,
     otpResponseSchema
 } from "~/services/auth/dto/otp.dto";
+import {
+    type RequestResetPasswordBody,
+    type RequestResetPasswordDto,
+    requestResetPasswordBodySchema
+} from "~/services/auth/dto/requestResetPasswordDto";
+import {
+    type UpdatePasswordBody,
+    type UpdatePasswordDto,
+    updatePasswordBodySchema
+} from "~/services/auth/dto/updatePasswordDto";
 
 export const useAuthApi = () => {
     const config = useRuntimeConfig()
@@ -68,10 +78,39 @@ export const useAuthApi = () => {
             .finally(() => (isLoading.value = false))
     }
 
+    const requestResetPassword = async(requestResetPasswordDto: RequestResetPasswordDto) => {
+        isLoading.value = true
+        return new RequestBuilder(AUTH_API_URL)
+            .post('/doctors/password-reset')
+            .withBody<RequestResetPasswordBody>(requestResetPasswordBodySchema)
+            .execute({
+                body : {
+                    email: requestResetPasswordDto.email,
+                }
+            })
+            .finally(() => (isLoading.value = false))
+    }
+
+    const updatePassword = async(updatePasswordDto: UpdatePasswordDto) => {
+        isLoading.value = true
+        return new RequestBuilder(AUTH_API_URL)
+            .put('/doctors/password-reset')
+            .withBody<UpdatePasswordBody>(updatePasswordBodySchema)
+            .execute({
+                body : {
+                    newPassword: updatePasswordDto.newPassword,
+                    token: updatePasswordDto.token,
+                }
+            })
+            .finally(() => (isLoading.value = false))
+    }
+
     return {
         isLoading,
         login,
         register,
         verifyOtp,
+        requestResetPassword,
+        updatePassword,
     }
 }

@@ -14,28 +14,26 @@ import LanguageSelect from "~/components/inputs/LanguageSelect.vue";
 import YearExperienceInput from "~/components/inputs/YearExperienceInput.vue";
 import RPPSInput from "~/components/inputs/RPPSInput.vue";
 import IdentityCardInput from "~/components/inputs/IdentityCardInput.vue";
-import AddressInput from "~/components/inputs/AddressInput.vue";
 import {useOnboardingApi} from "~/services/onboarding/onboarding.api";
 
-const {logoutUser} = useSession()
+const {logoutUser, hasCompletedOnboarding} = useSession()
 const {translate} = useTranslate()
 const {showSuccess, showError} = useNotify()
 const {process, isLoading} = useOnboardingApi()
 
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
-//todo abd: c'est juste pour le teste normalement il faut le type du schema
 const form = reactive<Partial<OnboardingForm>>({
-  rpps: "12345678801    ",
-  speciality: "Cardiology   ",
-  experienceYears: 5,
-  acceptPublicCoverage: true,
-  firstName: "John",
-  lastName: "Doe",
-  birthDate: "1980-05-12",
-  bio: "Experienced cardiologist with 10 years of practice.",
-  profilePictureUrl: "https://example.com/pic.jpg",
-  languages: ["English", "French"],
-  doctorDocuments: ["https://ex.com/2.pdf", "https://ex.com/1.pdf"]
+  rpps: '',
+  speciality: 'Cardiology',
+  experienceYears: 0,
+  acceptPublicCoverage: false,
+  firstName: '',
+  lastName: '',
+  birthDate: '',
+  bio: '',
+  profilePictureUrl: '',
+  languages: ['', ''],
+  doctorDocuments: ['', '']
 })
 
 const currentStep = ref(0)
@@ -45,46 +43,52 @@ const hasPaid = ref(false)
 
 const steps = [
   {
-    title: 'Étape 1',
-    shortDescription: 'Ajoutez une photo et vos infos personnelles',
-    formTitle: 'Informations personnelles',
-    formSubtitle: 'Aidez-nous à mieux vous connaître en remplissant les informations de base.',
+    title: translate('onboarding.step1.title'),
+    shortDescription: translate('onboarding.step1.shortDescription'),
+    formTitle: translate('onboarding.step1.formTitle'),
+    formSubtitle: translate('onboarding.step1.formSubtitle'),
   },
   {
-    title: 'Étape 2',
-    shortDescription: 'Décrivez votre parcours et vos compétences',
-    formTitle: 'Votre parcours professionnel',
-    formSubtitle: 'Renseignez votre spécialité, vos expériences et vos langues parlées.',
+    title: translate('onboarding.step2.title'),
+    shortDescription: translate('onboarding.step2.shortDescription'),
+    formTitle: translate('onboarding.step2.formTitle'),
+    formSubtitle: translate('onboarding.step2.formSubtitle'),
   },
   {
-    title: 'Étape 3',
-    shortDescription: 'RPPS et documents justificatifs',
-    formTitle: 'Vérification professionnelle',
-    formSubtitle: 'Fournissez vos identifiants professionnels et documents requis.',
+    title: translate('onboarding.step3.title'),
+    shortDescription: translate('onboarding.step3.shortDescription'),
+    formTitle: translate('onboarding.step3.formTitle'),
+    formSubtitle: translate('onboarding.step3.formSubtitle'),
   },
   {
-    title: 'Étape 4',
-    shortDescription: 'Vérification en cours',
-    formTitle: 'Vérification de votre compte',
-    formSubtitle: 'Nous vérifions vos informations, cela peut prendre quelques minutes.',
+    title: translate('onboarding.step4.title'),
+    shortDescription: translate('onboarding.step4.shortDescription'),
+    formTitle: translate('onboarding.step4.formTitle'),
+    formSubtitle: translate('onboarding.step4.formSubtitle'),
   },
   {
-    title: 'Étape 5',
-    shortDescription: 'Paiement de la licence',
-    formTitle: 'Paiement de la licence',
-    formSubtitle: 'Procédez au paiement de votre licence.',
+    title: translate('onboarding.step5.title'),
+    shortDescription: translate('onboarding.step5.shortDescription'),
+    formTitle: translate('onboarding.step5.formTitle'),
+    formSubtitle: translate('onboarding.step5.formSubtitle'),
   },
   {
-    title: 'Étape 6',
-    shortDescription: 'Confirmation d\'inscription',
-    formTitle: 'Inscription réussie !',
-    formSubtitle: 'Votre inscription est validée, accédez à votre tableau de bord.',
+    title: translate('onboarding.step6.title'),
+    shortDescription: translate('onboarding.step6.shortDescription'),
+    formTitle: translate('onboarding.step6.formTitle'),
+    formSubtitle: translate('onboarding.step6.formSubtitle'),
   }
 ]
 
 function goToDashboard() {
-  //redirection
+  // redirection
 }
+
+onMounted(() => {
+  if (hasCompletedOnboarding.value) {
+    navigateTo('/')
+  }
+})
 
 function redirectToStripeCheckout() {
   console.log("Redirecting to Stripe checkout...");
@@ -93,12 +97,10 @@ function redirectToStripeCheckout() {
 }
 
 async function onSubmit(event: FormSubmitEvent<OnboardingForm>) {
-  //todo ici abd
-  console.log(event.data)
   try {
     await process({
       rpps: event.data.rpps,
-      specialty: event.data.speciality,
+      speciality: event.data.speciality,
       experienceYears: event.data.experienceYears,
       acceptPublicCoverage: event.data.acceptPublicCoverage,
       firstName: event.data.firstName,
@@ -107,10 +109,8 @@ async function onSubmit(event: FormSubmitEvent<OnboardingForm>) {
       bio: event.data.bio,
       profilePictureUrl: event.data.profilePictureUrl,
       languages: event.data.languages,
-      doctorDocuments: event.data.doctorDocuments // todo Corentino: mettre le storage en place
+      doctorDocuments: event.data.doctorDocuments,
     })
-    navigateTo('/')
-
     showSuccess(
         translate('auth.login.success.title'),
         translate('auth.login.success.message')
@@ -155,31 +155,30 @@ function validateAccount() {
                   <div class="space-y-4">
                     <AvatarFileInput/>
                     <div class="flex flex-row gap-6">
-                      <FirstNameInput class="w-1/2"/>
-                      <LastNameInput class="w-1/2"/>
+                      <FirstNameInput v-model="form.firstName" class="w-1/2"/>
+                      <LastNameInput v-model="form.lastName" class="w-1/2"/>
                     </div>
-                    <BirthDateInput/>
-                    <BioInput/>
+                    <BirthDateInput v-model="form.birthDate"/>
+                    <BioInput v-model="form.bio"/>
                   </div>
                 </div>
 
                 <!-- Step 2           -->
                 <div v-if="currentStep === 1" class="w-full text-center" style="">
                   <div class="space-y-4">
-                    <DoctorSpecialitySelect/>
-                    <YearExperienceInput/>
-                    <LanguageSelect/>
+                    <DoctorSpecialitySelect v-model="form.speciality"/>
+                    <YearExperienceInput v-model="form.experienceYears"/>
+                    <LanguageSelect v-model="form.languages"/>
                   </div>
                 </div>
 
                 <!-- Step 3           -->
                 <div v-if="currentStep === 2" class="w-full text-center" style="">
                   <div class="space-y-4">
-                    <RPPSInput/>
-                    <IdentityCardInput/>
-                    <AddressInput/>
-                    <UButton block class="px-6" color="primary" type="submit" @click="onSubmit">
-                      Finaliser l'inscription
+                    <RPPSInput v-model="form.rpps"/>
+                    <IdentityCardInput v-model="form.doctorDocuments"/>
+                    <UButton :loading="isLoading" block class="px-6" color="primary" type="submit">
+                      {{ translate('onboarding.finalSubmit') }}
                     </UButton>
                   </div>
                 </div>
@@ -187,40 +186,26 @@ function validateAccount() {
                 <!-- Step 4           -->
                 <div v-if="currentStep === 3 && isOnWaiting">
                   <div class="space-y-4 text-gray-700 text-sm leading-6 text-left px-2">
-                    <p>
-                      Nos équipes examinent actuellement votre dossier afin de vérifier que vous êtes bien autorisé à
-                      exercer la médecine en France.
-                    </p>
-                    <p>
-                      Cette vérification inclut la validation de vos documents professionnels, votre numéro RPPS, ainsi
-                      que l'exactitude des informations fournies.
-                    </p>
-                    <p>
-                      Ce processus peut prendre jusqu’à <strong>trois jours ouvrés</strong>. Vous recevrez une
-                      notification dès que votre compte sera validé.
-                    </p>
+                    <p>{{ translate('onboarding.step4.paragraph1') }}</p>
+                    <p>{{ translate('onboarding.step4.paragraph2') }}</p>
+                    <p v-html="translate('onboarding.step4.paragraph3')"></p>
                   </div>
-                  <UButton v-if="isAccepted" block class="mt-6 px-6" color="primary" @click="validateAccount">
-                    Passer à l'étape suivante
+                  <UButton v-if="isAccepted" :loading="isLoading" block class="mt-6 px-6" color="primary" @click="validateAccount">
+                    {{ translate('onboarding.step4.buttonNext') }}
                   </UButton>
                   <UButton v-else block class="mt-6 px-6" color="primary" disabled loading>
-                    En attente de validation
+                    {{ translate('onboarding.step4.buttonPending') }}
                   </UButton>
                 </div>
 
                 <!-- Step 5           -->
                 <div v-if="currentStep === 4 && isAccepted">
                   <div class="space-y-4 text-gray-700 text-sm leading-6 text-left px-2">
-                    <p>
-                      Votre compte a été validé avec succès ! Vous pouvez maintenant procéder au paiement de votre
-                      licence.
-                    </p>
-                    <p>
-                      Cliquez sur le bouton ci-dessous pour être redirigé vers la page de paiement sécurisé.
-                    </p>
+                    <p>{{ translate('onboarding.step5.paragraph1') }}</p>
+                    <p>{{ translate('onboarding.step5.paragraph2') }}</p>
                   </div>
-                  <UButton block class="mt-6 px-6" color="primary" @click="redirectToStripeCheckout">
-                    Payer la licence
+                  <UButton :loading="isLoading" block class="mt-6 px-6" color="primary" @click="redirectToStripeCheckout">
+                    {{ translate('onboarding.step5.button') }}
                   </UButton>
                 </div>
               </UForm>
@@ -249,8 +234,8 @@ function validateAccount() {
         </div>
       </div>
       <p class="text-center text-xs mt-2 font-medium">
-        Vous avez fait une erreur ou souhaitez reprendre plus tard ?
-        <NuxtLink class="text-primary" @click="logoutUser">Se déconnecter</NuxtLink>
+        {{ translate('onboarding.logout.prefix') }}
+        <NuxtLink class="text-primary" @click="logoutUser">{{ translate('onboarding.logout.action') }}</NuxtLink>
       </p>
     </div>
   </AuthLayout>

@@ -2,7 +2,7 @@ import {z} from "zod";
 
 export interface OnboardingDto {
     rpps: string,
-    specialty: string,
+    speciality: string,
     experienceYears: number,
     acceptPublicCoverage: boolean,
     firstName: string,
@@ -16,7 +16,7 @@ export interface OnboardingDto {
 
 export const onboardingBodySchema = z.object({
     rpps: z.string(),
-    specialty: z.string(),
+    speciality: z.string(),
     experienceYears: z.number(),
     acceptPublicCoverage: z.boolean(),
     firstName: z.string(),

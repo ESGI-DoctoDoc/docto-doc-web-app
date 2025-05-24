@@ -4,7 +4,7 @@ import InputTextBase from "~/components/inputs/base/InputTextBase.vue"
 
 const modelValue = defineModel('modelValue', {
   type: String,
-  default: ''
+  default: '3 rue des olives'
 })
 
 </script>

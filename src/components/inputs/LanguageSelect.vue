@@ -10,7 +10,7 @@ const languages = [
   {id: 'german', name: 'Deutsch'},
 ];
 
-const selectedLanguage = ref();
+const selectedLanguage = ref(languages[0].id);
 </script>
 
 <template>

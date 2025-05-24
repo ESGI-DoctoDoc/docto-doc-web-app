@@ -9,7 +9,7 @@ const specialities = [
   {id: 'neurology', name: 'Neurology'},
 ];
 
-const selectedSpeciality = ref(specialities[0].id);
+const selectedSpeciality = ref(specialities[0]);
 </script>
 
 <template>

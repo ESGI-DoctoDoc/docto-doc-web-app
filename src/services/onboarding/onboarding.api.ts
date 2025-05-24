@@ -21,7 +21,7 @@ export const useOnboardingApi = () => {
             .execute({
                 body: {
                     rpps: onboardingDto.rpps,
-                    specialty: onboardingDto.specialty,
+                    speciality: onboardingDto.speciality,
                     experienceYears: onboardingDto.experienceYears,
                     acceptPublicCoverage: onboardingDto.acceptPublicCoverage,
                     firstName: onboardingDto.firstName,

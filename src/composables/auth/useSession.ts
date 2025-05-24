@@ -39,9 +39,15 @@ export const useSession = () => {
         localStorageService.setItem(localStorageService.keys.OtpValidatedKey, hasOtpValidated.toString());
     }
 
+    const setHasCompletedOnBoarding = (hasCompletedOnboarding: boolean) => {
+        const localStorageService = new LocalStorageService();
+        localStorageService.setItem(localStorageService.keys.OnboardingKey, hasCompletedOnboarding.toString());
+    }
+
     const setUser = (user: User) => {
         const localStorageService = new LocalStorageService();
         setHasOtpValidated(true);
+        setHasCompletedOnBoarding(user.hasOnBoardingDone);
         localStorageService.setItem(localStorageService.keys.UserKey, JSON.stringify(user));
     }
 
@@ -86,6 +92,7 @@ export const useSession = () => {
     return {
         setToken,
         setHasOtpValidated,
+        setHasCompletedOnBoarding,
         setUser,
         hasOtpValidated,
         hasCompletedOnboarding,

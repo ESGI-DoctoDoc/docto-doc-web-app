@@ -3,7 +3,7 @@ import InputTextBase from "~/components/inputs/base/InputTextBase.vue"
 
 const modelValue = defineModel('modelValue', {
   type: String,
-  default: ''
+  default: 'Abdallah'
 })
 </script>
 

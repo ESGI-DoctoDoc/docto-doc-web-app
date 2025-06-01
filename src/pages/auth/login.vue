@@ -11,7 +11,7 @@ import {useSession} from "~/composables/auth/useSession";
 const {showSuccess, showError} = useNotify()
 const {translate} = useTranslate()
 const {login, isLoading} = useAuthApi()
-const {setToken} = useSession()
+const {setToken, setUser} = useSession()
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
 
 const form = reactive<Partial<LoginForm>>({
@@ -38,6 +38,22 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
     showError('Erreur', 'Connexion échouée.')
   }
 }
+
+async function fastlogin() {
+  console.log('Fast login clicked')
+  setToken('qsdqsd')
+  setUser({
+    userId: 'data.id',
+    email: 'data.email',
+    firstname: 'data.firstName',
+    lastname: 'data.lastName',
+    phone: 'data.phoneNumber',
+    hasOnBoardingDone: true,
+    role: 'doctor',
+  })
+  navigateTo('/')
+}
+
 </script>
 
 <template>
@@ -54,6 +70,9 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
               <EmailInput v-model="form.email"/>
               <PasswordInput v-model="form.password" forgot-password/>
               <UButton :loading="isLoading" block color="primary" type="submit">
+                {{ translate('auth.login.button') }}
+              </UButton>
+              <UButton :loading="isLoading" block color="primary" @click="fastlogin()">
                 {{ translate('auth.login.button') }}
               </UButton>
             </UForm>

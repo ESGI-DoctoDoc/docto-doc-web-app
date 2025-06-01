@@ -21,9 +21,14 @@ export class ApiClient {
         const {getToken} = useSession();
         const token = getToken();
 
-        return token
-            ? { Authorization: `Bearer ${token}` }
-            : {};
+        const headers: Record<string, string> = {
+            'x-api-key': import.meta.env.VITE_API_KEY,
+        }
+
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        return headers;
     }
 
     async request<TResponse, TBody extends ApiRequestBody = undefined>(

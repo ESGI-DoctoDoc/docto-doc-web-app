@@ -1,8 +1,8 @@
 import {RequestBuilder} from "~/api/request-builder";
 import {
-    type OnboardingDto,
     type OnboardingBody,
     onboardingBodySchema,
+    type OnboardingDto,
     type OnboardingResponse,
     onboardingResponseSchema,
 } from "~/services/onboarding/dto/onboarding.dto";
@@ -26,6 +26,7 @@ export const useOnboardingApi = () => {
                     acceptPublicCoverage: onboardingDto.acceptPublicCoverage,
                     firstName: onboardingDto.firstName,
                     lastName: onboardingDto.lastName,
+                    gender: onboardingDto.gender,
                     birthDate: onboardingDto.birthDate,
                     bio: onboardingDto.bio,
                     profilePictureUrl: onboardingDto.profilePictureUrl,

@@ -26,6 +26,7 @@ const form = reactive<Partial<OnboardingForm>>({
   rpps: '',
   speciality: 'Cardiology',
   experienceYears: 0,
+  gender: 'FEMALE',
   acceptPublicCoverage: false,
   firstName: '',
   lastName: '',
@@ -105,6 +106,7 @@ async function onSubmit(event: FormSubmitEvent<OnboardingForm>) {
       acceptPublicCoverage: event.data.acceptPublicCoverage,
       firstName: event.data.firstName,
       lastName: event.data.lastName,
+      gender: event.data.gender,
       birthDate: event.data.birthDate,
       bio: event.data.bio,
       profilePictureUrl: event.data.profilePictureUrl,
@@ -142,13 +144,13 @@ function validateAccount() {
           class="flex flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden h-full"
           style="min-width: 600px">
         <!-- Left forms     -->
-        <div class="w-3/5 p-12 flex justify-center items-center bg-white">
+        <div class="w-3/5 p-12 flex justify-center items-center bg-white overflow-y-scroll py-4">
           <div class="w-full h-full">
-            <div class="h-2/6 text-center flex flex-col justify-center items-center">
+            <div class="text-center flex flex-col justify-center items-center">
               <h1 class="text-2xl font-bold">{{ steps[currentStep].formTitle }}</h1>
               <p class="pt-4 pb-8">{{ steps[currentStep].formSubtitle }}</p>
             </div>
-            <div class="h-4/6">
+            <div class="">
               <UForm :schema="onboardingSchema" :state="form" @submit.prevent="onSubmit">
                 <!-- Step 1           -->
                 <div v-if="currentStep === 0" class="w-full text-center" style="">
@@ -159,7 +161,12 @@ function validateAccount() {
                       <LastNameInput v-model="form.lastName" class="w-1/2"/>
                     </div>
                     <BirthDateInput v-model="form.birthDate"/>
-                    <BioInput v-model="form.bio"/>
+                    <URadioGroup
+                        v-model="form.gender"
+                        :items="[{label: 'Femme', value: 'FEMALE'}, {label: 'Homme', value: 'MALE'}]"
+                        orientation="horizontal"
+                    />
+                    <BioInput v-model="form.bio" class="mb-4"/>
                   </div>
                 </div>
 

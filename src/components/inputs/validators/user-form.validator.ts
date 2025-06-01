@@ -33,6 +33,8 @@ export const nameSchema = z
     .regex(/^[a-zA-ZÀ-ÿ '-]+$/, "form.firstname.invalid");
 
 
+const genderEnumSchema = z.enum(["MALE", "FEMALE"]);
+
 export const bioSchema = z
     .string()
     .trim()
@@ -121,6 +123,7 @@ export type ProfileForm = z.infer<typeof profileSchema>;
 export const onboardingSchema = z.object({
     rpps: rppsSchema,
     speciality: specialitySchema,
+    gender: genderEnumSchema,
     experienceYears: experienceYearsSchema,
     acceptPublicCoverage: acceptPublicCoverageSchema,
     firstName: nameSchema,

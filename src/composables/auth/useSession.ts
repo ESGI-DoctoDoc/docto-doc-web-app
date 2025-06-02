@@ -89,6 +89,8 @@ export const useSession = () => {
         navigateTo('/auth/login');
     }
 
+    const currentUser = ref<User>();
+
     return {
         setToken,
         setHasOtpValidated,
@@ -99,6 +101,7 @@ export const useSession = () => {
         isAuthenticated,
         getToken,
         getUser,
-        logoutUser
+        logoutUser,
+        currentUser,
     }
 }

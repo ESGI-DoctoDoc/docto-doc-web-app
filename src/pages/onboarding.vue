@@ -15,15 +15,16 @@ import YearExperienceInput from "~/components/inputs/YearExperienceInput.vue";
 import RPPSInput from "~/components/inputs/RPPSInput.vue";
 import IdentityCardInput from "~/components/inputs/IdentityCardInput.vue";
 import {useOnboardingApi} from "~/services/onboarding/onboarding.api";
+import type {User} from "~/types/user";
 
-const {logoutUser, hasCompletedOnboarding} = useSession()
+const {logoutUser, hasCompletedOnboarding, setUser} = useSession()
 const {translate} = useTranslate()
 const {showSuccess, showError} = useNotify()
 const {process, isLoading} = useOnboardingApi()
 
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
 const form = reactive<Partial<OnboardingForm>>({
-  rpps: '',
+  rpps: '123456789011',
   speciality: 'Cardiology',
   experienceYears: 0,
   gender: 'FEMALE',
@@ -82,7 +83,16 @@ const steps = [
 ]
 
 function goToDashboard() {
-  // redirection
+  const user: User = {
+    userId: '00000000-0000-0000-0000-000000000001',
+    firstname: 'Doctor',
+    lastname: 'One',
+    email: 'doctor1@example.com',
+    phone: '+33100000001',
+    hasOnBoardingDone: true,
+    role: "doctor",
+  };
+  setUser(user)
 }
 
 onMounted(() => {
@@ -117,7 +127,7 @@ async function onSubmit(event: FormSubmitEvent<OnboardingForm>) {
         translate('auth.login.success.title'),
         translate('auth.login.success.message')
     )
-  }  catch (e) {
+  } catch (e) {
     console.log(e)
     showError('Erreur', 'Onboarding échoué.')
   }
@@ -184,7 +194,8 @@ function validateAccount() {
                   <div class="space-y-4">
                     <RPPSInput v-model="form.rpps"/>
                     <IdentityCardInput v-model="form.doctorDocuments"/>
-                    <UButton :loading="isLoading" block class="px-6" color="primary" type="submit">
+                    <UButton :loading="isLoading" block class="px-6" color="primary" type="submit"
+                             @click="goToDashboard()">
                       {{ translate('onboarding.finalSubmit') }}
                     </UButton>
                   </div>

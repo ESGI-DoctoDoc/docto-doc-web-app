@@ -1,13 +1,10 @@
-<script setup lang="ts">
-
-onMounted(() => {
-  navigateTo('/my-calendar')
-})
+<script lang="ts" setup>
 
 </script>
 
 <template>
   <div>
+    yo
   </div>
 </template>
 

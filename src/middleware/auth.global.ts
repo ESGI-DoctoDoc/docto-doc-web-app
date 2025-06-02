@@ -4,7 +4,8 @@ export default defineNuxtRouteMiddleware((to) => {
     const {
         isAuthenticated,
         hasOtpValidated,
-        hasCompletedOnboarding
+        hasCompletedOnboarding,
+        getUser,
     } = useSession()
 
     const publicPages = [
@@ -43,9 +44,10 @@ export default defineNuxtRouteMiddleware((to) => {
     if (isPublicPage) return navigateTo('/')
 
     // 5. Accès admin restreint
-    // if (to.fullPath.startsWith('/admin') && user.value?.role !== 'admin') {
-    //     return navigateTo('/')
-    // }
+    const user = getUser();
+    if (to.fullPath.startsWith('/admin') && user?.role !== 'admin') {
+        return navigateTo('/')
+    }
 
     // ✅ Accès autorisé
 })

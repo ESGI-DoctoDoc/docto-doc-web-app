@@ -16,11 +16,10 @@ const allLinks = {
     // { label: 'Paramètres', to: '/settings', icon: 'i-heroicons-cog-6-tooth' }
   ],
   admin: [
-    {label: 'Dashboard', to: '/', icon: 'i-heroicons-home'},
-    {label: 'Docteurs', to: '/doctors', icon: 'i-heroicons-user'},
-    {label: 'Rendez-vous', to: '/appointments', icon: 'i-heroicons-calendar-days'},
-    {label: 'Motifs', to: '/medical-concerns', icon: 'i-heroicons-clipboard-document-list'},
-    {label: 'Questions', to: '/questions', icon: 'i-heroicons-question-mark-circle'},
+    {label: 'Dashboard', to: '/admin/dashboard', icon: 'i-heroicons-home'},
+    {label: 'Docteurs', to: '/admin/doctors', icon: 'i-heroicons-user'},
+    {label: 'Rendez-vous', to: '/admin/appointments', icon: 'i-heroicons-calendar-days'},
+    {label: 'Spécialités', to: '/admin/specialities', icon: 'i-heroicons-clipboard-document-list'},
   ]
 }
 

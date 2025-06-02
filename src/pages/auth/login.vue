@@ -39,7 +39,7 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
   }
 }
 
-async function fastlogin() {
+async function fastlogin(role: 'admin' | 'doctor') {
   console.log('Fast login clicked')
   setToken('qsdqsd')
   setUser({
@@ -49,7 +49,7 @@ async function fastlogin() {
     lastname: 'data.lastName',
     phone: 'data.phoneNumber',
     hasOnBoardingDone: true,
-    role: 'doctor',
+    role,
   })
   navigateTo('/')
 }
@@ -72,8 +72,11 @@ async function fastlogin() {
               <UButton :loading="isLoading" block color="primary" type="submit">
                 {{ translate('auth.login.button') }}
               </UButton>
-              <UButton :loading="isLoading" block color="primary" @click="fastlogin()">
-                {{ translate('auth.login.button') }}
+              <UButton :loading="isLoading" block color="primary" @click="fastlogin('doctor')">
+                {{ translate('doctor') }}
+              </UButton>
+              <UButton :loading="isLoading" block color="primary" @click="fastlogin('admin')">
+                {{ translate('admin') }}
               </UButton>
             </UForm>
 

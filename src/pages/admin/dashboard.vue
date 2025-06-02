@@ -1,5 +1,12 @@
 <script lang="ts" setup>
 
+definePageMeta({
+  title: 'Tableau de bord',
+  layout: 'main-layout',
+  role: 'admin',
+
+})
+
 </script>
 
 <template>

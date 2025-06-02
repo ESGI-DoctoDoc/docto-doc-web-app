@@ -51,7 +51,7 @@ export const useSession = () => {
         localStorageService.setItem(localStorageService.keys.UserKey, JSON.stringify(user));
     }
 
-    const getUser = () => {
+    const getUser = (): User | null => {
         const localStorageService = new LocalStorageService();
         const user = localStorageService.getItem(localStorageService.keys.UserKey);
         return user ? JSON.parse(user) : null;

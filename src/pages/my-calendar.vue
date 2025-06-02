@@ -5,11 +5,12 @@ import type {EventContentArg} from "@fullcalendar/core";
 import DoctorCalendarTemplate from "~/components/modals/DoctorCalendarTemplate.vue";
 import {ref} from "vue";
 import type {DropdownMenuItem, TabsItem} from "@nuxt/ui";
-import InputDateBase from "~/components/inputs/base/InputDateBase.vue";
 
 definePageMeta({
   title: 'Mon calendrier',
   layout: 'main-layout',
+  role: 'doctor',
+
 })
 
 const isOpen = ref(false);
@@ -41,6 +42,10 @@ function onEventClick(event: EventContentArg) {
 
 function onChangeView(view: string | number) {
   calendarTemplateRef.value?.changeView(view as 'dayGridMonth' | 'timeGridWeek' | 'timeGridDay');
+}
+
+function onCreateAbsence(form: unknown) {
+  console.log(form)
 }
 
 </script>
@@ -83,53 +88,11 @@ function onChangeView(view: string | number) {
     <AppCalendar v-if="!showCalendarTemplate" ref="calendarTemplateRef" class="h-full" @event-click="onEventClick"/>
     <DoctorCalendarTemplate v-else class="h-full" @event-click="onEventClick"/>
 
-    <!-- Modal create absence //todo create component -->
-    <UModal
+    <!-- Modal create absence -->
+    <CreateDoctorAbsence
         v-model:open="showCreateAbsence"
-        :close="false"
-    >
-      <template #body>
-        <div class="pt-4 flex justify-between w-full">
-          <h2 class="text-2xl font-medium">Créer une absence</h2>
-        </div>
-        <AppDivider class="w-full pb-4 pt-2"/>
-
-        <div class="flex flex-col space-y-4 w-full">
-          <div class="flex space-x-2">
-            <UFormField class="w-1/2" label="Début" required>
-              <InputDateBase/>
-            </UFormField>
-            <UFormField class="w-1/2" label="Fin" required>
-              <InputDateBase/>
-            </UFormField>
-          </div>
-          <UCheckbox label="Absence est pour la journée entière"/>
-
-          <UFormField class="w-full" label="Répéter">
-            <URadioGroup :items="[
-                { label: 'Ne pas répéter', value: 'none' },
-                { label: 'Chaque jour', value: 'daily' },
-                { label: 'Chaque semaine', value: 'weekly' },
-                { label: 'Chaque mois', value: 'monthly' },
-            ]"/>
-          </UFormField>
-
-          <UFormField label="Date de fin de répétition">
-            <InputDateBase/>
-          </UFormField>
-
-          <UFormField class="w-full" label="Description">
-            <UTextarea
-                class="w-full"
-                placeholder="Entrez une description de l'absence"
-            />
-          </UFormField>
-
-          <UButton block label="Ajouter un motif de consultation"/>
-
-        </div>
-      </template>
-    </UModal>
+        @on-submit="onCreateAbsence"
+    />
 
     <!-- Slideover for event details //todo create component -->
     <USlideover

@@ -1,5 +1,12 @@
 <script lang="ts" setup>
 
+definePageMeta({
+  title: 'Rendez-vous',
+  layout: 'main-layout',
+  role: 'admin',
+
+})
+
 </script>
 
 <template>

@@ -4,10 +4,10 @@ import {useSession} from "~/composables/auth/useSession";
 import SidebarMenu from '~/components/SidebarMenu.vue'
 
 const route = useRoute()
-const {logoutUser} = useSession()
+const {logoutUser, getUser} = useSession()
 
 const image = new URL('@/assets/images/logo.png', import.meta.url).href
-const userRole = 'doctor'
+const userRole = getUser()?.role || 'doctor'
 
 const pageTitle = computed(() => {
   return route.meta.title || route.name?.toString().replace('-', ' ') || 'Page'

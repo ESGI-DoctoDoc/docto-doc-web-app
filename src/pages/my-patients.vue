@@ -12,6 +12,7 @@ export type MedicalConcern = {
 definePageMeta({
   title: 'Mes rendez-vous',
   layout: 'main-layout',
+  role: 'doctor',
 })
 
 const {showError} = useNotify()

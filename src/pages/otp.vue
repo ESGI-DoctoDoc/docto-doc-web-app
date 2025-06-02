@@ -34,6 +34,7 @@ async function onSubmit(event: FormSubmitEvent<OtpVerificationForm>) {
       role: 'doctor',
     });
     navigateTo('/')
+    console.log(data.hasOnBoardingDone)
 
     showSuccess(
         translate('auth.otp.success.title'),

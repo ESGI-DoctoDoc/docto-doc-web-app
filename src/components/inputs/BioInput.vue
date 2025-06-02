@@ -4,7 +4,7 @@ import InputAreaBase from "~/components/inputs/base/InputAreaBase.vue";
 
 const modelValue = defineModel('modelValue', {
   type: String,
-  default: ''
+  default: 'yoyo'
 })
 
 

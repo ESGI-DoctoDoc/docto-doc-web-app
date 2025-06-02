@@ -16,7 +16,7 @@ const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url)
 
 const form = reactive<Partial<LoginForm>>({
   email: 'slimane.abdallah75@gmail.com',
-  password: 'Abd1234$',
+  password: 'Abd1234#',
 })
 
 async function onSubmit(event: FormSubmitEvent<LoginForm>) {
@@ -72,7 +72,7 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
           <img :src="image" alt="patient" class="w-auto">
         </div>
       </div>
-      <p class="text-center text-xs">
+      <p class="text-center text-xs mt-2 font-medium">
         {{ translate('auth.login.terms_prefix') }}
         <NuxtLink class="text-primary" to="/terms">{{ translate('common.terms') }}</NuxtLink>
         <span class="px-1">{{ translate('common.and') }}</span>

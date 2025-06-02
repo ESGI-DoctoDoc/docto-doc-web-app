@@ -10,12 +10,13 @@ defineProps<{
   placeholder?: string
   autoresize?: boolean
   required?: boolean
+  maxRows?: number
 }>()
 
 </script>
 
 <template>
-  <UTextarea v-model="modelValue" :placeholder :rows class="w-full"/>
+  <UTextarea v-model="modelValue" :maxrows="5" :placeholder :rows="rows" autoresize class="w-full"/>
 </template>
 
 <style scoped>

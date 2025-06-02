@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 
 defineProps<{
-  modelValue: string
+  modelValue: string | number
   label?: string
   placeholder?: string
   type?: "number" | "reset" | "submit" | "search" | "date" | "text" | "color" | "button" | "checkbox" | "datetime-local" | "email" | "file" | "hidden" | "image" | "month" | "password" | "radio" | "range" | "tel" | "time" | "url" | "week" | string & {}

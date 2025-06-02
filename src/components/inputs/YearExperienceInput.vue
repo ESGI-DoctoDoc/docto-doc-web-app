@@ -1,23 +1,23 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import InputTextBase from "~/components/inputs/base/InputTextBase.vue"
 
 const modelValue = defineModel('modelValue', {
-  type: String,
-  default: 'Abdallah'
+  type: Number,
+  default: 0
 })
+
 </script>
 
 <template>
-  <UFormField label="Prénom" name="firstName" required>
+  <UFormField label="Année d'expérience" name="year" required>
     <InputTextBase
         v-model="modelValue"
-        name="firstName"
-        type="text"
-        placeholder="Entrez votre prénom"
-        required
-        autocomplete="given-name"
-        variant="outline"
         color="primary"
+        name="year"
+        placeholder="Combien d'années d'expérience vous avez ?"
+        required
+        type="number"
+        variant="outline"
     />
   </UFormField>
 </template>

@@ -12,7 +12,7 @@ defineProps<{
   loading: boolean
 }>()
 
-const emits = defineEmits([])
+const emits = defineEmits(['onCreateSpeciality'])
 
 const isOpen = ref(false)
 
@@ -31,13 +31,44 @@ const columns: TableColumn<Speciality>[] = [
     cell: ({row}) => row.getValue('name'),
   },
   {
+    id: 'createdAt',
+    header: 'Créé le',
+    accessorKey: 'createdAt',
+    cell: ({row}) => new Date(row.getValue('createdAt')).toLocaleDateString('fr-FR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }),
+  },
+  {
     id: 'actions',
     header: 'Actions',
   }
 ]
 
+function getRowActions(speciality: Speciality) {
+  return [
+    {
+      label: 'Modifier',
+      icon: 'i-lucide-edit',
+      onClick: () => {
+        console.log('Modifier', speciality)
+      },
+    },
+    {
+      label: 'Supprimer',
+      icon: 'i-lucide-trash',
+      onClick: () => {
+        console.log('Supprimer', speciality)
+      },
+    },
+  ]
+}
+
 function onCreateSpeciality(form: CreateSpecialityForm) {
-  console.log(form);
+  emits('onCreateSpeciality', form, () => {
+    isOpen.value = false
+  })
 }
 
 </script>
@@ -54,6 +85,7 @@ function onCreateSpeciality(form: CreateSpecialityForm) {
 
     <UTable
         ref="table"
+        :loading="loading"
         :columns="columns"
         :data="data"
         sticky
@@ -62,8 +94,8 @@ function onCreateSpeciality(form: CreateSpecialityForm) {
       <template #expanded="{ row }">
         <pre>{{ row.original }}</pre>
       </template>
-      <template #actions-cell="{ /*row*/ }">
-        <UDropdownMenu :items="[]">
+      <template #actions-cell="{ row }">
+        <UDropdownMenu :items="getRowActions(row.original)">
           <UButton
               aria-label="Actions"
               color="neutral"

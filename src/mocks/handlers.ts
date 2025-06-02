@@ -17,6 +17,34 @@ async function rejectRequest(data: unknown): Promise<{ success: false, errorCode
 }
 
 export const handlers = [
+    http.get('http://localhost:8080/api/v1/specialities', async () => {
+        return HttpResponse.json(await resolveRequest([
+            {
+                id: 'uuid1',
+                name: 'Speciality 1',
+                createdAt: new Date().toISOString(),
+            },
+            {
+                id: 'uuid2',
+                name: 'Speciality 2',
+                createdAt: new Date().toISOString(),
+            },
+            {
+                id: 'uuid3',
+                name: 'Speciality 3',
+                createdAt: new Date().toISOString(),
+            },
+        ]))
+    }),
+    http.post('http://localhost:8080/api/v1/specialities', async ({request}) => {
+        const body = await request.json() as { name: string } | null
+        return HttpResponse.json(await resolveRequest({
+            id: 'uuid4',
+            name: body?.name,
+            createdAt: new Date().toISOString(),
+        }))
+    }),
+
     http.post('http://localhost:8080/api/login', async () => {
         return HttpResponse.json()
         // return HttpResponse.error();

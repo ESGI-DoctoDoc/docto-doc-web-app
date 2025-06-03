@@ -13,7 +13,7 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="table-header-default py-3.5 overflow-x-auto">
+  <div class="table-header-default p-3.5 overflow-x-auto">
     <UInput
         v-if="searchable"
         :model-value="search"
@@ -34,6 +34,7 @@ defineEmits<{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  min-height: 60px;
+  max-height: 60px;
 }
 </style>

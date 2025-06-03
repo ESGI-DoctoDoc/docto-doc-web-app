@@ -10,6 +10,11 @@ import {
     type CreateMedicalConcernResponse,
     createMedicalConcernResponseSchema
 } from "~/services/medical-concerns/dto/create-medical-concern.dto";
+import {
+    type SaveMedicalConcernDto,
+    saveMedicalConcernQuestionBody,
+    type SaveMedicalConcernQuestionBody,
+} from "~/services/medical-concerns/dto/save-medical-concern-question.dto";
 
 
 export const medicalConcernsApi = () => {
@@ -33,7 +38,6 @@ export const medicalConcernsApi = () => {
                     name: requestDto.name,
                     duration: requestDto.duration,
                     price: requestDto.price,
-                    questions: requestDto.questions,
                 }
             })
     }
@@ -48,10 +52,21 @@ export const medicalConcernsApi = () => {
             .execute()
     }
 
+    /* Questions */
+    async function saveMedicalConcernQuestions(requestDto: SaveMedicalConcernDto) {
+        return new RequestBuilder(BASE_API_URL)
+            .put(`/medical-concerns/${requestDto.medicalConcernId}/questions`)
+            .withBody<SaveMedicalConcernQuestionBody>(saveMedicalConcernQuestionBody)
+            .execute({
+                body: requestDto.questions,
+            })
+    }
+
     return {
         fetchMedicalConcerns,
         createMedicalConcern,
         editDoctorMedicalConcerns,
         removeMedicalConcern,
+        saveMedicalConcernQuestions,
     }
 }

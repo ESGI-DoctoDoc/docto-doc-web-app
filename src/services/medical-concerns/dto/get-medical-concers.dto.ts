@@ -13,6 +13,7 @@ export const getMedicalConcernsResponseSchema = z.array(z.object({
             options: z.array(z.object({label: z.string(), value: z.string()})).optional(),
             isMandatory: z.boolean(),
             createdAt: z.string(),
+            archivedAt: z.string().optional(),
         })
     ),
     createdAt: z.string(),

@@ -17,17 +17,14 @@ async function rejectRequest(data: unknown): Promise<{ success: false, errorCode
 }
 
 export const handlers = [
+    http.put('http://localhost:8080/api/v1/medical-concerns/:id/questions', async ({params, request}) => {
+        return HttpResponse.json(await resolveRequest({}));
+    }),
     http.post('http://localhost:8080/api/v1/medical-concerns', async ({request}) => {
         const body = await request.json() as {
             name: string,
             duration: '0h15' | '0h30' | '0h45' | '1h00' | '1h30' | '2h00',
             price: number,
-            questions: {
-                question: string,
-                type: 'text' | 'list' | 'yes_no',
-                options?: { label: string, value: string }[],
-                isMandatory?: boolean,
-            }[]
         } | null
 
         if (!body) {
@@ -109,6 +106,14 @@ export const handlers = [
                 ],
                 createdAt: new Date().toISOString(),
                 archivedAt: new Date().toISOString(),
+            },
+            {
+                id: 'uuid5',
+                name: 'Consultation pédiatrique',
+                duration: '45min',
+                price: 60,
+                questions: [],
+                createdAt: new Date().toISOString(),
             }
         ]))
     }),

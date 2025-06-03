@@ -42,6 +42,7 @@ const durations = [
       v-model:open="open"
       :close="false"
       class="w-full h-1/2"
+      @close="open = false"
   >
     <template #body>
       <div class="pt-4 flex justify-between w-full">
@@ -50,44 +51,35 @@ const durations = [
       <AppDivider class="w-full pb-4 pt-2"/>
 
       <div class="flex fit gap-4">
+        <UForm
+            :schema="createMedicalConcernSchema"
+            :state="form"
+            class="flex flex-col space-y-4 w-full"
+            @submit.prevent="onSubmit"
+        >
+          <UFormField class="w-full" label="Nom du motif" name="name" required>
+            <UInput v-model="form.name" class="w-full" placeholder="Entrez le nom de la spécialité" type="text"/>
+          </UFormField>
+          <UFormField class="w-full" label="Durée de la consultation" name="duration" required>
+            <USelect
+                v-model="form.duration"
+                :items="durations"
+                class="w-full"
+                placeholder="Sélectionnez la durée de la consultation"
+            />
+          </UFormField>
+          <UFormField class="w-full" label="Prix de la consultation" name="price" required>
+            <UInput
+                v-model.number="form.price"
+                class="w-full"
+                min="0"
+                placeholder="Entrez le prix de la consultation"
+                type="number"
+            />
+          </UFormField>
 
-        <!-- Partie gauche : formulaire principal -->
-        <div class="w-1/2">
-          <UForm
-              :schema="createMedicalConcernSchema"
-              :state="form"
-              class="flex flex-col space-y-4 w-full"
-              @submit.prevent="onSubmit"
-          >
-            <UFormField class="w-full" label="Nom du motif" name="name" required>
-              <UInput v-model="form.name" class="w-full" placeholder="Entrez le nom de la spécialité" type="text"/>
-            </UFormField>
-            <UFormField class="w-full" label="Durée de la consultation" name="duration" required>
-              <USelect
-                  v-model="form.duration"
-                  :items="durations"
-                  class="w-full"
-                  placeholder="Sélectionnez la durée de la consultation"
-              />
-            </UFormField>
-            <UFormField class="w-full" label="Prix de la consultation" name="price" required>
-              <UInput
-                  v-model.number="form.price"
-                  class="w-full"
-                  min="0"
-                  placeholder="Entrez le prix de la consultation"
-                  type="number"
-              />
-            </UFormField>
-
-            <UButton block label="Ajouter un motif de consultation" type="submit"/>
-          </UForm>
-        </div>
-
-        <!-- Partie droite : liste des questions -->
-        <div class="w-1/2 max-h-[500px] overflow-y-auto space-y-2">
-          todo les questions
-        </div>
+          <UButton block label="Ajouter un motif de consultation" type="submit"/>
+        </UForm>
       </div>
     </template>
   </UModal>

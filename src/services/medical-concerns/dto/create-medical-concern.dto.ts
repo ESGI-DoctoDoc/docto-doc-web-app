@@ -1,20 +1,15 @@
 import {z} from "zod";
-
-export interface CreateMedicalConcernQuestionDto {
-    question: string;
-    type: "text" | "list" | "yes_no";
-    options?: { label: string, value: string }[];
-}
+import {MedicalConcernDuration} from "~/types/medical-concern-duration";
 
 export interface CreateMedicalConcernDto {
     name: string;
-    duration: "0h15" | "0h30" | "0h45" | "1h00" | "1h30" | "2h00";
+    duration: 15 | 30 | 45 | 60 | 90 | 120;
     price: number;
 }
 
 export const createMedicalConcernBody = z.object({
     name: z.string(),
-    duration: z.enum(["0h15", "0h30", "0h45", "1h00", "1h30", "2h00"]),
+    duration: z.nativeEnum(MedicalConcernDuration),
     price: z.number().nonnegative(),
 })
 export type CreateMedicalConcernBody = z.infer<typeof createMedicalConcernBody>;
@@ -22,13 +17,13 @@ export type CreateMedicalConcernBody = z.infer<typeof createMedicalConcernBody>;
 export const createMedicalConcernResponseSchema = z.object({
     id: z.string(),
     name: z.string(),
-    duration: z.string(),
+    duration: z.number().nonnegative(),
     price: z.number(),
     questions: z.array(
         z.object({
             id: z.string(),
             question: z.string(),
-            type: z.enum(['text', 'list', 'yes_no']),
+            type: z.enum(['text', 'list', 'yes_no', 'date']),
             options: z.array(z.object({label: z.string(), value: z.string()})).optional(),
             isMandatory: z.boolean(),
             createdAt: z.string(),

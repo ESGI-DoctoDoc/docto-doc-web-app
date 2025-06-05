@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import PatientsTable from '~/components/table/PatientsTable.vue'
-import {medicalConcernsApi} from "~/services/medical-concers/medical-concerns.api";
 import {useNotify} from "~/composables/useNotify";
+import {medicalConcernsApi} from "~/services/medical-concerns/medical-concerns.api";
 
 export type MedicalConcern = {
   id: string;
@@ -16,7 +16,7 @@ definePageMeta({
 })
 
 const {showError} = useNotify()
-const {fetchDoctorMedicalConcerns, removeDoctorMedicalConcern} = medicalConcernsApi();
+const {fetchMedicalConcerns, removeMedicalConcern} = medicalConcernsApi();
 
 
 const isLoading = ref<boolean>(true);
@@ -29,7 +29,7 @@ function onEditQuestions(medicalConcern: MedicalConcern) {
 async function onRemoveConcern(medicalConcern: MedicalConcern) {
   isLoading.value = true;
   try {
-    await removeDoctorMedicalConcern(medicalConcern.id);
+    await removeMedicalConcern(medicalConcern.id);
     myMedicalConcerns.value = myMedicalConcerns.value.filter(mc => mc.id !== medicalConcern.id);
   } catch (error) {
     if (error instanceof Error) {
@@ -44,7 +44,7 @@ async function onRemoveConcern(medicalConcern: MedicalConcern) {
 
 onMounted(() => {
   isLoading.value = true;
-  fetchDoctorMedicalConcerns()
+  fetchMedicalConcerns()
       .then((response) => {
         myMedicalConcerns.value = response;
       })

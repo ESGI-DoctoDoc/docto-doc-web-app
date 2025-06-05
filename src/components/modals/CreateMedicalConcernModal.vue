@@ -5,34 +5,51 @@ import {
   type CreateMedicalConcernForm,
   createMedicalConcernSchema
 } from "~/components/inputs/validators/medical-concern-form.validator";
+import {MedicalConcernDuration} from "~/types/medical-concern-duration";
+import {medicalConcernsApi} from "~/services/medical-concerns/medical-concerns.api";
+import {useNotify} from "~/composables/useNotify";
 
 const open = defineModel('open', {
   type: Boolean,
   default: true,
 })
 
-const emit = defineEmits<{
-  (e: 'onSubmit', value: CreateMedicalConcernForm): void;
-}>()
+const {showError, showSuccess} = useNotify()
+const {createMedicalConcern} = medicalConcernsApi();
 
 const form = ref<CreateMedicalConcernForm>({
   name: '',
-  duration: '1h00',
+  duration: 60,
   price: 0,
   questions: [],
 })
 
-function onSubmit(form: FormSubmitEvent<CreateMedicalConcernForm>) {
-  emit('onSubmit', form.data);
+async function onSubmit(formEvent: FormSubmitEvent<CreateMedicalConcernForm>) {
+  try {
+    await createMedicalConcern({
+      name: formEvent.data.name,
+      duration: formEvent.data.duration,
+      price: formEvent.data.price,
+    });
+
+    showSuccess("Motif créé !", "Le motif a bien été créé.");
+    open.value = false;
+  } catch (error) {
+    if (error instanceof Error) {
+      showError('Erreur lors de la création du motif de consultation', error.message);
+    } else {
+      showError('Erreur inconnue lors de la création du motif de consultation');
+    }
+  }
 }
 
 const durations = [
-  {label: '15 minutes', value: '0h15'},
-  {label: '30 minutes', value: '0h30'},
-  {label: '45 minutes', value: '0h45'},
-  {label: '1 heure', value: '1h00'},
-  {label: '1 heure 30 minutes', value: '1h30'},
-  {label: '2 heures', value: '2h00'},
+  { label: "15 minutes", value: MedicalConcernDuration.MIN_15 },
+  { label: "30 minutes", value: MedicalConcernDuration.MIN_30 },
+  { label: "45 minutes", value: MedicalConcernDuration.MIN_45 },
+  { label: "1 heure",    value: MedicalConcernDuration.MIN_60 },
+  { label: "1h30",       value: MedicalConcernDuration.MIN_90 },
+  { label: "2 heures",   value: MedicalConcernDuration.MIN_120 },
 ];
 
 </script>

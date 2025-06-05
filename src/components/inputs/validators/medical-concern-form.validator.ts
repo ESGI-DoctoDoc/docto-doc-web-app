@@ -1,8 +1,9 @@
 import {z} from "zod";
 import {medicalConcernQuestionSchema} from "~/components/inputs/validators/medical-concern-question-form.validator";
+import {MedicalConcernDuration} from "~/types/medical-concern-duration";
 
 const nameSchema = z.string().min(3).max(128);
-const durationSchema = z.enum(["0h15", "0h30", "0h45", "1h00", "1h30", "2h00"]);
+const durationSchema = z.nativeEnum(MedicalConcernDuration);
 const priceSchema = z.number().nonnegative();
 const questionsSchema = z.array(medicalConcernQuestionSchema).max(10);
 

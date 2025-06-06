@@ -1,0 +1,74 @@
+import {RequestBuilder} from "~/api/request-builder";
+import {
+    type GetMedicalConcernsResponse,
+    getMedicalConcernsResponseSchema
+} from "~/services/medical-concerns/dto/get-medical-concers.dto";
+import {
+    createMedicalConcernBody,
+    type CreateMedicalConcernBody,
+    type CreateMedicalConcernDto,
+    type CreateMedicalConcernResponse,
+    createMedicalConcernResponseSchema
+} from "~/services/medical-concerns/dto/create-medical-concern.dto";
+import {
+    type SaveMedicalConcernDto,
+    saveMedicalConcernQuestionBody,
+    type SaveMedicalConcernQuestionBody,
+} from "~/services/medical-concerns/dto/save-medical-concern-question.dto";
+
+
+export const medicalConcernsApi = () => {
+    const config = useRuntimeConfig()
+    const BASE_API_URL = `${config.public.apiBase}/v1`
+
+    async function fetchMedicalConcerns() {
+        return new RequestBuilder(BASE_API_URL)
+            .get('/doctors/medical-concerns')
+            .withResponse<GetMedicalConcernsResponse>(getMedicalConcernsResponseSchema)
+            .execute()
+    }
+
+    async function createMedicalConcern(requestDto: CreateMedicalConcernDto) {
+        return new RequestBuilder(BASE_API_URL)
+            .post('/doctors/medical-concerns')
+            .withBody<CreateMedicalConcernBody>(createMedicalConcernBody)
+            .withResponse<CreateMedicalConcernResponse>(createMedicalConcernResponseSchema)
+            .execute({
+                body: {
+                    name: requestDto.name,
+                    duration: requestDto.duration,
+                    price: requestDto.price,
+                }
+            })
+    }
+
+    async function editDoctorMedicalConcerns() {
+        throw new Error('Not implemented yet');
+    }
+
+    async function removeMedicalConcern(medicalConcernId: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .delete(`/medical-concerns/${medicalConcernId}`)
+            .execute()
+    }
+
+    /* Questions */
+    async function saveMedicalConcernQuestions(requestDto: SaveMedicalConcernDto) {
+        return new RequestBuilder(BASE_API_URL)
+            .post(`/doctors/medical-concerns/${requestDto.medicalConcernId}/questions`)
+            .withBody<SaveMedicalConcernQuestionBody>(saveMedicalConcernQuestionBody)
+            .execute({
+                body: {
+                    questions: requestDto.questions
+                },
+            })
+    }
+
+    return {
+        fetchMedicalConcerns,
+        createMedicalConcern,
+        editDoctorMedicalConcerns,
+        removeMedicalConcern,
+        saveMedicalConcernQuestions,
+    }
+}

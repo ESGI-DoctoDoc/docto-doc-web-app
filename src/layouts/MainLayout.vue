@@ -110,7 +110,6 @@ const pageTitle = computed(() => {
 }
 
 .page-content {
-  padding: 1rem;
   overflow-y: auto;
   flex: 1;
   background: white;

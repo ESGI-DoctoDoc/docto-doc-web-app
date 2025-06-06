@@ -6,16 +6,15 @@ import {
   createMedicalConcernSchema
 } from "~/components/inputs/validators/medical-concern-form.validator";
 import {MedicalConcernDuration} from "~/types/medical-concern-duration";
-import {medicalConcernsApi} from "~/services/medical-concerns/medical-concerns.api";
-import {useNotify} from "~/composables/useNotify";
 
 const open = defineModel('open', {
   type: Boolean,
   default: true,
 })
 
-const {showError, showSuccess} = useNotify()
-const {createMedicalConcern} = medicalConcernsApi();
+const emit = defineEmits<{
+  (e: 'onSubmit', value: CreateMedicalConcernForm): void;
+}>()
 
 const form = ref<CreateMedicalConcernForm>({
   name: '',
@@ -25,22 +24,7 @@ const form = ref<CreateMedicalConcernForm>({
 })
 
 async function onSubmit(formEvent: FormSubmitEvent<CreateMedicalConcernForm>) {
-  try {
-    await createMedicalConcern({
-      name: formEvent.data.name,
-      duration: formEvent.data.duration,
-      price: formEvent.data.price,
-    });
-
-    showSuccess("Motif créé !", "Le motif a bien été créé.");
-    open.value = false;
-  } catch (error) {
-    if (error instanceof Error) {
-      showError('Erreur lors de la création du motif de consultation', error.message);
-    } else {
-      showError('Erreur inconnue lors de la création du motif de consultation');
-    }
-  }
+  emit('onSubmit', formEvent.data);
 }
 
 const durations = [

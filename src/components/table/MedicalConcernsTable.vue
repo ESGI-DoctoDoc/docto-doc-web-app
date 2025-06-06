@@ -12,6 +12,18 @@ defineProps<{
 
 const emits = defineEmits(['onUpdate', 'onRemove', 'onCreate', 'onEditQuestions'])
 
+function formatDuration(duration: number): string {
+  switch (duration) {
+    case 15: return '15 minutes';
+    case 30: return '30 minutes';
+    case 45: return '45 minutes';
+    case 60: return '1 heure';
+    case 90: return '1h30';
+    case 120: return '2 heures';
+    default: return `${duration} min`;
+  }
+}
+
 const search = ref('')
 const table = ref('table')
 const columns: TableColumn<MedicalConcern>[] = [
@@ -22,7 +34,7 @@ const columns: TableColumn<MedicalConcern>[] = [
   {
     accessorKey: 'duration',
     header: 'Durée',
-    cell: ({row}) => row.getValue('duration') || 'Non spécifiée'
+    cell: ({row}) => formatDuration(row.getValue('duration')) || 'Non spécifiée'
   },
   {
     accessorKey: 'price',

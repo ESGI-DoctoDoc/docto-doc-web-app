@@ -17,6 +17,11 @@ async function rejectRequest(data: unknown): Promise<{ success: false, errorCode
 }
 
 export const handlers = [
+    http.post('http://localhost:8080/api/v1/doctors/slots', async () => {
+        return HttpResponse.json(await resolveRequest({
+            id: 'uuid1234',
+        }));
+    }),
     // http.put('http://localhost:8080/api/v1/medical-concerns/:id/questions', async ({params, request}) => {
     //     return HttpResponse.json(await resolveRequest({}));
     // }),
@@ -37,33 +42,49 @@ export const handlers = [
     //         createdAt: new Date().toISOString(),
     //     }))
     // }),
-    // http.get('http://localhost:8080/api/v1/medical-concerns', async () => {
-    //     return HttpResponse.json(await resolveRequest([
-    //         {
-    //             id: '00000000-0000-0000-0000-000000000001',
-    //             name: 'Consultation standard',
-    //             duration: '30min',
-    //             price: 30,
-    //             questions: [
-    //                 {
-    //                     id: 'q1',
-    //                     question: 'Quels sont vos symptômes ?',
-    //                     type: 'text',
-    //                     isMandatory: true,
-    //                     createdAt: new Date().toISOString(),
-    //                 },
-    //                 {
-    //                     id: 'q2',
-    //                     question: 'Avez-vous des antécédents médicaux ?',
-    //                     type: 'YES_NO',
-    //                     isMandatory: false,
-    //                     createdAt: new Date().toISOString(),
-    //                 }
-    //             ],
-    //             createdAt: new Date().toISOString(),
-    //         },
-    //     ]))
-    // }),
+    http.get('http://localhost:8080/api/v1/doctors/medical-concerns', async () => {
+        return HttpResponse.json(await resolveRequest([
+            {
+                id: '00000000-0000-0000-0000-000000000001',
+                name: 'Consultation standard',
+                duration: 30,
+                price: 30,
+                questions: [
+                    {
+                        id: 'q1',
+                        question: 'Quels sont vos symptômes ?',
+                        type: 'text',
+                        isMandatory: true,
+                        createdAt: new Date().toISOString(),
+                    },
+                    {
+                        id: 'q2',
+                        question: 'Avez-vous des antécédents médicaux ?',
+                        type: 'yes_no',
+                        isMandatory: false,
+                        createdAt: new Date().toISOString(),
+                    }
+                ],
+                createdAt: new Date().toISOString(),
+            },
+            {
+                id: '00000000-0000-0000-0000-000000000002',
+                name: 'Consultation',
+                duration: 60,
+                price: 30,
+                questions: [
+                    {
+                        id: 'q1',
+                        question: 'Quels sont vos symptômes ?',
+                        type: 'text',
+                        isMandatory: true,
+                        createdAt: new Date().toISOString(),
+                    },
+                ],
+                createdAt: new Date().toISOString(),
+            },
+        ]))
+    }),
     http.post('http://localhost:8080/api/v1/specialities', async ({request}) => {
         const body = await request.json() as { name: string } | null
         return HttpResponse.json(await resolveRequest({

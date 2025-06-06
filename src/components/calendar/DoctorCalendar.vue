@@ -15,9 +15,10 @@ const props = defineProps({
 })
 const emits = defineEmits<{
   (e: 'event-click', event: EventContentArg): void
+  (e: 'on-calendar-type'): void
 }>()
 
-const calendarRef = ref()
+const calendarRef = useTemplateRef('calendarRef');
 
 const calendarOptions = ref<CalendarOptions>({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -71,17 +72,26 @@ const calendarOptions = ref<CalendarOptions>({
   }
 })
 
-function changeView(view: 'dayGridMonth' | 'timeGridWeek' | 'timeGridDay') {
-  calendarRef.value?.getApi().changeView(view)
+function onChangeView(view: string | number) {
+  calendarRef.value?.getApi().changeView(view as 'dayGridMonth' | 'timeGridWeek' | 'timeGridDay');
 }
 
-defineExpose({
-  changeView
-})
+function onActions(action: 'absence' | 'exceptional_opening') {
+  if (action === 'absence') {
+    //todo
+  } else if (action === 'exceptional_opening') {
+    //todo
+  }
+}
 
 </script>
 
 <template>
+  <CalendarHeaderDefault
+      @change-view="onChangeView"
+      @on-actions="onActions"
+      @on-calendar-type="$emit('on-calendar-type')"
+  />
   <FullCalendar ref="calendarRef" :options="calendarOptions"/>
 </template>
 

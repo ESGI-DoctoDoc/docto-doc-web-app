@@ -24,6 +24,7 @@
     "@nuxtjs/i18n": "npm:@nuxtjs/i18n-edge",
     "@pinia/nuxt": "^0.11.0",
     "@tailwindcss/vite": "^4.1.4",
+    "dayjs": "^1.11.13",
     "eslint": "^9.24.0",
     "nuxt": "^3.16.2",
     "tailwindcss": "^4.1.4",

@@ -6,14 +6,25 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
+import CalendarEventDetailSlideover from "~/components/slideover/CalendarEventDetailSlideover.vue";
+import CreateSlotModal from "~/components/modals/CreateSlotModal.vue";
+import type {CreateSlotForm} from "~/components/inputs/validators/slot-form.validator";
+import {slotApi} from "~/services/slots/slot.api";
 
 
 defineProps({})
 
-const emits = defineEmits<{
-  (e: 'event-click', event: EventContentArg): void
+defineEmits<{
+  (e: 'on-calendar-type'): void
 }>()
 
+const {createSlot} = slotApi();
+
+
+const loading = ref(true);
+const showEventDetail = ref(false)
+const showCreateSlot = ref(false)
+const currentSlot = ref({});
 const slots = ref([
   // Lundi
   {title: 'Consultation', start: '2025-06-02T08:00:00', end: '2025-06-02T12:00:00'},
@@ -89,7 +100,9 @@ const calendarOptions = ref<CalendarOptions>({
     console.log('Date clicked')
   },
   eventClick(arg) {
-    emits('event-click', arg)
+    console.log(arg);
+    currentSlot.value = {};
+    showEventDetail.value = true
   },
   eventContent: (arg: EventContentArg) => {
     return {
@@ -102,10 +115,37 @@ const calendarOptions = ref<CalendarOptions>({
     }
   }
 })
+
+async function onCreateSlot(form: CreateSlotForm) {
+  loading.value = true;
+  try {
+    const slot = await createSlot(form);
+    console.log(slot);
+    showCreateSlot.value = false
+  } catch (error) {
+    console.error('Error creating slot:', error);
+  } finally {
+    loading.value = false;
+  }
+}
+
 </script>
 
 <template>
-  <FullCalendar ref="calendarRef" :options="calendarOptions" class="w-full"/>
+  <CalendarHeaderDefault>
+    <USwitch class="text-sm" label="Ma semaine type" model-value @change="$emit('on-calendar-type')"/>
+
+    <UButton label="Nouveau créneau" variant="subtle" @click="showCreateSlot = true"/>
+  </CalendarHeaderDefault>
+  <FullCalendar
+      ref="calendarRef"
+      :options="calendarOptions"
+  />
+  <CalendarEventDetailSlideover
+      v-model:open="showEventDetail"
+      v-model:slot="currentSlot"
+  />
+  <CreateSlotModal v-model:open="showCreateSlot" @on-submit="onCreateSlot"/>
 </template>
 
 <style>

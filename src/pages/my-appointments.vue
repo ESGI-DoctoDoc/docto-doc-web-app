@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import AppointmentsTable from '~/components/table/AppointmentsTable.vue'
 import {useNotify} from "~/composables/useNotify";
-import {medicalConcernsApi} from "~/services/medical-concerns/medical-concerns.api";
 
 export type MedicalConcern = {
   id: string;
@@ -17,7 +16,6 @@ definePageMeta({
 })
 
 const {showError} = useNotify()
-const {fetchMedicalConcerns, removeMedicalConcern} = medicalConcernsApi();
 
 
 const isLoading = ref<boolean>(true);
@@ -29,30 +27,30 @@ function onEditQuestions(medicalConcern: MedicalConcern) {
 
 async function onRemoveConcern(medicalConcern: MedicalConcern) {
   isLoading.value = true;
-  try {
-    await removeMedicalConcern(medicalConcern.id);
-    myMedicalConcerns.value = myMedicalConcerns.value.filter(mc => mc.id !== medicalConcern.id);
-  } catch (error) {
-    if (error instanceof Error) {
-      showError('Erreur lors de la suppression du motif de consultation', error.message);
-    } else {
-      showError('Erreur inconnue lors de la suppression du motif de consultation');
-    }
-  } finally {
-    isLoading.value = false;
-  }
+  // try {
+  //   await removeDoctorMedicalConcern(medicalConcern.id);
+  //   myMedicalConcerns.value = myMedicalConcerns.value.filter(mc => mc.id !== medicalConcern.id);
+  // } catch (error) {
+  //   if (error instanceof Error) {
+  //     showError('Erreur lors de la suppression du motif de consultation', error.message);
+  //   } else {
+  //     showError('Erreur inconnue lors de la suppression du motif de consultation');
+  //   }
+  // } finally {
+  //   isLoading.value = false;
+  // }
 }
 
 onMounted(() => {
   isLoading.value = true;
-  fetchMedicalConcerns()
-      .then((response) => {
-        myMedicalConcerns.value = response;
-      })
-      .catch((error: Error) => {
-        showError('Erreur lors du chargement des motifs de consultation', error.message);
-      })
-      .finally(() => (isLoading.value = false));
+  // fetchDoctorMedicalConcerns()
+  //     .then((response) => {
+  //       myMedicalConcerns.value = response;
+  //     })
+  //     .catch((error: Error) => {
+  //       showError('Erreur lors du chargement des motifs de consultation', error.message);
+  //     })
+  //     .finally(() => (isLoading.value = false));
 })
 
 </script>

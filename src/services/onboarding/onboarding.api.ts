@@ -8,8 +8,7 @@ import {
 } from "~/services/onboarding/dto/onboarding.dto";
 
 export const useOnboardingApi = () => {
-    const config = useRuntimeConfig()
-    const AUTH_API_URL = `${config.public.apiBase}/v1`
+    const AUTH_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
     const isLoading = ref(false)
 
     const process = async (onboardingDto: OnboardingDto) => {

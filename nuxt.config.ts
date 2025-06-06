@@ -15,11 +15,6 @@ export default defineNuxtConfig({
       tailwindcss()
     ]
   },
-  runtimeConfig: {
-    public: {
-      apiBase: 'https://doctodoc-api-stage.onrender.com/api', // À adapter
-    }
-  },
   modules: [
     '@nuxt/eslint',
     '@nuxt/fonts',

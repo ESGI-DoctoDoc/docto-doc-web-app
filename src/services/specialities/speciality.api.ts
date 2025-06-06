@@ -12,8 +12,7 @@ import {
 } from "~/services/specialities/dto/get-speciality.dto";
 
 export const specialityApi = () => {
-    const config = useRuntimeConfig()
-    const BASE_API_URL = `${config.public.apiBase}/v1`
+    const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
 
     async function getSpecialities() {
         return new RequestBuilder(BASE_API_URL)

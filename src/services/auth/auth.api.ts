@@ -6,22 +6,17 @@ import {
     type LoginResponse,
     loginResponseSchema
 } from "~/services/auth/dto/login.dto";
+import {type RegisterBody, registerBodySchema, type RegisterDto,} from "~/services/auth/dto/register.dto";
 import {
-    type RegisterDto,
-    type RegisterBody,
-    registerBodySchema,
-} from "~/services/auth/dto/register.dto";
-import {
-    type OtpDto,
     type OtpBody,
     otpBodySchema,
+    type OtpDto,
     type OtpResponse,
     otpResponseSchema
 } from "~/services/auth/dto/otp.dto";
 
 export const useAuthApi = () => {
-    const config = useRuntimeConfig()
-    const AUTH_API_URL = `${config.public.apiBase}/v1`
+    const AUTH_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
     const isLoading = ref(false)
 
     const login = async (loginDto: LoginDto) => {

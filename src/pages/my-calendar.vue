@@ -16,9 +16,10 @@ const showCalendarType = ref(true);
 </script>
 
 <template>
-  <div style="height: calc(100vh - 8vh - 6vh);">
+  <div class="overflow-hidden" style="height: calc(100vh - 8vh);">
     <DoctorCalendarTemplate
         v-if="showCalendarType"
+        class="fit"
         @on-calendar-type="showCalendarType = !showCalendarType"
     />
     <DoctorCalendar

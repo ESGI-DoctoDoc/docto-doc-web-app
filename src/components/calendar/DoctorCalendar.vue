@@ -25,27 +25,6 @@ const calendarOptions = ref<CalendarOptions>({
   initialView: 'timeGridWeek',
   locale: frLocale,
   headerToolbar: false,
-  customButtons: {
-    createEvent: {
-      text: 'Créer événement',
-      click() {
-        const date = new Date()
-        const dateStr = date.toISOString().substring(0, 10)
-        const time = '08:00'
-        const startISO = `${dateStr}T${time}:00`
-        const startDate = new Date(startISO)
-        const durationMinutes = 90
-        const endDate = new Date(startDate.getTime() + durationMinutes * 60000)
-        const endISO = endDate.toISOString()
-
-        calendarOptions.value.events.push(
-            {title: 'Motif A', start: startISO, end: endISO},
-            {title: 'Motif B', start: startISO, end: endISO},
-            {title: 'Motif C', start: `${dateStr}T08:00:00`, end: `${dateStr}T11:30:00`}
-        )
-      }
-    }
-  },
   selectable: true,
   editable: true,
   dayMaxEventRows: true,
@@ -92,7 +71,9 @@ function onActions(action: 'absence' | 'exceptional_opening') {
       @on-actions="onActions"
       @on-calendar-type="$emit('on-calendar-type')"
   />
-  <FullCalendar ref="calendarRef" :options="calendarOptions"/>
+  <div class="overflow-y-auto" style="height: calc(100% - 6vh);">
+    <FullCalendar ref="calendarRef" :options="calendarOptions" class="h-full"/>
+  </div>
 </template>
 
 <style>

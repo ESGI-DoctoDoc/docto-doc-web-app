@@ -3,32 +3,34 @@
 import type {FormErrorEvent, FormSubmitEvent} from "@nuxt/ui";
 import DoctorMedicalConcernsSelect from "~/components/inputs/DoctorMedicalConcernsSelect.vue";
 import {type CreateSlotForm, createSlotSchema} from "~/components/inputs/validators/slot-form.validator";
-import dayjs from 'dayjs';
+import type {SlotDetail} from "~/types/slot";
+
+const props = defineProps<{
+  slotDetail: SlotDetail;
+}>();
 
 const open = defineModel('open', {
   type: Boolean,
   default: true,
 })
 
-const props = defineProps<{
-  hours?: [string, string, string]; // [date, startHour, endHour]
-}>();
 const emit = defineEmits<{
   (e: 'onSubmit', value: CreateSlotForm): void;
+  (e: 'onCancel'): void;
 }>()
 
 const {showError} = useNotify()
 
 const form = ref<CreateSlotForm>({
-  day: props?.hours?.[0] ?? 'monday',
-  startHour: props?.hours?.[1] ?? '',
-  endHour: props?.hours?.[2] ?? '',
-  recurrence: 'none',
-  dayNumber: 1,
-  start: dayjs().format('YYYY-MM-DD'),
-  end: '',
-  medicalConcerns: [],
-})
+  day: props.slotDetail.day,
+  startHour: props.slotDetail.startHour,
+  endHour: props.slotDetail.endHour,
+  recurrence: props.slotDetail.recurrence || 'none',
+  start: props.slotDetail.start,
+  end: props.slotDetail.end,
+  dayNumber: props.slotDetail.dayNumber,
+  medicalConcerns: props.slotDetail.medicalConcerns.map(concern => concern.id),
+});
 
 const daysOfWeek = [
   {label: 'Lundi', value: 'monday'},
@@ -66,9 +68,10 @@ function onError(event: FormErrorEvent) {
         body: 'min-h-auto max-h-[65vh] overflow-y-auto'
       }"
       close
+      @after:leave="$emit('onCancel')"
   >
     <template #title>
-      <h2 class="text-2xl font-medium">Nouvelle plage d'ouverture</h2>
+      <h2 class="text-2xl font-medium">Modifier la plage d'ouverture</h2>
     </template>
     <template #body>
       <UForm
@@ -131,6 +134,7 @@ function onError(event: FormErrorEvent) {
               placeholder="Aucune (exceptionnel)"
           />
         </UFormField>
+
         <UFormField v-if="form.recurrence === 'monthly'" label="Jour du mois" name="dayNumber">
           <UInput
               v-model="form.dayNumber"

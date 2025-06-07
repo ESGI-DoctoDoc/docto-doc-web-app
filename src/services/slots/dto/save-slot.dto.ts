@@ -7,6 +7,7 @@ export interface CreateSlotDto {
     recurrence: 'none' | 'weekly' | 'monthly';
     start?: string;
     end?: string;
+    dayNumber?: number;
     medicalConcerns: string[];
 }
 
@@ -17,11 +18,12 @@ export const createSlotBodySchema = z.object({
     recurrence: z.enum(['none', 'weekly', 'monthly']),
     start: z.string().optional(),
     end: z.string().optional(),
+    dayNumber: z.number().optional(),
     medicalConcerns: z.array(z.string().uuid()),
 });
 export type CreateSlotBody = z.infer<typeof createSlotBodySchema>;
 
-export const createSlotResponseSchema = z.object({
-    id: z.string(),
-});
-export type CreateSlotResponse = z.infer<typeof createSlotResponseSchema>;
+// export const createSlotResponseSchema = z.object({
+//     id: z.string(),
+// });
+// export type CreateSlotResponse = z.infer<typeof createSlotResponseSchema>;

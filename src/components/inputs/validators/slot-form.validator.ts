@@ -27,9 +27,10 @@ export const createSlotSchema = z.object({
     recurrence: recurrence,
     start: startDate.optional(),
     end: endDate.optional(),
+    dayNumber: z.number().min(0).max(28).optional(),
     medicalConcerns: medicalConcernIds,
 }).superRefine((data, ctx) => {
-    const {startHour, endHour, recurrence, start, end} = data;
+    const {startHour, endHour, recurrence, start, end, dayNumber} = data;
 
     // 1. Vérifier que l'heure de fin est après l'heure de début
     const startTime = dayjs(`2020-01-01T${startHour}`);
@@ -65,34 +66,42 @@ export const createSlotSchema = z.object({
             });
         }
 
-        if (end) {
-            const endDate = dayjs(end);
+        const endDate = dayjs(end);
 
-            // 3.2. La date de fin doit être après la date de début
-            if (endDate.isBefore(startDate)) {
+        // 3.2. La date de fin doit être après la date de début
+        if (endDate.isBefore(startDate)) {
+            ctx.addIssue({
+                path: ['end'],
+                code: z.ZodIssueCode.custom,
+                message: "form.slot.end-date.afterStart",
+            });
+        }
+
+        // 3.3. La date de fin doit couvrir au moins un cycle complet
+        const minEndDate = recurrence === 'weekly'
+            ? startDate.add(6, 'day')
+            : recurrence === 'monthly'
+                ? startDate.add(1, 'month').subtract(1, 'day')
+                : startDate;
+
+        if (endDate.isBefore(minEndDate)) {
+            ctx.addIssue({
+                path: ['end'],
+                code: z.ZodIssueCode.custom,
+                message: "form.slot.end-date.recurrenceTooShort",
+            });
+        }
+
+        // 3.4. Pour les récurrences mensuelles, vérifier que dayNumber est défini et dans la plage valide
+        if (recurrence === 'monthly') {
+            if (dayNumber === undefined || dayNumber < 1 || dayNumber > 28) {
                 ctx.addIssue({
-                    path: ['end'],
+                    path: ['dayNumber'],
                     code: z.ZodIssueCode.custom,
-                    message: "form.slot.end-date.afterStart",
-                });
-            }
-
-            // 3.3. La date de fin doit couvrir au moins un cycle complet
-            const minEndDate = recurrence === 'weekly'
-                ? startDate.add(6, 'day')
-                : recurrence === 'monthly'
-                    ? startDate.add(1, 'month').subtract(1, 'day')
-                    : startDate;
-
-            if (endDate.isBefore(minEndDate)) {
-                ctx.addIssue({
-                    path: ['end'],
-                    code: z.ZodIssueCode.custom,
-                    message: "form.slot.end-date.recurrenceTooShort",
+                    message: "form.slot.day-number.invalid",
                 });
             }
         }
     }
 });
 export type CreateSlotForm = z.infer<typeof createSlotSchema>;
-

@@ -1,11 +1,11 @@
 import {RequestBuilder} from "~/api/request-builder";
+import {type CreateSlotBody, createSlotBodySchema, type CreateSlotDto,} from "~/services/slots/dto/save-slot.dto";
 import {
-    type CreateSlotBody,
-    createSlotBodySchema,
-    type CreateSlotDto,
-    type CreateSlotResponse,
-    createSlotResponseSchema
-} from "~/services/slots/dto/save-slot.dto";
+    type GetSlotByIdResponse,
+    getSlotByIdResponseSchema,
+    type GetSlotsResponse,
+    getSlotsResponseSchema
+} from "~/services/slots/dto/get-slots.dto";
 
 export const slotApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
@@ -13,7 +13,15 @@ export const slotApi = () => {
 
     async function getSlots() {
         return new RequestBuilder(BASE_API_URL)
-            .get('doctors/slots')
+            .get('/doctors/slots')
+            .withResponse<GetSlotsResponse>(getSlotsResponseSchema)
+            .execute()
+    }
+
+    async function getSlotById(id: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .get(`/doctors/slots/${id}`)
+            .withResponse<GetSlotByIdResponse>(getSlotByIdResponseSchema)
             .execute()
     }
 
@@ -21,7 +29,7 @@ export const slotApi = () => {
         return new RequestBuilder(BASE_API_URL)
             .post('/doctors/slots')
             .withBody<CreateSlotBody>(createSlotBodySchema)
-            .withResponse<CreateSlotResponse>(createSlotResponseSchema)
+            // .withResponse<CreateSlotResponse>(createSlotResponseSchema)
             .execute({
                 body: {
                     day: requestDto.day,
@@ -38,6 +46,7 @@ export const slotApi = () => {
 
     return {
         getSlots,
+        getSlotById,
         createSlot
     }
 }

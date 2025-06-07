@@ -14,6 +14,23 @@ export enum SlotRecurrence {
     MONTHLY = 'monthly',
 }
 
+interface SlotMedicalConcern {
+    id: string;
+    name: string;
+    duration: number;
+}
+
 export interface Slot {
     id: string;
+    day: SlotDay;
+    startHour: string;
+    endHour: string;
+    recurrence: SlotRecurrence;
+}
+
+export interface SlotDetail extends Slot {
+    medicalConcerns: SlotMedicalConcern[];
+    start?: string;
+    end?: string;
+    dayNumber?: number;
 }

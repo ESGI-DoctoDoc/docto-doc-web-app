@@ -11,7 +11,7 @@ definePageMeta({
 
 })
 
-const showCalendarType = ref(true);
+const showCalendarType = ref(false);
 
 </script>
 

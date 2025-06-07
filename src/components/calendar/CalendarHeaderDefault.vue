@@ -5,13 +5,14 @@ import type {TabsItem} from "#ui/components/Tabs.vue";
 
 enum ActionsType {
   ABSENCE = 'absence',
-  EXCEPTIONAL_OPENING = 'exceptional_opening'
+  EXCEPTIONAL_OPENING = 'exceptional_opening',
+  APPOINTMENT = 'appointment'
 }
 
 const emits = defineEmits<{
   (e: 'change-view', view: string | number): void
   (e: 'on-actions', action: ActionsType): void
-  (e: 'on-calendar-type'): void
+  (e: 'on-calendar-type' | 'next' | 'prev'): void
 }>()
 
 const items = ref<TabsItem[]>([
@@ -21,6 +22,11 @@ const items = ref<TabsItem[]>([
 ])
 
 const planItems = ref<DropdownMenuItem[]>([
+  {
+    label: 'Un rendez-vous',
+    icon: 'i-lucide-calendar-plus',
+    onSelect: () => emits('on-actions', ActionsType.APPOINTMENT)
+  },
   {
     label: 'Une absence',
     icon: 'i-lucide-ban',
@@ -43,15 +49,21 @@ const planItems = ref<DropdownMenuItem[]>([
         <USwitch class="text-sm" label="Ma semaine type" @change="$emit('on-calendar-type')"/>
       </div>
 
-      <UTabs
-          :content="false"
-          :items="items"
-          class="flex-1 max-w-md"
-          default-value="timeGridWeek"
-          size="xs"
-          variant="pill"
-          @update:model-value="$emit('change-view', $event)"
-      />
+      <div class="flex-1 max-w-md">
+        <div class="flex space-x-2 w-full">
+          <UButton icon="i-lucide-chevron-left" variant="soft" @click="$emit('prev')"/>
+          <UTabs
+              :content="false"
+              :items="items"
+              class="w-full"
+              default-value="timeGridWeek"
+              size="xs"
+              variant="pill"
+              @update:model-value="$emit('change-view', $event)"
+          />
+          <UButton icon="i-lucide-chevron-right" variant="soft" @click="$emit('next')"/>
+        </div>
+      </div>
 
       <UDropdownMenu :items="planItems">
         <UButton class="pl-4" color="primary" label="Planifier" trailing-icon="i-lucide-chevron-down" variant="subtle"/>

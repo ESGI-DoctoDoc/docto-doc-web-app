@@ -48,14 +48,14 @@ const calendarOptions = ref<CalendarOptions>({
         </div>
       `
     }
-  }
+  },
 })
 
 function onChangeView(view: string | number) {
   calendarRef.value?.getApi().changeView(view as 'dayGridMonth' | 'timeGridWeek' | 'timeGridDay');
 }
 
-function onActions(action: 'absence' | 'exceptional_opening') {
+function onActions(action: 'absence' | 'exceptional_opening' | 'appointment') {
   if (action === 'absence') {
     //todo
   } else if (action === 'exceptional_opening') {
@@ -63,16 +63,28 @@ function onActions(action: 'absence' | 'exceptional_opening') {
   }
 }
 
+function onNext() {
+  calendarRef.value?.getApi().next();
+}
+
+function onPrev() {
+  calendarRef.value?.getApi().prev();
+}
+
 </script>
 
 <template>
-  <CalendarHeaderDefault
-      @change-view="onChangeView"
-      @on-actions="onActions"
-      @on-calendar-type="$emit('on-calendar-type')"
-  />
-  <div class="overflow-y-auto" style="height: calc(100% - 6vh);">
-    <FullCalendar ref="calendarRef" :options="calendarOptions" class="h-full"/>
+  <div class="fit">
+    <CalendarHeaderDefault
+        @next="onNext()"
+        @prev="onPrev()"
+        @change-view="onChangeView"
+        @on-actions="onActions"
+        @on-calendar-type="$emit('on-calendar-type')"
+    />
+    <div class="overflow-y-auto" style="height: calc(100% - 6vh);">
+      <FullCalendar ref="calendarRef" :options="calendarOptions" class="h-full"/>
+    </div>
   </div>
 </template>
 

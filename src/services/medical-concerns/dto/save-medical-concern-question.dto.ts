@@ -4,7 +4,7 @@ export interface SaveMedicalConcernDto {
     medicalConcernId: string;
     questions: {
         question: string;
-        type: "text" | "list" | "yes_no";
+        type: "text" | "list" | "yes_no" | "date";
         options?: { label: string, value: string }[];
         isMandatory: boolean;
     }[];
@@ -13,7 +13,7 @@ export interface SaveMedicalConcernDto {
 export const saveMedicalConcernQuestionBody = z.object({
     questions: z.array(z.object({
         question: z.string(),
-        type: z.enum(['list', 'yes_no', 'text']).transform((value) => value.toUpperCase()),
+        type: z.enum(['list', 'yes_no', 'text']),
         options: z.array(z.object({
             label: z.string(),
             value: z.string(),

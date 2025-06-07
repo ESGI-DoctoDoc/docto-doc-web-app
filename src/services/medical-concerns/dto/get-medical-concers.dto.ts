@@ -9,7 +9,7 @@ export const getMedicalConcernsResponseSchema = z.array(z.object({
         z.object({
             id: z.string(),
             question: z.string(),
-            type: z.enum(['TEXT', 'LIST', 'YES_NO']).transform((value) => value.toLowerCase()),
+            type: z.enum(['text', 'list', 'yes_no']),
             options: z.array(z.object({label: z.string(), value: z.string()})).optional(),
             isMandatory: z.boolean(),
             createdAt: z.string(),

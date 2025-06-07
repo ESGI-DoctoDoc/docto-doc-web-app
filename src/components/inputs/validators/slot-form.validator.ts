@@ -21,7 +21,7 @@ const medicalConcernIds = z
     .max(15, "form.slot.medical-concern.max");
 
 export const createSlotSchema = z.object({
-    day: day,
+    day: day.optional(),
     startHour: startHour,
     endHour: endHour,
     recurrence: recurrence,

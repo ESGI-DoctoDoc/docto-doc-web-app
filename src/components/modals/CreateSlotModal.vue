@@ -20,10 +20,10 @@ const emit = defineEmits<{
 const {showError} = useNotify()
 
 const form = ref<CreateSlotForm>({
-  day: props?.hours?.[0] ?? 'monday',
   startHour: props?.hours?.[1] ?? '',
   endHour: props?.hours?.[2] ?? '',
   recurrence: 'none',
+  day: props?.hours?.[0] ?? '',
   dayNumber: 1,
   start: dayjs().format('YYYY-MM-DD'),
   end: '',
@@ -80,15 +80,6 @@ function onError(event: FormErrorEvent) {
           @submit="onSubmit"
       >
         <h3 class="text-lg font-semibold">Jour et heures de consultation</h3>
-        <!-- Jour -->
-        <UFormField class="w-full" label="Jour" name="day">
-          <USelect
-              v-model="form.day"
-              :items="daysOfWeek"
-              class="w-full"
-              placeholder="Sélectionnez un jour"
-          />
-        </UFormField>
 
         <div class="w-full flex space-x-4">
           <!-- Heure de début -->
@@ -129,6 +120,15 @@ function onError(event: FormErrorEvent) {
               class="w-full"
               clearable
               placeholder="Aucune (exceptionnel)"
+          />
+        </UFormField>
+        <!-- Jour -->
+        <UFormField v-if="form.recurrence === 'weekly'" class="w-full" label="Jour" name="day">
+          <USelect
+              v-model="form.day"
+              :items="daysOfWeek"
+              class="w-full"
+              placeholder="Sélectionnez un jour"
           />
         </UFormField>
         <UFormField v-if="form.recurrence === 'monthly'" label="Jour du mois" name="dayNumber">

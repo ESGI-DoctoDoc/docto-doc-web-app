@@ -15,6 +15,12 @@ export default defineNuxtConfig({
       tailwindcss()
     ]
   },
+  runtimeConfig: {
+    public: {
+      apiKey: '',
+      apiBase: '',
+    }
+  },
   modules: [
     '@nuxt/eslint',
     '@nuxt/fonts',

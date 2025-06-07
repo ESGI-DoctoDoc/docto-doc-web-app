@@ -18,7 +18,7 @@ import {
 
 
 export const medicalConcernsApi = () => {
-    const BASE_API_URL = `${import.meta.env.VITE_API_BASE_URL}/v1`;
+    const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
 
     async function fetchMedicalConcerns() {
         return new RequestBuilder(BASE_API_URL)

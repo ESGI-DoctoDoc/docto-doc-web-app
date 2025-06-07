@@ -1,11 +1,16 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
-import type {CalendarOptions, EventContentArg} from '@fullcalendar/core'
+import type {CalendarOptions, EventContentArg, EventSourceInput} from '@fullcalendar/core'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
+import SaveDoctorAbsence from "~/components/modals/SaveDoctorAbsence.vue";
+import type {CreateDoctorAbsenceForm} from "~/components/inputs/validators/doctor-absence-form.validator";
+import {doctorAbsenceApi} from "~/services/absences/doctorAbsenceApi";
+import {useCalendar} from "~/composables/calendar/useCalendar";
+import type {Absence} from "~/types/absence";
 
 const props = defineProps({
   events: {
@@ -13,12 +18,19 @@ const props = defineProps({
     default: () => []
   }
 })
-const emits = defineEmits<{
+
+defineEmits<{
   (e: 'event-click', event: EventContentArg): void
   (e: 'on-calendar-type'): void
 }>()
 
+const {showError, showSuccess} = useNotify()
+const {createAbsence, getAbsences} = doctorAbsenceApi();
+const {mapDoctorAbsenceToCalendarEvent} = useCalendar()
 const calendarRef = useTemplateRef('calendarRef');
+
+const loading = ref(false);
+const showCreateAbsence = ref(false);
 
 const calendarOptions = ref<CalendarOptions>({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -36,19 +48,18 @@ const calendarOptions = ref<CalendarOptions>({
   dateClick() {
     console.log('Date clicked')
   },
-  eventClick(arg) {
-    emits('event-click', arg)
-  },
   eventContent: (arg: EventContentArg) => {
     return {
       html: `
-        <div>
-          <b>${arg.event.title}</b><br/>
-          <small>${arg.event.extendedProps.description || ''}</small>
+        <div class="text-black">
+          <b>${arg.event.extendedProps.extraParams.title}</b><br/>
+          <p>
+            ${arg.event.extendedProps.extraParams.startHour || ''} - ${arg.event.extendedProps.extraParams.endHour || ''}
+          </p>
         </div>
       `
     }
-  },
+  }
 })
 
 function onChangeView(view: string | number) {
@@ -57,9 +68,39 @@ function onChangeView(view: string | number) {
 
 function onActions(action: 'absence' | 'exceptional_opening' | 'appointment') {
   if (action === 'absence') {
-    //todo
+    showCreateAbsence.value = true;
   } else if (action === 'exceptional_opening') {
     //todo
+  }
+}
+
+async function onSaveAbsence(form: CreateDoctorAbsenceForm) {
+  loading.value = true;
+  try {
+    await createAbsence(form);
+    await fetchAbsences();
+    showSuccess('Motif de consultation créé avec succès');
+  } catch (error) {
+    if (error instanceof Error) {
+      showError("Erreur lors de la création de l'absence", error.message);
+    } else {
+      showError("Erreur inconnue lors de la création de l'absence");
+    }
+  }
+}
+
+async function fetchAbsences() {
+  try {
+    const absences = await getAbsences();
+    calendarOptions.value.events = absences.map((absence) => mapDoctorAbsenceToCalendarEvent(absence as Absence)) as EventSourceInput;
+  } catch (error) {
+    if (error instanceof Error) {
+      showError('Erreur lors de la récupération des absences', error.message);
+    } else {
+      showError('Erreur inconnue lors de la récupération des absences');
+    }
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -70,6 +111,10 @@ function onNext() {
 function onPrev() {
   calendarRef.value?.getApi().prev();
 }
+
+onMounted(() => {
+  fetchAbsences();
+})
 
 </script>
 
@@ -85,6 +130,11 @@ function onPrev() {
     <div class="overflow-y-auto" style="height: calc(100% - 6vh);">
       <FullCalendar ref="calendarRef" :options="calendarOptions" class="h-full"/>
     </div>
+
+    <SaveDoctorAbsence
+        v-model:open="showCreateAbsence"
+        @on-submit="onSaveAbsence"
+    />
   </div>
 </template>
 

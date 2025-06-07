@@ -83,7 +83,7 @@ function onError(event: FormErrorEvent) {
 
         <div class="w-full flex space-x-4">
           <!-- Heure de début -->
-          <UFormField class="w-1/2" label="Heure de début" name="startHour">
+          <UFormField class="w-1/2" label="Heure de début" name="startHour" required>
             <UInput
                 v-model="form.startHour"
                 class="w-full"
@@ -93,7 +93,7 @@ function onError(event: FormErrorEvent) {
           </UFormField>
 
           <!-- Heure de fin -->
-          <UFormField class="w-1/2" label="Heure de fin" name="endHour">
+          <UFormField class="w-1/2" label="Heure de fin" name="endHour" required>
             <UInput
                 v-model="form.endHour"
                 class="w-full"
@@ -113,7 +113,7 @@ function onError(event: FormErrorEvent) {
 
         <h3 class="text-lg font-semibold mt-4">Périodicité</h3>
         <!-- Récurrence -->
-        <UFormField class="w-full" label="Récurrence" name="recurrence">
+        <UFormField class="w-full" label="Récurrence" name="recurrence" required>
           <USelect
               v-model="form.recurrence"
               :items="recurrences"
@@ -123,7 +123,7 @@ function onError(event: FormErrorEvent) {
           />
         </UFormField>
         <!-- Jour -->
-        <UFormField v-if="form.recurrence === 'weekly'" class="w-full" label="Jour" name="day">
+        <UFormField v-if="form.recurrence === 'weekly'" class="w-full" label="Jour" name="day" required>
           <USelect
               v-model="form.day"
               :items="daysOfWeek"
@@ -131,7 +131,7 @@ function onError(event: FormErrorEvent) {
               placeholder="Sélectionnez un jour"
           />
         </UFormField>
-        <UFormField v-if="form.recurrence === 'monthly'" label="Jour du mois" name="dayNumber">
+        <UFormField v-if="form.recurrence === 'monthly'" label="Jour du mois" name="dayNumber" required>
           <UInput
               v-model="form.dayNumber"
               class="w-full"
@@ -144,7 +144,7 @@ function onError(event: FormErrorEvent) {
 
         <h3 v-if="form.recurrence !== 'none'" class="text-lg font-semibold mt-4">Plage de périodicité</h3>
         <!-- Date de début -->
-        <UFormField v-if="form.recurrence !== 'none'" class="w-full" label="Date de début" name="start">
+        <UFormField v-if="form.recurrence !== 'none'" class="w-full" label="Date de début" name="start" required>
           <UInput
               v-model="form.start"
               class="w-full"
@@ -153,7 +153,7 @@ function onError(event: FormErrorEvent) {
         </UFormField>
 
         <!-- Date de fin (optionnelle) -->
-        <UFormField v-if="form.recurrence !== 'none'" class="w-full" label="Date de fin" name="end">
+        <UFormField v-if="form.recurrence !== 'none'" class="w-full" label="Date de fin" name="end" required>
           <UInput
               v-model="form.end"
               class="w-full"

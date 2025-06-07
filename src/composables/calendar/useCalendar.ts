@@ -2,6 +2,7 @@ import dayjs from "dayjs"
 import type {Slot} from "~/types/slot";
 import 'dayjs/locale/fr'
 import type {EventSourceInput} from "@fullcalendar/core";
+import type {Absence} from "~/types/absence";
 
 dayjs.locale('fr');
 
@@ -54,14 +55,40 @@ export const useCalendar = () => {
         };
     }
 
-    function mapSlotsToCalendarEvents(slots: Slot[]): EventSourceInput {
-        const array = slots.map(mapSlotToCalendarEvent);
-        return array as EventSourceInput;
+    function mapDoctorAbsenceToCalendarEvent(absence: Absence): EventSourceInput {
+        if (absence.date) {
+            return {
+                id: absence.id,
+                start: dayjs(absence.date).startOf('day').toISOString(),
+                end: dayjs(absence.date).endOf('day').toISOString(),
+                extraParams: {
+                    title: 'Absence journée',
+                    description: absence.description?.slice(0, 30),
+                }
+            }
+        } else {
+            const formatDate = (date: string, hours: string) => dayjs(date)
+                .set('hour', hours ? parseInt(hours.split(':')[0]) : 0)
+                .set('minute', hours ? parseInt(hours.split(':')[1]) : 0);
+
+            return {
+                id: absence.id,
+                start: formatDate(absence.start!, absence.startHour!).toISOString(),
+                end: formatDate(absence.end!, absence.endHour!).toISOString(),
+                extraParams: {
+                    title: 'Absence',
+                    startHour: absence.startHour || '',
+                    endHour: absence.endHour || '',
+                    description: absence.description?.slice(0, 30),
+                }
+            }
+        }
+
     }
 
     return {
         doctorSlotsTemplate,
         mapSlotToCalendarEvent,
-        mapSlotsToCalendarEvents,
+        mapDoctorAbsenceToCalendarEvent,
     };
 }

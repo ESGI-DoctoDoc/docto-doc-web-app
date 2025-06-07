@@ -128,14 +128,14 @@ export const handlers = [
                     {
                         id: 'q1',
                         question: 'Quels sont vos symptômes ?',
-                        type: 'text',
+                        type: 'TEXT',
                         isMandatory: true,
                         createdAt: new Date().toISOString(),
                     },
                     {
                         id: 'q2',
                         question: 'Avez-vous des antécédents médicaux ?',
-                        type: 'yes_no',
+                        type: 'YES_NO',
                         isMandatory: false,
                         createdAt: new Date().toISOString(),
                     }
@@ -151,7 +151,7 @@ export const handlers = [
                     {
                         id: 'q1',
                         question: 'Quels sont vos symptômes ?',
-                        type: 'text',
+                        type: 'TEXT',
                         isMandatory: true,
                         createdAt: new Date().toISOString(),
                     },

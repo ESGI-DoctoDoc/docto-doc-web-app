@@ -12,7 +12,9 @@ export interface CreateSlotDto {
 }
 
 export const createSlotBodySchema = z.object({
-    day: z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']).optional(),
+    day: z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])
+        .transform((val) => val?.toUpperCase())
+        .optional(),
     startHour: z.string(),
     endHour: z.string(),
     recurrence: z.enum(['none', 'weekly', 'monthly']),

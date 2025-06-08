@@ -66,6 +66,13 @@ export const createSlotSchema = z.object({
             });
         }
 
+        if (!end) {
+            ctx.addIssue({
+                path: ['end'],
+                code: z.ZodIssueCode.custom,
+                message: "form.slot.end-date.required",
+            })
+        }
         const endDate = dayjs(end);
 
         // 3.2. La date de fin doit être après la date de début

@@ -17,11 +17,16 @@ async function rejectRequest(data: unknown): Promise<{ success: false, errorCode
 }
 
 export const handlers = [
-    http.post('http://localhost:8080/api/v1/doctors/slots', async () => {
-        return HttpResponse.json(await resolveRequest({
-            id: 'uuid1234',
-        }));
-    }),
+    // http.post('http://localhost:8080/api/v1/doctors/slots/monthly', async () => {
+    //     return HttpResponse.json(await resolveRequest({
+    //         id: 'uuid1234',
+    //     }));
+    // }),
+    // http.post('http://localhost:8080/api/v1/doctors/slots/weekly', async () => {
+    //     return HttpResponse.json(await resolveRequest({
+    //         id: 'uuid1234',
+    //     }));
+    // }),
     http.get('http://localhost:8080/api/v1/doctors/slots', async () => {
         return HttpResponse.json(await resolveRequest([
             {

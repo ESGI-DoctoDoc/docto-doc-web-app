@@ -11,19 +11,27 @@ export interface CreateSlotDto {
     medicalConcerns: string[];
 }
 
-export const createSlotBodySchema = z.object({
-    day: z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])
-        .transform((val) => val?.toUpperCase())
-        .optional(),
+export const createSlotMonthlyBodySchema = z.object({
     startHour: z.string(),
     endHour: z.string(),
-    recurrence: z.enum(['none', 'weekly', 'monthly']),
     start: z.string().optional(),
     end: z.string().optional(),
     dayNumber: z.number().optional(),
     medicalConcerns: z.array(z.string().uuid()),
 });
-export type CreateSlotBody = z.infer<typeof createSlotBodySchema>;
+export type CreateSlotMonthlyBody = z.infer<typeof createSlotMonthlyBodySchema>;
+
+export const createSlotWeeklyBodySchema = z.object({
+    day: z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])
+        .transform((val) => val?.toUpperCase())
+        .optional(),
+    startHour: z.string(),
+    endHour: z.string(),
+    start: z.string().optional(),
+    end: z.string().optional(),
+    medicalConcerns: z.array(z.string().uuid()),
+});
+export type CreateSlotWeeklyBody = z.infer<typeof createSlotWeeklyBodySchema>;
 
 // export const createSlotResponseSchema = z.object({
 //     id: z.string(),

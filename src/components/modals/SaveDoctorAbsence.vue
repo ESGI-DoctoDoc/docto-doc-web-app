@@ -7,6 +7,7 @@ import {
   createDoctorAbsenceSchema
 } from "~/components/inputs/validators/doctor-absence-form.validator";
 import type {Absence} from "~/types/absence";
+import InputAreaBase from "~/components/inputs/base/InputAreaBase.vue";
 
 const open = defineModel('open', {
   type: Boolean,
@@ -19,18 +20,20 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'on-submit', value: CreateDoctorAbsenceForm): void;
+  (e: 'on-delete', id: string): void;
 }>()
 
+const {showPopupContinueModal} = useModals()
 const {showError} = useNotify()
 
-const allDay = ref(false);
+const allDay = ref(props?.absence?.date !== '');
 const form = ref<CreateDoctorAbsenceForm>({
-  date: props?.absence?.date ?? '',
-  start: props?.absence?.start ?? dayjs().format('YYYY-MM-DD'),
-  end: props?.absence?.end ?? '',
-  startHour: props?.absence?.startHour ?? dayjs().format('HH:mm'),
-  endHour: props?.absence?.endHour ?? '',
-  description: props?.absence?.description ?? '',
+  date: props?.absence?.date || '',
+  start: props?.absence?.start || dayjs().format('YYYY-MM-DD'),
+  end: props?.absence?.end || '',
+  startHour: props?.absence?.startHour || dayjs().format('HH:mm'),
+  endHour: props?.absence?.endHour || '',
+  description: props?.absence?.description || '',
 });
 
 // const repeatItems = [
@@ -66,6 +69,16 @@ function onSetFullDay() {
   }
 }
 
+async function confirmDelete() {
+  if (props.absence) {
+    const instance = showPopupContinueModal("Souhaitez-vous supprimer cette absence ?");
+    const result = await instance.result;
+    if (result) {
+      emit('on-delete', props.absence.id);
+    }
+  }
+}
+
 </script>
 
 <template>
@@ -74,10 +87,12 @@ function onSetFullDay() {
       :ui="{
         body: 'min-h-auto max-h-[65vh] overflow-y-auto'
       }"
+      aria-description="Créer une absence pour le médecin"
       close
   >
     <template #title>
-      <h2 class="text-2xl font-medium">Créer une absence</h2>
+      <h2 v-if="absence" class="text-2xl font-medium">Modifier l'absence</h2>
+      <h2 v-else class="text-2xl font-medium">Créer une absence</h2>
     </template>
     <template #body>
       <UForm
@@ -130,20 +145,31 @@ function onSetFullDay() {
 
         <h3 class="text-lg font-semibold mt-4">Motif de l'absence</h3>
         <UFormField class="w-full" label="Description" name="description">
-          <UTextarea
+          <InputAreaBase
+              v-model="form.description"
               class="w-full"
+              :rows="3"
               placeholder="Entrez une description de l'absence"
           />
         </UFormField>
       </UForm>
     </template>
     <template #footer>
-      <UButton
-          block
-          form="create-absence-form"
-          label="Enregistrer"
-          type="submit"
-      />
+      <div class="flex w-full space-x-2.5">
+        <UButton
+            block
+            form="create-absence-form"
+            label="Enregistrer"
+            type="submit"
+        />
+        <UButton
+            v-if="absence"
+            block
+            color="error"
+            label="supprimer l'absence"
+            @click="confirmDelete"
+        />
+      </div>
     </template>
   </UModal>
 </template>

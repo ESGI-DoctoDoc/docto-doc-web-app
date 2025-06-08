@@ -26,11 +26,13 @@ defineEmits<{
 
 const {showError, showSuccess} = useNotify()
 const {createAbsence, getAbsences} = doctorAbsenceApi();
-const {mapDoctorAbsenceToCalendarEvent} = useCalendar()
+const {mapDoctorAbsenceToCalendarEvent, mapCalendarEventToDoctorAbsence} = useCalendar()
 const calendarRef = useTemplateRef('calendarRef');
 
 const loading = ref(false);
 const showCreateAbsence = ref(false);
+const showUpdateAbsence = ref(false);
+const currentAbsence = ref<Absence>();
 
 const calendarOptions = ref<CalendarOptions>({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
@@ -47,6 +49,12 @@ const calendarOptions = ref<CalendarOptions>({
   events: props.events,
   dateClick() {
     console.log('Date clicked')
+  },
+  eventClick(arg) {
+    if (arg.event.id) {
+      currentAbsence.value = mapCalendarEventToDoctorAbsence(arg.event);
+      showUpdateAbsence.value = true;
+    }
   },
   eventContent: (arg: EventContentArg) => {
     return {
@@ -104,6 +112,22 @@ async function fetchAbsences() {
   }
 }
 
+
+async function onDeleteAbsence(id: string) {
+  loading.value = true;
+  try {
+    await fetchAbsences();
+    showSuccess('Absence supprimée avec succès');
+  } catch (error) {
+    if (error instanceof Error) {
+      showError("Erreur lors de la suppression de l'absence", error.message);
+    } else {
+      showError("Erreur inconnue lors de la suppression de l'absence");
+    }
+  } finally {
+    loading.value = false;
+  }
+}
 function onNext() {
   calendarRef.value?.getApi().next();
 }
@@ -134,6 +158,13 @@ onMounted(() => {
     <SaveDoctorAbsence
         v-model:open="showCreateAbsence"
         @on-submit="onSaveAbsence"
+    />
+    <SaveDoctorAbsence
+        v-if="showUpdateAbsence"
+        v-model:open="showUpdateAbsence"
+        :absence="currentAbsence"
+        @on-submit="onSaveAbsence"
+        @on-delete="onDeleteAbsence"
     />
   </div>
 </template>

@@ -64,6 +64,8 @@ export const useCalendar = () => {
                 extraParams: {
                     title: 'Absence journée',
                     description: absence.description?.slice(0, 30),
+                    isFullDay: true,
+                    createdAt: dayjs(absence.createdAt).toISOString(),
                 }
             }
         } else {
@@ -80,15 +82,43 @@ export const useCalendar = () => {
                     startHour: absence.startHour || '',
                     endHour: absence.endHour || '',
                     description: absence.description?.slice(0, 30),
+                    isFullDay: false,
+                    createdAt: dayjs(absence.createdAt).toISOString(),
                 }
             }
         }
 
     }
 
+    function mapCalendarEventToDoctorAbsence(event: EventSourceInput): Absence {
+        const params = event?.extendedProps?.extraParams || {};
+        const isFullDay = params?.isFullDay;
+
+        if (isFullDay === true) {
+            return {
+                id: event.id || '',
+                date: dayjs(event.start).format('YYYY-MM-DD'),
+                description: params?.description || '',
+                createdAt: dayjs(params?.createdAt).toISOString(),
+            }
+        } else {
+            return {
+                id: event.id || '',
+                date: '',
+                startHour: params?.startHour || '',
+                endHour: params?.endHour || '',
+                start: dayjs(event.start).format('YYYY-MM-DD'),
+                end: dayjs(event.end).format('YYYY-MM-DD'),
+                description: params?.description || '',
+                createdAt: dayjs(params?.createdAt).toISOString(),
+            }
+        }
+    }
+
     return {
         doctorSlotsTemplate,
         mapSlotToCalendarEvent,
         mapDoctorAbsenceToCalendarEvent,
+        mapCalendarEventToDoctorAbsence,
     };
 }

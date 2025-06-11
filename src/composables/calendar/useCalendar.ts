@@ -31,8 +31,8 @@ export const useCalendar = () => {
         }
     }
 
-    function convertDateToIsoString(day: string, hour: string, dayNumber?: number): string {
-        const now = dayjs();
+    function convertDateToIsoString(day: string, hour: string, dayNumber?: number, compareTo?: string): string {
+        const now = compareTo ? dayjs(compareTo) : dayjs();
 
         if (typeof dayNumber === 'number') {
             const date = dayjs(`${now.year()}-${String(now.month() + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}T${hour}`);
@@ -51,15 +51,15 @@ export const useCalendar = () => {
         return date.toISOString();
     }
 
-    function mapSlotToCalendarEvent(slot: Slot): EventSourceInput {
+    function mapSlotToCalendarEvent(slot: Slot, compareTo: string): EventSourceInput {
         const isRecurring = slot.recurrence !== 'none';
 
         // is monthly recurrence
         if (slot.recurrence === 'monthly' && slot.dayNumber) {
             return {
                 id: slot.id,
-                start: convertDateToIsoString(slot.day, slot.startHour, slot.dayNumber),
-                end: convertDateToIsoString(slot.day, slot.endHour, slot.dayNumber),
+                start: convertDateToIsoString(slot.day, slot.startHour, slot.dayNumber, compareTo),
+                end: convertDateToIsoString(slot.day, slot.endHour, slot.dayNumber, compareTo),
                 extraParams: {
                     title: 'Ouverture récurrente mensuelle',
                     startHour: slot.startHour,
@@ -72,8 +72,8 @@ export const useCalendar = () => {
         // is weekly recurrence
         return {
             id: slot.id,
-            start: convertDateToIsoString(slot.day, slot.startHour),
-            end: convertDateToIsoString(slot.day, slot.endHour),
+            start: convertDateToIsoString(slot.day, slot.startHour, undefined, compareTo),
+            end: convertDateToIsoString(slot.day, slot.endHour, undefined, compareTo),
             extraParams: {
                 title: isRecurring ? 'Ouverture récurrente' : 'Ouverture',
                 startHour: slot.startHour,
@@ -82,14 +82,8 @@ export const useCalendar = () => {
         };
     }
 
-    function mapSlotsToCalendarEvents(slots: Slot[]): EventSourceInput {
-        const array = slots.map(mapSlotToCalendarEvent);
-        return array as EventSourceInput;
-    }
-
     return {
         doctorSlotsTemplate,
         mapSlotToCalendarEvent,
-        mapSlotsToCalendarEvents,
     };
 }

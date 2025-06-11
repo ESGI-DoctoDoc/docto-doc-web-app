@@ -53,6 +53,32 @@ export const handlers = [
             },
         ]));
     }),
+    http.get('http://localhost:8080/api/v1/doctors/slots?start_dade=2025-06-16', async () => {
+        return HttpResponse.json(await resolveRequest([
+            {
+                id: 'slot-1',
+                day: 'monday',
+                startHour: '09:00',
+                endHour: '12:00',
+                recurrence: 'weekly',
+            },
+            {
+                id: 'slot-2',
+                day: 'sunday',
+                dayNumber: 15,
+                startHour: '09:00',
+                endHour: '12:00',
+                recurrence: 'monthly',
+            },
+            {
+                id: 'slot-3',
+                day: 'friday',
+                startHour: '15:00',
+                endHour: '18:30',
+                recurrence: 'weekly',
+            },
+        ]));
+    }),
 
     // http.get('http://localhost:8080/api/v1/doctors/slots/:id', async ({params}) => {
     //     const {id} = params

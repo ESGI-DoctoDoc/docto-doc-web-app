@@ -144,7 +144,7 @@ async function fetchSlots(start?: string) {
     currentStartDate.value = start ?? dayjs().startOf('week').format('YYYY-MM-DD');
     const startDate = currentStartDate.value;
     const doctorSlots = await getSlots({startDate});
-    calendarOptions.value.events = doctorSlots.map((slot) => mapSlotToCalendarEvent(slot as Slot)) as EventSourceInput;
+    calendarOptions.value.events = doctorSlots.map((slot) => mapSlotToCalendarEvent(slot as Slot, currentStartDate.value)) as EventSourceInput;
     doctorSlotsTemplate.value = calendarOptions.value.events as EventSourceInput;
   } catch (error) {
     console.error('Error loading slots:', error);
@@ -179,6 +179,7 @@ onMounted(() => {
 
 <template>
   <div class="fit">
+    <UProgress v-if="loading" animation="carousel" class="absolute top-0 left-0 w-full z-50" size="sm"/>
     <CalendarHeaderDefault>
       <USwitch class="text-sm" label="Créneaux configurés" model-value @change="$emit('on-calendar-type')"/>
       <div class="w-2/12">

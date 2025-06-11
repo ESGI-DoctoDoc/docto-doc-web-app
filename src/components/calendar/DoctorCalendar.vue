@@ -75,6 +75,7 @@ function onPrev() {
 
 <template>
   <div class="fit">
+    <UProgress v-if="loading" animation="carousel" class="absolute top-0 left-0 w-full z-50" size="sm"/>
     <CalendarHeaderDefault
         @next="onNext()"
         @prev="onPrev()"

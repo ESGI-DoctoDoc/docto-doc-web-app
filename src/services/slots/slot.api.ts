@@ -9,6 +9,9 @@ import {
 import {
     type GetSlotByIdResponse,
     getSlotByIdResponseSchema,
+    type GetSlotDto,
+    getSlotQuerySchema,
+    type GetSlotsQuery,
     type GetSlotsResponse,
     getSlotsResponseSchema
 } from "~/services/slots/dto/get-slots.dto";
@@ -17,11 +20,16 @@ export const slotApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
 
 
-    async function getSlots() {
+    async function getSlots(getSlotDto: GetSlotDto) {
         return new RequestBuilder(BASE_API_URL)
             .get('/doctors/slots')
+            .withQuery<GetSlotsQuery>(getSlotQuerySchema)
             .withResponse<GetSlotsResponse>(getSlotsResponseSchema)
-            .execute()
+            .execute({
+                query: {
+                    start_date: getSlotDto.startDate
+                }
+            })
     }
 
     async function getSlotById(id: string) {

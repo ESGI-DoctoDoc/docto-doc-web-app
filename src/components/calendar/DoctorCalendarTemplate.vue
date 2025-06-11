@@ -2,7 +2,6 @@
 import {ref} from 'vue'
 import type {CalendarOptions, EventContentArg, EventSourceInput} from '@fullcalendar/core'
 import FullCalendar from '@fullcalendar/vue3'
-import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
@@ -13,6 +12,7 @@ import {slotApi} from "~/services/slots/slot.api";
 import {useCalendar} from "~/composables/calendar/useCalendar";
 import type {Slot, SlotDetail} from "~/types/slot";
 import UpdateSlotModal from "~/components/modals/UpdateSlotModal.vue";
+import dayjs from "dayjs";
 
 
 defineProps({})
@@ -27,6 +27,7 @@ const {createSlot, getSlots} = slotApi();
 
 
 const loading = ref(true);
+const currentStartDate = ref(dayjs().startOf('week').format('YYYY-MM-DD'));
 const showEventDetail = ref(false)
 const showCreateSlot = ref(false)
 const showUpdateSlot = ref(false)
@@ -41,13 +42,10 @@ const currentSlotIndex = 0
 const calendarRef = ref()
 
 const calendarOptions = ref<CalendarOptions>({
-  plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
+  plugins: [timeGridPlugin, interactionPlugin],
   initialView: 'timeGridWeek',
-  initialDate: '2025-06-02',
+  initialDate: dayjs().startOf('week').format('YYYY-MM-DD'),
   locale: frLocale,
-  showNonCurrentDates: false,
-  dayHeaderFormat: {weekday: 'long'},
-  fixedWeekCount: true,
   headerToolbar: false,
   selectable: true,
   editable: true,
@@ -107,9 +105,9 @@ const calendarOptions = ref<CalendarOptions>({
 async function onCreateSlot(form: CreateSlotForm) {
   loading.value = true;
   try {
-    const slot = await createSlot(form);
-    console.log(slot);
+    await createSlot(form);
     showCreateSlot.value = false
+    await fetchSlots();
     showSuccess('Créneau créé avec succès');
   } catch (error) {
     if (error instanceof Error) {
@@ -140,10 +138,12 @@ async function onUpdateSlot(/*form: CreateSlotForm*/) {
   }
 }
 
-async function fetchSlots() {
+async function fetchSlots(start?: string) {
   loading.value = true;
   try {
-    const doctorSlots = await getSlots();
+    currentStartDate.value = start ?? dayjs().startOf('week').format('YYYY-MM-DD');
+    const startDate = currentStartDate.value;
+    const doctorSlots = await getSlots({startDate});
     calendarOptions.value.events = doctorSlots.map((slot) => mapSlotToCalendarEvent(slot as Slot)) as EventSourceInput;
     doctorSlotsTemplate.value = calendarOptions.value.events as EventSourceInput;
   } catch (error) {
@@ -151,6 +151,24 @@ async function fetchSlots() {
   } finally {
     loading.value = false;
   }
+}
+
+function onNext() {
+  calendarRef.value?.getApi().next();
+  currentStartDate.value = dayjs(currentStartDate.value)
+      .add(1, 'week')
+      .startOf('week')
+      .format('YYYY-MM-DD');
+  fetchSlots(currentStartDate.value);
+}
+
+function onPrev() {
+  calendarRef.value?.getApi().prev();
+  currentStartDate.value = dayjs(currentStartDate.value)
+      .subtract(1, 'week')
+      .startOf('week')
+      .format('YYYY-MM-DD');
+  fetchSlots(currentStartDate.value);
 }
 
 onMounted(() => {
@@ -162,8 +180,21 @@ onMounted(() => {
 <template>
   <div class="fit">
     <CalendarHeaderDefault>
-      <USwitch class="text-sm" label="Ma semaine type" model-value @change="$emit('on-calendar-type')"/>
-
+      <USwitch class="text-sm" label="Créneaux configurés" model-value @change="$emit('on-calendar-type')"/>
+      <div class="w-2/12">
+        <div class="flex space-x-2 w-full">
+          <UButton icon="i-lucide-chevron-left" variant="soft" @click="onPrev"/>
+          <UTabs
+              :content="false"
+              :items="[{label: 'Semaine', value: 'timeGridWeek'}]"
+              class="w-full"
+              default-value="timeGridWeek"
+              size="xs"
+              variant="pill"
+          />
+          <UButton icon="i-lucide-chevron-right" variant="soft" @click="onNext"/>
+        </div>
+      </div>
       <UButton :disabled="loading" label="Nouveau créneau" variant="subtle" @click="showCreateSlot = true"/>
     </CalendarHeaderDefault>
     <div class="overflow-y-auto" style="height: calc(100% - 6vh);">

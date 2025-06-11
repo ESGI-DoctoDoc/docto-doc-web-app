@@ -27,7 +27,7 @@ export const handlers = [
     //         id: 'uuid1234',
     //     }));
     // }),
-    http.get('http://localhost:8080/api/v1/doctors/slots', async () => {
+    http.get('http://localhost:8080/api/v1/doctors/slots?start_dade=2025-06-10', async () => {
         return HttpResponse.json(await resolveRequest([
             {
                 id: 'slot-1',
@@ -38,69 +38,42 @@ export const handlers = [
             },
             {
                 id: 'slot-2',
-                day: 'monday',
-                startHour: '14:00',
-                endHour: '17:00',
-                recurrence: 'weekly',
+                day: 'sunday',
+                dayNumber: 15,
+                startHour: '09:00',
+                endHour: '12:00',
+                recurrence: 'monthly',
             },
             {
                 id: 'slot-3',
-                day: 'tuesday',
-                startHour: '10:00',
-                endHour: '13:00',
-                recurrence: 'weekly',
-            },
-            {
-                id: 'slot-4',
-                day: 'wednesday',
-                startHour: '08:30',
-                endHour: '12:30',
-                recurrence: 'weekly',
-            },
-            {
-                id: 'slot-5',
-                day: 'thursday',
-                startHour: '14:00',
-                endHour: '18:00',
-                recurrence: 'weekly',
-            },
-            {
-                id: 'slot-6',
                 day: 'friday',
-                startHour: '09:00',
-                endHour: '12:00',
+                startHour: '15:00',
+                endHour: '18:30',
                 recurrence: 'weekly',
             },
-            {
-                id: 'slot-7',
-                day: 'friday',
-                startHour: '13:30',
-                endHour: '15:30',
-                recurrence: 'weekly',
-            }
         ]));
     }),
 
-    http.get('http://localhost:8080/api/v1/doctors/slots/:id', async ({params}) => {
-        const {id} = params
-        return HttpResponse.json(await resolveRequest({
-            id,
-            day: 'monday',
-            startHour: '09:00',
-            endHour: '12:00',
-            recurrence: 'monthly',
-            start: '2025-10-02',
-            end: '2025-10-09',
-            dayNumber: 2,
-            medicalConcerns: [
-                {
-                    id: '00000000-0000-0000-0000-000000000001',
-                    name: 'Consultation standard',
-                    duration: 30,
-                },
-            ]
-        }))
-    }),
+    // http.get('http://localhost:8080/api/v1/doctors/slots/:id', async ({params}) => {
+    //     const {id} = params
+    //     return HttpResponse.json(await resolveRequest({
+    //         id,
+    //         day: 'monday',
+    //         startHour: '09:00',
+    //         endHour: '12:00',
+    //         recurrence: 'monthly',
+    //         start: '2025-10-02',
+    //         end: '2025-10-09',
+    //         dayNumber: 2,
+    //         medicalConcerns: [
+    //             {
+    //                 id: '00000000-0000-0000-0000-000000000001',
+    //                 name: 'Consultation standard',
+    //                 duration: 30,
+    //             },
+    //         ]
+    //     }))
+    // }),
 
     // http.put('http://localhost:8080/api/v1/medical-concerns/:id/questions', async ({params, request}) => {
     //     return HttpResponse.json(await resolveRequest({}));

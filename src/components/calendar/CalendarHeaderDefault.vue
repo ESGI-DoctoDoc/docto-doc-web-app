@@ -46,7 +46,7 @@ const planItems = ref<DropdownMenuItem[]>([
   <div class="flex items-center justify-between space-x-2 p-3.5" style="min-height: 6vh; max-height: 6vh;">
     <slot name="default">
       <div class="">
-        <USwitch class="text-sm" label="Ma semaine type" @change="$emit('on-calendar-type')"/>
+        <USwitch class="text-sm" label="Créneaux configurés" @change="$emit('on-calendar-type')"/>
       </div>
 
       <div class="flex-1 max-w-md">

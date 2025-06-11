@@ -31,17 +31,45 @@ export const useCalendar = () => {
         }
     }
 
-    function convertDateToIsoString(day: string, hour: string): string {
-        return dayjs()
-            .set('day', convertDayToNumber(day))
+    function convertDateToIsoString(day: string, hour: string, dayNumber?: number): string {
+        const now = dayjs();
+
+        if (typeof dayNumber === 'number') {
+            const date = dayjs(`${now.year()}-${String(now.month() + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}T${hour}`);
+            return date.toISOString();
+        }
+
+        const targetDay = convertDayToNumber(day);
+        const baseDate = now.startOf('week'); // Sunday by default
+
+        const date = baseDate.add(targetDay, 'day')
             .set("hour", parseInt(hour.split(':')[0]))
             .set("minute", parseInt(hour.split(':')[1]))
-            .toISOString();
+            .set("second", 0)
+            .set("millisecond", 0);
+
+        return date.toISOString();
     }
 
     function mapSlotToCalendarEvent(slot: Slot): EventSourceInput {
         const isRecurring = slot.recurrence !== 'none';
 
+        // is monthly recurrence
+        if (slot.recurrence === 'monthly' && slot.dayNumber) {
+            return {
+                id: slot.id,
+                start: convertDateToIsoString(slot.day, slot.startHour, slot.dayNumber),
+                end: convertDateToIsoString(slot.day, slot.endHour, slot.dayNumber),
+                extraParams: {
+                    title: 'Ouverture récurrente mensuelle',
+                    startHour: slot.startHour,
+                    endHour: slot.endHour,
+                    dayNumber: slot.dayNumber,
+                }
+            }
+        }
+
+        // is weekly recurrence
         return {
             id: slot.id,
             start: convertDateToIsoString(slot.day, slot.startHour),

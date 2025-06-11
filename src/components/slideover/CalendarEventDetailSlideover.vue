@@ -21,6 +21,7 @@ const {showError} = useNotify()
 const {getSlotById} = slotApi();
 
 const loading = ref(false)
+const isError = ref(false)
 const slotDetail = ref<SlotDetail>()
 
 async function fetchSlotDetails() {
@@ -32,6 +33,7 @@ async function fetchSlotDetails() {
     }
     slotDetail.value = await getSlotById(props!.slotId) as SlotDetail;
   } catch (error) {
+    isError.value = true;
     if (error instanceof Error) {
       showError('Erreur lors de la récupération des détails du slot', error.message)
     } else {
@@ -179,7 +181,7 @@ onMounted(() => {
     <template #footer>
       <div class="fit flex flex-col space-y-2">
         <UButton
-            :disabled="loading"
+            :disabled="loading || isError"
             block
             class="w-full"
             variant="subtle"
@@ -188,7 +190,7 @@ onMounted(() => {
           Modifier
         </UButton>
         <UButton
-            :disabled="loading"
+            :disabled="loading || isError"
             block
             class="w-full"
             color="error"

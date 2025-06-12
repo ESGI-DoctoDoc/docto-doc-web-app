@@ -27,7 +27,7 @@ export const slotApi = () => {
             .withResponse<GetSlotsResponse>(getSlotsResponseSchema)
             .execute({
                 query: {
-                    start_date: getSlotDto.startDate
+                    startDate: getSlotDto.startDate
                 }
             })
     }

@@ -5,7 +5,7 @@ export interface GetSlotDto {
 }
 
 export const getSlotQuerySchema = z.object({
-    start_date: z.string()
+    startDate: z.string()
 })
 export type GetSlotsQuery = z.infer<typeof getSlotQuerySchema>;
 
@@ -15,7 +15,7 @@ export const getSlotsResponseSchema = z.array(
         startHour: z.string(),
         endHour: z.string(),
         day: z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']),
-        dayNumber: z.number().optional(),
+        dayNumber: z.union([z.number(), z.null()]).optional(),
         recurrence: z.enum(['none', 'weekly', 'monthly']),
     })
 )
@@ -29,7 +29,7 @@ export const getSlotByIdResponseSchema = z.object({
     recurrence: z.enum(['none', 'weekly', 'monthly']),
     start: z.string().optional(),
     end: z.string().optional(),
-    dayNumber: z.number().optional(),
+    dayNumber: z.union([z.number(), z.null()]).optional(),
     medicalConcerns: z.array(z.object({
         id: z.string(),
         name: z.string(),

@@ -35,7 +35,10 @@ export const useCalendar = () => {
         const now = compareTo ? dayjs(compareTo) : dayjs();
 
         if (typeof dayNumber === 'number') {
-            const date = dayjs(`${now.year()}-${String(now.month() + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}T${hour}`);
+            const date = dayjs(compareTo)
+                .day(convertDayToNumber(day))
+                .set('hour', parseInt(hour.split(':')[0]))
+                .set('minute', parseInt(hour.split(':')[1]))
             return date.toISOString();
         }
 

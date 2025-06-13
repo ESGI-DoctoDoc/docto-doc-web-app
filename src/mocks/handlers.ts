@@ -119,26 +119,26 @@ export const handlers = [
         ]));
     }),
 
-    http.get('http://localhost:8080/api/v1/doctors/slots/:id', async ({params}) => {
-        const {id} = params
-        return HttpResponse.json(await resolveRequest({
-            id,
-            day: 'monday',
-            startHour: '09:00',
-            endHour: '12:00',
-            recurrence: 'monthly',
-            start: '2025-10-02',
-            end: '2025-10-09',
-            dayNumber: 2,
-            medicalConcerns: [
-                {
-                    id: '00000000-0000-0000-0000-000000000001',
-                    name: 'Consultation standard',
-                    duration: 30,
-                },
-            ]
-        }))
-    }),
+    // http.get('http://localhost:8080/api/v1/doctors/slots/:id', async ({params}) => {
+    //     const {id} = params
+    //     return HttpResponse.json(await resolveRequest({
+    //         id,
+    //         day: 'monday',
+    //         startHour: '09:00',
+    //         endHour: '12:00',
+    //         recurrence: 'monthly',
+    //         start: '2025-10-02',
+    //         end: '2025-10-09',
+    //         dayNumber: 2,
+    //         medicalConcerns: [
+    //             {
+    //                 id: '00000000-0000-0000-0000-000000000001',
+    //                 name: 'Consultation standard',
+    //                 duration: 30,
+    //             },
+    //         ]
+    //     }))
+    // }),
 
     // http.put('http://localhost:8080/api/v1/medical-concerns/:id/questions', async ({params, request}) => {
     //     return HttpResponse.json(await resolveRequest({}));

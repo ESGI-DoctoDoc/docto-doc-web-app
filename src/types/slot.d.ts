@@ -23,6 +23,7 @@ interface SlotMedicalConcern {
 export interface Slot {
     id: string;
     day: SlotDay;
+    dayNumber?: number;
     startHour: string;
     endHour: string;
     recurrence: SlotRecurrence;

@@ -27,7 +27,7 @@ export const createSlotSchema = z.object({
     recurrence: recurrence,
     start: startDate.optional(),
     end: endDate.optional(),
-    dayNumber: z.number().min(0).max(28).optional(),
+    dayNumber: z.number().min(0).max(31).optional(),
     medicalConcerns: medicalConcernIds,
 }).superRefine((data, ctx) => {
     const {startHour, endHour, recurrence, start, end, dayNumber} = data;
@@ -66,6 +66,13 @@ export const createSlotSchema = z.object({
             });
         }
 
+        if (!end) {
+            ctx.addIssue({
+                path: ['end'],
+                code: z.ZodIssueCode.custom,
+                message: "form.slot.end-date.required",
+            })
+        }
         const endDate = dayjs(end);
 
         // 3.2. La date de fin doit être après la date de début
@@ -94,7 +101,7 @@ export const createSlotSchema = z.object({
 
         // 3.4. Pour les récurrences mensuelles, vérifier que dayNumber est défini et dans la plage valide
         if (recurrence === 'monthly') {
-            if (dayNumber === undefined || dayNumber < 1 || dayNumber > 28) {
+            if (dayNumber === undefined || dayNumber < 1 || dayNumber > 31) {
                 ctx.addIssue({
                     path: ['dayNumber'],
                     code: z.ZodIssueCode.custom,

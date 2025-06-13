@@ -135,9 +135,9 @@ function onError(event: FormErrorEvent) {
           <UInput
               v-model="form.dayNumber"
               class="w-full"
-              max="28"
+              max="31"
               min="1"
-              placeholder="1-28"
+              placeholder="1-31"
               type="number"
           />
         </UFormField>

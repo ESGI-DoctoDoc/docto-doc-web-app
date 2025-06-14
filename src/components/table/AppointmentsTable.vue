@@ -2,29 +2,95 @@
 
 import {ref} from 'vue'
 import TableHeaderDefault from '~/components/table/TableHeaderDefault.vue'
-import type {TableColumn} from "@nuxt/ui";
+import type {TableColumn, TableRow} from "@nuxt/ui";
+import {useSession} from "~/composables/auth/useSession";
+import type {DropdownMenuItem} from "#ui/components/DropdownMenu.vue";
+import type {Appointment} from "~/types/appointment";
+import dayjs from "dayjs";
 
-type Appointment = {}
-
-defineProps<{
+const props = defineProps<{
   data: Appointment[]
   loading: boolean
 }>()
 
-const emits = defineEmits([])
+const emits = defineEmits(['onDetail', 'onUpdate', 'onReschedule', 'onCreate', 'onCancel', 'onDelete'])
+
+const {getUser} = useSession()
+
+
+const permissions = ref({
+  canDelete: false,
+})
 
 const search = ref('')
 const table = ref('table')
 const columns: TableColumn<Appointment>[] = [
   {
-    id: 'actions',
+    accessorKey: 'patient',
+    header: 'Nom du patient',
+    cell: ({row}) => `${row.original.patient.name}`,
+  },
+  {
+    accessorKey: 'start',
+    header: 'Date',
+    cell: ({row}) => {
+      return dayjs(row.original.start).format('DD/MM/YYYY') + ' ' + row.original.startHour;
+    }
+  },
+  {
+    accessorKey: 'birthdate',
+    header: 'Date de naissance',
+  },
+  {
+    accessorKey: 'status',
+    header: 'Statut',
+  },
+  {
+    accessorKey: 'actions',
     header: 'Actions',
+  },
+];
+
+function onSelect(row: TableRow<Appointment>) {
+  const patient = props.data[row.index];
+  emits('onDetail', patient);
+}
+
+onMounted(() => {
+  const user = getUser()
+  if (user) {
+    permissions.value.canDelete = user.role === 'admin';
   }
-]
+})
 
+function getAppointmentOptions(row: Appointment): DropdownMenuItem[] {
+  const options: DropdownMenuItem[] = [
+    {
+      label: 'Modifier le rendez-vous',
+      icon: 'i-lucide-edit',
+      onClick: () => emits('onUpdate', row),
+    },
+    {
+      label: 'Replanifier le rendez-vous',
+      icon: 'i-lucide-calendar-check',
+      onClick: () => emits('onReschedule', row),
+    },
+    {
+      label: 'Annuler le rendez-vous',
+      icon: 'i-lucide-x-circle',
+      onClick: () => emits('onCancel', row),
+    }
+  ]
 
-function onAddClick() {
-  console.log('Ajout d’un')
+  if (permissions.value.canDelete) {
+    options.push({
+      label: 'Supprimer le rendez-vous',
+      icon: 'i-lucide-trash-2',
+      onSelect: () => emits('onDelete', row),
+    })
+  }
+
+  return options
 }
 
 </script>
@@ -33,10 +99,10 @@ function onAddClick() {
   <div class="flex-1 divide-y divide-accented w-full">
     <TableHeaderDefault
         v-model:search="search"
-        button-label="Ajouter ?"
+        button-label="Ajouter un rendez-vous"
         searchable
         @update:search="table?.tableApi?.getColumn('name')?.setFilterValue($event)"
-        @button-click="onAddClick"
+        @button-click="$emit('onCreate')"
     />
 
     <UTable
@@ -44,13 +110,14 @@ function onAddClick() {
         :columns="columns"
         :data="data"
         sticky
-        style="height: calc(100vh - 8vh - 15vh);"
+        style="height: calc(100vh - 8vh - 60px - 55px);"
+        @select="onSelect"
     >
       <template #expanded="{ row }">
         <pre>{{ row.original }}</pre>
       </template>
-      <template #actions-cell="{ /*row*/ }">
-        <UDropdownMenu :items="[]">
+      <template #actions-cell="{ row }">
+        <UDropdownMenu :items="getAppointmentOptions(row.original)">
           <UButton
               aria-label="Actions"
               color="neutral"

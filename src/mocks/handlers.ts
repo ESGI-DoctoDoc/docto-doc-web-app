@@ -17,6 +17,61 @@ async function rejectRequest(data: unknown): Promise<{ success: false, errorCode
 }
 
 export const handlers = [
+    http.get('http://localhost:8080/api/v1/appointments', async () => {
+        return HttpResponse.json(await resolveRequest([
+            {
+                id: 'uuid1',
+                patient: {
+                    id: 'patient1',
+                    name: 'John Doe',
+                    email: 'john.doe@example.com',
+                    phone: '+33675704647',
+                    birthdate: '1990-01-01',
+                },
+                start: '2025-06-20T09:00:00Z',
+                startHour: '09:00',
+                status: 'upcoming',
+                doctorNotes: 'Patient needs follow-up in 2 weeks.',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            },
+            {
+                id: 'uuid2',
+                patient: {
+                    id: 'patient2',
+                    name: 'Jane Smith',
+                    email: 'jane.smith@example.com',
+                    phone: '+33612345678',
+                    birthdate: '1985-05-15',
+                },
+                start: '2025-06-18T14:00:00Z',
+                startHour: '14:00',
+                status: 'past',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            },
+        ]));
+    }),
+    http.get('http://localhost:8080/api/v1/appointments/:id', async ({params}) => {
+        const {id} = params
+        return HttpResponse.json(await resolveRequest({
+            id,
+            patient: {
+                id: 'patient1',
+                name: 'John Doe',
+                email: 'john.doe@example.com',
+                phone: '+33675704647',
+                birthdate: '1990-01-01',
+            },
+            start: '2025-06-20T09:00:00Z',
+            startHour: '09:00',
+            status: 'upcoming',
+            doctorNotes: 'Patient needs follow-up in 2 weeks.',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+        }));
+    }),
+
     http.get('http://localhost:8080/api/v1/patients', async () => {
         return HttpResponse.json(await resolveRequest([
             {

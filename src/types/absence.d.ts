@@ -1,3 +1,5 @@
+export type dayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+
 export interface AbsenceDay {
     date: string;
 }

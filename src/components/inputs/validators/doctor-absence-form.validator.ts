@@ -76,7 +76,7 @@ export const createDoctorAbsenceSchema = z.object({
             })
         }
 
-        if (startDate.isAfter(endDate)) {
+        if (startDate.isAfter(endDate, 'day')) {
             ctx.addIssue({
                 path: ['end'],
                 code: z.ZodIssueCode.custom,

@@ -1,68 +1,66 @@
 <script lang="ts" setup>
 import PatientsTable from '~/components/table/PatientsTable.vue'
-// import {medicalConcernsApi} from "~/services/medical-concers/medical-concerns.api";
-import {useNotify} from "~/composables/useNotify";
-
-export type MedicalConcern = {
-  id: string;
-  name: string;
-  description: string;
-}
+import {patientsApi} from '~/services/patients/patient.api'
+import {useNotify} from '~/composables/useNotify'
+import type {Patient} from '~/types/patient'
+import PatientDetailSlideover from "~/components/slideover/PatientDetailSlideover.vue";
 
 definePageMeta({
-  title: 'Mes rendez-vous',
+  title: 'Mes patients',
   layout: 'main-layout',
   role: 'doctor',
 })
 
 const {showError} = useNotify()
-// const {fetchDoctorMedicalConcerns, removeDoctorMedicalConcern} = medicalConcernsApi();
+const {fetchPatients} = patientsApi()
 
+const isLoading = ref(true)
+const myPatients = ref<Patient[]>([])
+const currentPatient = ref<Patient>()
+const openPatientDetail = ref(false)
 
-const isLoading = ref<boolean>(true);
-const myMedicalConcerns = ref<MedicalConcern[]>([]);
-
-function onEditQuestions(medicalConcern: MedicalConcern) {
-
+async function getPatients() {
+  isLoading.value = true
+  try {
+    myPatients.value = await fetchPatients()
+  } catch (error) {
+    if (error instanceof Error) {
+      showError('Erreur lors du chargement des patients', error.message)
+    } else {
+      showError('Erreur inconnue lors du chargement des patients')
+    }
+  } finally {
+    isLoading.value = false
+  }
 }
 
-async function onRemoveConcern(medicalConcern: MedicalConcern) {
-  isLoading.value = true;
-  // try {
-  //   await removeDoctorMedicalConcern(medicalConcern.id);
-  //   myMedicalConcerns.value = myMedicalConcerns.value.filter(mc => mc.id !== medicalConcern.id);
-  // } catch (error) {
-  //   if (error instanceof Error) {
-  //     showError('Erreur lors de la suppression du motif de consultation', error.message);
-  //   } else {
-  //     showError('Erreur inconnue lors de la suppression du motif de consultation');
-  //   }
-  // } finally {
-  //   isLoading.value = false;
-  // }
+function onDetail(patient: Patient) {
+  console.log('patient', currentPatient)
+  currentPatient.value = patient
+  openPatientDetail.value = true
 }
 
 onMounted(() => {
-  isLoading.value = true;
-  // fetchDoctorMedicalConcerns()
-  //     .then((response) => {
-  //       myMedicalConcerns.value = response;
-  //     })
-  //     .catch((error: Error) => {
-  //       showError('Erreur lors du chargement des motifs de consultation', error.message);
-  //     })
-  //     .finally(() => (isLoading.value = false));
+  getPatients()
 })
-
 </script>
 
 <template>
-  <PatientsTable
-      v-model:loading="isLoading"
-      :data="myMedicalConcerns"
-  />
+  <div class="fit">
+    <PatientsTable
+        v-model:loading="isLoading"
+        :data="myPatients"
+        @on-detail="onDetail"
+    />
+
+    <PatientDetailSlideover
+        v-if="currentPatient"
+        v-model:open="openPatientDetail"
+        :patient="currentPatient"
+        @on-close="currentPatient = undefined"
+    />
+  </div>
 </template>
 
 <style scoped>
-
 </style>

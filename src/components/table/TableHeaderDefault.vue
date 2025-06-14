@@ -22,7 +22,7 @@ defineEmits<{
         @update:model-value="$emit('update:search', $event)"
     />
     <UButton
-        v-if="buttonLabel"
+        v-if="buttonLabel?.trim()"
         :label="buttonLabel"
         @click="$emit('button-click')"
     />

@@ -17,6 +17,54 @@ async function rejectRequest(data: unknown): Promise<{ success: false, errorCode
 }
 
 export const handlers = [
+    http.get('http://localhost:8080/api/v1/patients', async () => {
+        return HttpResponse.json(await resolveRequest([
+            {
+                id: 'uuid1',
+                firstname: 'John',
+                lastname: 'Doe',
+                email: 'jesaispas@myfes.fr',
+                gender: 'MALE',
+                phone: '+33675704647',
+                birthdate: '1990-01-01',
+                createdAt: new Date().toISOString(),
+            },
+            {
+                id: 'uuid2',
+                firstname: 'Jane',
+                lastname: 'Doe',
+                email: 'jesaispas@myfes.fr',
+                gender: 'FEMALE',
+                phone: '+33675704647',
+                birthdate: '1992-02-02',
+                createdAt: new Date().toISOString(),
+            },
+            {
+                id: 'uuid3',
+                firstname: 'Alice',
+                lastname: 'Smith',
+                email: 'jesaispas@myfes.fr',
+                gender: 'MALE',
+                phone: '+33675704647',
+                birthdate: '1985-03-03',
+                createdAt: new Date().toISOString(),
+            },
+        ]));
+    }),
+    http.get('http://localhost:8080/api/v1/patients/:id', async ({params}) => {
+        const {id} = params
+        return HttpResponse.json(await resolveRequest({
+            id,
+            firstname: 'John',
+            lastname: 'Doe',
+            email: 'chasp@qqd.fr',
+            gender: 'MALE',
+            phone: '+33675704647',
+            birthdate: '1985-03-03',
+            createdAt: new Date().toISOString(),
+        }));
+    }),
+
     http.get('http://localhost:8080/api/v1/doctors/absences', async () => {
         return HttpResponse.json(await resolveRequest([
             {

@@ -145,6 +145,8 @@ async function onSaveAbsence(form: CreateDoctorAbsenceForm) {
     } else {
       showError("Erreur inconnue lors de la création de l'absence");
     }
+  } finally {
+    loading.value = false;
   }
 }
 

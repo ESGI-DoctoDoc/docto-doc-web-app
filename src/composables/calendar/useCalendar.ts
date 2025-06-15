@@ -1,13 +1,13 @@
 import dayjs from "dayjs"
 import type {Slot} from "~/types/slot";
 import 'dayjs/locale/fr'
-import type {EventSourceInput} from "@fullcalendar/core";
+import type {EventApi, EventInput} from "@fullcalendar/core";
 import type {Absence} from "~/types/absence";
 
 dayjs.locale('fr');
 
 export const useCalendar = () => {
-    const doctorSlotsTemplate = useState<EventSourceInput>('doctorSlotsTemplate', () => {
+    const doctorSlotsTemplate = useState<EventInput[]>('doctorSlotsTemplate', () => {
         return [];
     })
 
@@ -18,7 +18,7 @@ export const useCalendar = () => {
             .toISOString();
     }
 
-    function mapSlotToCalendarEvent(slot: Slot): EventSourceInput {
+    function mapSlotToCalendarEvent(slot: Slot): EventInput {
         const isRecurring = slot.recurrence !== 'none';
 
         // is monthly recurrence
@@ -49,7 +49,7 @@ export const useCalendar = () => {
         };
     }
 
-    function mapDoctorAbsenceToCalendarEvent(absence: Absence): EventSourceInput {
+    function mapDoctorAbsenceToCalendarEvent(absence: Absence): EventInput {
         if (absence.date) {
             return {
                 id: absence.id,
@@ -80,7 +80,7 @@ export const useCalendar = () => {
 
     }
 
-    function mapCalendarEventToDoctorAbsence(event: EventSourceInput): Absence {
+    function mapCalendarEventToDoctorAbsence(event: EventApi): Absence {
         const params = event?.extendedProps?.extraParams || {};
         const isFullDay = params?.isFullDay;
 

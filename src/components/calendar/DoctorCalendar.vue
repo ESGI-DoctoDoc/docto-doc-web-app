@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
-import type {CalendarOptions, EventContentArg, EventSourceInput} from '@fullcalendar/core'
+import type {CalendarOptions, EventContentArg} from '@fullcalendar/core'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -153,7 +153,7 @@ async function onSaveAbsence(form: CreateDoctorAbsenceForm) {
 async function fetchAbsences() {
   try {
     const absences = await getAbsences();
-    calendarOptions.value.events = absences.map((absence) => mapDoctorAbsenceToCalendarEvent(absence as Absence)) as EventSourceInput;
+    calendarOptions.value.events = absences.map((absence) => mapDoctorAbsenceToCalendarEvent(absence as Absence));
   } catch (error) {
     if (error instanceof Error) {
       showError('Erreur lors de la récupération des absences', error.message);

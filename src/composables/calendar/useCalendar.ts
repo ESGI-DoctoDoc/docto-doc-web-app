@@ -11,59 +11,22 @@ export const useCalendar = () => {
         return [];
     })
 
-    function convertDayToNumber(day: string): number {
-        switch (day) {
-            case 'monday':
-                return 1;
-            case 'tuesday':
-                return 2;
-            case 'wednesday':
-                return 3;
-            case 'thursday':
-                return 4;
-            case 'friday':
-                return 5;
-            case 'saturday':
-                return 6;
-            case 'sunday':
-                return 0;
-            default:
-                throw new Error(`Invalid day: ${day}`);
-        }
+    function convertDateToIsoString(date: string, hour: string): string {
+        return dayjs(date)
+            .set('hour', parseInt(hour.split(':')[0]))
+            .set('minute', parseInt(hour.split(':')[1]))
+            .toISOString();
     }
 
-    function convertDateToIsoString(day: string, hour: string, dayNumber?: number, compareTo?: string): string {
-        const now = compareTo ? dayjs(compareTo) : dayjs();
-
-        if (typeof dayNumber === 'number') {
-            const date = dayjs(compareTo)
-                .day(convertDayToNumber(day))
-                .set('hour', parseInt(hour.split(':')[0]))
-                .set('minute', parseInt(hour.split(':')[1]))
-            return date.toISOString();
-        }
-
-        const targetDay = convertDayToNumber(day);
-        const baseDate = now.startOf('week'); // Sunday by default
-
-        const date = baseDate.add(targetDay, 'day')
-            .set("hour", parseInt(hour.split(':')[0]))
-            .set("minute", parseInt(hour.split(':')[1]))
-            .set("second", 0)
-            .set("millisecond", 0);
-
-        return date.toISOString();
-    }
-
-    function mapSlotToCalendarEvent(slot: Slot, compareTo: string): EventSourceInput {
+    function mapSlotToCalendarEvent(slot: Slot): EventSourceInput {
         const isRecurring = slot.recurrence !== 'none';
 
         // is monthly recurrence
         if (slot.recurrence === 'monthly' && slot.dayNumber) {
             return {
                 id: slot.id,
-                start: convertDateToIsoString(slot.day, slot.startHour, slot.dayNumber, compareTo),
-                end: convertDateToIsoString(slot.day, slot.endHour, slot.dayNumber, compareTo),
+                start: convertDateToIsoString(slot.date, slot.startHour),
+                end: convertDateToIsoString(slot.date, slot.endHour),
                 extraParams: {
                     title: 'Ouverture récurrente mensuelle',
                     startHour: slot.startHour,
@@ -76,8 +39,8 @@ export const useCalendar = () => {
         // is weekly recurrence
         return {
             id: slot.id,
-            start: convertDateToIsoString(slot.day, slot.startHour, undefined, compareTo),
-            end: convertDateToIsoString(slot.day, slot.endHour, undefined, compareTo),
+            start: convertDateToIsoString(slot.date, slot.startHour),
+            end: convertDateToIsoString(slot.date, slot.endHour),
             extraParams: {
                 title: isRecurring ? 'Ouverture récurrente' : 'Ouverture',
                 startHour: slot.startHour,
@@ -100,14 +63,10 @@ export const useCalendar = () => {
                 }
             }
         } else {
-            const formatDate = (date: string, hours: string) => dayjs(date)
-                .set('hour', hours ? parseInt(hours.split(':')[0]) : 0)
-                .set('minute', hours ? parseInt(hours.split(':')[1]) : 0);
-
             return {
                 id: absence.id,
-                start: formatDate(absence.start!, absence.startHour!).toISOString(),
-                end: formatDate(absence.end!, absence.endHour!).toISOString(),
+                start: convertDateToIsoString(absence.start!, absence.startHour!),
+                end: convertDateToIsoString(absence.end!, absence.endHour!),
                 extraParams: {
                     title: 'Absence',
                     startHour: absence.startHour || '',

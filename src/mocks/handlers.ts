@@ -60,12 +60,12 @@ export const handlers = [
     //     }));
     // }),
 
-    http.post('http://localhost:8080/api/v1/doctors/slots', async () => {
+    /*http.post('http://localhost:8080/api/v1/doctors/slots', async () => {
         return HttpResponse.json(await resolveRequest({
             id: 'uuid1234',
         }));
-    }),
-    http.get('http://localhost:8080/api/v1/doctors/slots', async () => {
+    }),*/
+    /*http.get('http://localhost:8080/api/v1/doctors/slots', async () => {
         return HttpResponse.json(await resolveRequest([
             {
                 id: 'slot-1',
@@ -117,7 +117,7 @@ export const handlers = [
                 recurrence: 'weekly',
             }
         ]));
-    }),
+    }),*/
 
     // http.get('http://localhost:8080/api/v1/doctors/slots/:id', async ({params}) => {
     //     const {id} = params

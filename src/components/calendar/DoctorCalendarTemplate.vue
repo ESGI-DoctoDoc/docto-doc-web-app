@@ -144,7 +144,7 @@ async function fetchSlots(start?: string) {
     currentStartDate.value = start ?? dayjs().startOf('week').format('YYYY-MM-DD');
     const startDate = currentStartDate.value;
     const doctorSlots = await getSlots({startDate});
-    calendarOptions.value.events = doctorSlots.map((slot) => mapSlotToCalendarEvent(slot as Slot, currentStartDate.value)) as EventSourceInput;
+    calendarOptions.value.events = doctorSlots.map((slot) => mapSlotToCalendarEvent(slot as Slot)) as EventSourceInput;
     doctorSlotsTemplate.value = calendarOptions.value.events as EventSourceInput;
   } catch (error) {
     console.error('Error loading slots:', error);

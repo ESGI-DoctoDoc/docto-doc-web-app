@@ -12,6 +12,7 @@ export type GetSlotsQuery = z.infer<typeof getSlotQuerySchema>;
 export const getSlotsResponseSchema = z.array(
     z.object({
         id: z.string(),
+        date: z.string(),
         startHour: z.string(),
         endHour: z.string(),
         day: z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']),

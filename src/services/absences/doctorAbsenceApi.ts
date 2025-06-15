@@ -1,8 +1,10 @@
 import {RequestBuilder} from "~/api/request-builder";
 import {
-    type CreateDoctorAbsenceBody,
-    createDoctorAbsenceBodySchema,
-    type CreateDoctorAbsenceDto
+    type CreateDoctorAbsenceDateBody,
+    createDoctorAbsenceDateBodySchema,
+    type CreateDoctorAbsenceDto,
+    type CreateDoctorAbsenceRangeBody,
+    createDoctorAbsenceRangeBodySchema,
 } from "~/services/absences/dto/save-absence.dto";
 import {
     type GetDoctorAbsencesResponse,
@@ -14,16 +16,27 @@ export const doctorAbsenceApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
 
     function createAbsence(requestDto: CreateDoctorAbsenceDto) {
+        if (requestDto.date) {
+            return new RequestBuilder(BASE_API_URL)
+                .post('/doctors/absences/single-day')
+                .withBody<CreateDoctorAbsenceDateBody>(createDoctorAbsenceDateBodySchema)
+                .execute({
+                    body: {
+                        date: requestDto.date,
+                        description: requestDto.description?.trim() || undefined
+                    }
+                });
+        }
+
         return new RequestBuilder(BASE_API_URL)
-            .post('/doctors/absences')
-            .withBody<CreateDoctorAbsenceBody>(createDoctorAbsenceBodySchema)
+            .post('/doctors/absences/range')
+            .withBody<CreateDoctorAbsenceRangeBody>(createDoctorAbsenceRangeBodySchema)
             .execute({
                 body: {
-                    date: requestDto.date,
-                    startHour: requestDto.startHour,
-                    endHour: requestDto.endHour,
-                    start: requestDto.start,
-                    end: requestDto.end,
+                    startHour: requestDto.startHour ?? '',
+                    endHour: requestDto.endHour ?? '',
+                    start: requestDto.start ?? '',
+                    end: requestDto.end ?? '',
                     description: requestDto.description?.trim() || undefined
                 }
             });

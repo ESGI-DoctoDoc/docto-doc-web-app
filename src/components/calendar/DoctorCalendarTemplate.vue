@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
-import type {CalendarOptions, EventContentArg, EventSourceInput} from '@fullcalendar/core'
+import type {CalendarOptions, EventContentArg} from '@fullcalendar/core'
 import FullCalendar from '@fullcalendar/vue3'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
@@ -144,8 +144,8 @@ async function fetchSlots(start?: string) {
     currentStartDate.value = start ?? dayjs().startOf('week').format('YYYY-MM-DD');
     const startDate = currentStartDate.value;
     const doctorSlots = await getSlots({startDate});
-    calendarOptions.value.events = doctorSlots.map((slot) => mapSlotToCalendarEvent(slot as Slot, currentStartDate.value)) as EventSourceInput;
-    doctorSlotsTemplate.value = calendarOptions.value.events as EventSourceInput;
+    calendarOptions.value.events = doctorSlots.map((slot) => mapSlotToCalendarEvent(slot as Slot));
+    doctorSlotsTemplate.value = calendarOptions.value.events;
   } catch (error) {
     console.error('Error loading slots:', error);
   } finally {

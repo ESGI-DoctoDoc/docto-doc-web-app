@@ -9,12 +9,17 @@ export interface CreateDoctorAbsenceDto {
     description?: string;
 }
 
-export const createDoctorAbsenceBodySchema = z.object({
-    startHour: z.string().trim().optional(),
-    endHour: z.string().trim().optional(),
-    date: z.string().trim().optional(), // single day or range
-    start: z.string().trim().optional(),
-    end: z.string().trim().optional(),
+export const createDoctorAbsenceDateBodySchema = z.object({
+    date: z.string().trim(),
     description: z.string().trim().transform((value) => value?.replaceAll('  ', ' ')).optional(),
 });
-export type CreateDoctorAbsenceBody = z.infer<typeof createDoctorAbsenceBodySchema>;
+export type CreateDoctorAbsenceDateBody = z.infer<typeof createDoctorAbsenceDateBodySchema>;
+
+export const createDoctorAbsenceRangeBodySchema = z.object({
+    startHour: z.string().trim(),
+    endHour: z.string().trim(),
+    start: z.string().trim(),
+    end: z.string().trim(),
+    description: z.string().trim().transform((value) => value?.replaceAll('  ', ' ')).optional(),
+});
+export type CreateDoctorAbsenceRangeBody = z.infer<typeof createDoctorAbsenceRangeBodySchema>;

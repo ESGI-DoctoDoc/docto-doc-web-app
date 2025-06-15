@@ -1,8 +1,5 @@
 import {z} from "zod";
 import dayjs from "dayjs";
-import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-
-dayjs.extend(isSameOrAfter)
 
 const hour = z
     .string()
@@ -79,7 +76,7 @@ export const createDoctorAbsenceSchema = z.object({
             })
         }
 
-        if (startDate.isSameOrAfter(endDate, 'day')) {
+        if (startDate.isAfter(endDate, 'day')) {
             ctx.addIssue({
                 path: ['end'],
                 code: z.ZodIssueCode.custom,

@@ -3,6 +3,7 @@
 import type {AppointmentStatus} from "~/types/appointment";
 import dayjs from "dayjs";
 import {useCalendar} from "~/composables/calendar/useCalendar";
+import {useDeeplink} from "~/composables/useDeeplink";
 
 export interface AppointmentListItemType {
   id: string
@@ -22,6 +23,7 @@ const props = defineProps<{
 }>()
 
 const {convertDateToIsoString} = useCalendar()
+const {navigateToResource} = useDeeplink()
 
 const appointmentDate = computed(() => {
   const startDate = dayjs(convertDateToIsoString(props.appointment.date, props.appointment.startHour));
@@ -63,6 +65,7 @@ const badgeColor = computed(() => {
         <UIcon
             class="cursor-pointer"
             name="i-lucide-chevron-right"
+            @click="navigateToResource('/my-appointments', props.appointment.id)"
         />
       </div>
     </div>

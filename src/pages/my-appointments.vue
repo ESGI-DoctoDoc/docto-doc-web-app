@@ -9,8 +9,10 @@ definePageMeta({
   title: 'Mes rendez-vous',
   layout: 'main-layout',
   role: 'doctor',
+  path: '/my-appointments/:id?',
 })
 
+const {retrieveDeeplinkId, retrieveDeeplinkFilter, filterDeeplinkToQuery, resetDeeplink} = useDeeplink()
 const {showError} = useNotify()
 const {fetchAppointments} = appointmentApi()
 
@@ -34,14 +36,45 @@ async function getAppointments() {
   }
 }
 
+async function getAppointmentsByFilter(filters: Record<string, string>) {
+  isLoading.value = true
+  try {
+    console.log(`Fetching appointments with filters: "${filterDeeplinkToQuery(filters)}"`)
+    myAppointments.value = await fetchAppointments()
+  } catch (error) {
+    if (error instanceof Error) {
+      showError('Erreur lors du chargement des rendez-vous', error.message)
+    } else {
+      showError('Erreur inconnue lors du chargement des rendez-vous')
+    }
+  } finally {
+    isLoading.value = false
+  }
+}
+
 function onDetail(appointment: Appointment) {
-  console.log('appointment', currentAppointment)
   currentAppointment.value = appointment
   openAppointmentDetail.value = true
 }
 
+function onClose() {
+  openAppointmentDetail.value = false
+  currentAppointment.value = undefined
+  resetDeeplink();
+}
+
 onMounted(() => {
-  getAppointments()
+  const appointmentId = retrieveDeeplinkId()
+  if (appointmentId) {
+    onDetail({id: appointmentId} as Appointment)
+  }
+
+  const filters = retrieveDeeplinkFilter()
+  if (filters.hasFilter) {
+    getAppointmentsByFilter(filters.filter)
+  } else {
+    getAppointments()
+  }
 })
 </script>
 
@@ -57,7 +90,7 @@ onMounted(() => {
         v-if="currentAppointment"
         v-model:open="openAppointmentDetail"
         :appointment="currentAppointment"
-        @on-close="currentAppointment = undefined"
+        @on-close="onClose()"
     />
   </div>
 </template>

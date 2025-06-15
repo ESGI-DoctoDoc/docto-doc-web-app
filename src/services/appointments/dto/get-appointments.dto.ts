@@ -12,7 +12,7 @@ export const getAppointmentsSchema = z.array(
         }),
         start: z.string(),
         startHour: z.string(),
-        status: z.enum(['upcoming', 'past', 'cancelled', 'no-show']),
+        status: z.enum(['upcoming', 'cancelled-excused', 'cancelled-unexcused', 'completed', 'waiting-room']),
         doctorNotes: z.string().optional(),
         createdAt: z.string(),
         updatedAt: z.string(),

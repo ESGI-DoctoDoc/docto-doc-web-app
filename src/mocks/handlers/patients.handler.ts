@@ -5,7 +5,7 @@ export const patientsMockHandlers = [
     http.get('http://localhost:8080/api/v1/patients', async () => {
         return HttpResponse.json(await resolveRequestMock([
             {
-                id: 'uuid1',
+                id: 'b5bbedc2-b469-460c-9174-336801abb8ea',
                 firstname: 'John',
                 lastname: 'Doe',
                 email: 'jesaispas@myfes.fr',
@@ -15,7 +15,7 @@ export const patientsMockHandlers = [
                 createdAt: new Date().toISOString(),
             },
             {
-                id: 'uuid2',
+                id: 'b5bbedc2-b469-460c-9174-336801abb8eb',
                 firstname: 'Jane',
                 lastname: 'Doe',
                 email: 'jesaispas@myfes.fr',
@@ -25,7 +25,7 @@ export const patientsMockHandlers = [
                 createdAt: new Date().toISOString(),
             },
             {
-                id: 'uuid3',
+                id: 'b5bbedc2-b469-460c-9174-336801abb8ec',
                 firstname: 'Alice',
                 lastname: 'Smith',
                 email: 'jesaispas@myfes.fr',
@@ -38,7 +38,7 @@ export const patientsMockHandlers = [
     }),
     http.get('http://localhost:8080/api/v1/patients/:id', async ({params}) => {
         const {id} = params
-        if (id === 'uuid2') {
+        if (id === 'b5bbedc2-b469-460c-9174-336801abb8ec') {
             return HttpResponse.json(await rejectRequestMock());
         }
         return HttpResponse.json(await resolveRequestMock({
@@ -51,7 +51,7 @@ export const patientsMockHandlers = [
             birthdate: '1985-03-03',
             appointments: [
                 {
-                    id: 'appointment1',
+                    id: 'b5bbedc2-b469-460c-9174-336801abb8ef',
                     date: '2023-10-01',
                     startHour: '10:00',
                     endHour: '11:00',
@@ -60,7 +60,7 @@ export const patientsMockHandlers = [
                     comment: null,
                 },
                 {
-                    id: 'appointment2',
+                    id: 'b5bbedc2-b469-460c-9174-336801abb8ed',
                     date: '2023-10-02',
                     startHour: '12:00',
                     endHour: '13:00',
@@ -69,7 +69,7 @@ export const patientsMockHandlers = [
                     comment: ''
                 },
                 {
-                    id: 'appointment3',
+                    id: 'b5bbedc2-b469-460c-9174-336801abb8eg',
                     date: '2023-10-02',
                     startHour: '12:00',
                     endHour: '13:00',

@@ -5,7 +5,7 @@ export const appointmentsMockHandlers = [
     http.get('http://localhost:8080/api/v1/appointments', async () => {
         return HttpResponse.json(await resolveRequestMock([
             {
-                id: 'uuid1',
+                id: 'b5bbedc2-b469-460c-9174-336801abb8ef',
                 patient: {
                     id: 'patient1',
                     name: 'John Doe',
@@ -21,7 +21,7 @@ export const appointmentsMockHandlers = [
                 updatedAt: new Date().toISOString(),
             },
             {
-                id: 'uuid2',
+                id: 'b5bbedc2-b469-460c-9174-336801abb8ed',
                 patient: {
                     id: 'patient2',
                     name: 'Jane Smith',
@@ -31,7 +31,7 @@ export const appointmentsMockHandlers = [
                 },
                 start: '2025-06-18T14:00:00Z',
                 startHour: '14:00',
-                status: 'past',
+                status: 'completed',
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
             },

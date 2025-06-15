@@ -6,6 +6,7 @@ import {patientsApi} from "~/services/patients/patient.api";
 import {useSession} from "~/composables/auth/useSession";
 import {useClipboard} from "@vueuse/core";
 import AppointmentListItem, {type AppointmentListItemType} from "~/components/appointments/AppointmentListItem.vue";
+import {useDeeplink} from "~/composables/useDeeplink";
 
 const isOpen = defineModel('isOpen', {
   type: Boolean,
@@ -16,9 +17,9 @@ const props = defineProps<{
   patient: Patient
 }>()
 
-const emits = defineEmits(['on-close', 'on-update', 'on-delete'])
+defineEmits(['on-close', 'on-update', 'on-delete'])
 
-
+const {navigateToResourceWithFilter} = useDeeplink()
 const {showError, showSuccess} = useNotify()
 const {copy} = useClipboard()
 const {fetchPatientById} = patientsApi()
@@ -150,7 +151,12 @@ function toAppointment(appointment: PatientAppointment): AppointmentListItemType
 
         <div class="flex justify-between items-baseline pt-6">
           <h2 class="text-xl font-medium">Historique de rendez-vous</h2>
-          <p class="text-sm font-medium cursor-pointer">Voir tous</p>
+          <p
+              class="text-sm font-medium cursor-pointer"
+              @click="navigateToResourceWithFilter('/my-appointments', { patientId: patientDetail.id })"
+          >
+            Voir tous
+          </p>
         </div>
         <AppDivider class="w-full pb-4 pt-2"/>
         <div class="space-y-2">

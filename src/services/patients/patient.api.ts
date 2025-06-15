@@ -1,5 +1,5 @@
 import {RequestBuilder} from '~/api/request-builder'
-import type {Patient} from '~/types/patient'
+import type {Patient, PatientDetails} from '~/types/patient'
 import {
     type GetPatientByIdResponse,
     getPatientByIdResponseSchema,
@@ -21,7 +21,7 @@ export const patientsApi = () => {
         return new RequestBuilder(BASE_API_URL)
             .get(`/patients/${id}`)
             .withResponse<GetPatientByIdResponse>(getPatientByIdResponseSchema)
-            .execute() as Promise<Patient>
+            .execute() as Promise<PatientDetails>
     }
 
     return {

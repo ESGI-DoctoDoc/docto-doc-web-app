@@ -49,6 +49,35 @@ export const patientsMockHandlers = [
             gender: 'MALE',
             phone: '+33675704647',
             birthdate: '1985-03-03',
+            appointments: [
+                {
+                    id: 'appointment1',
+                    date: '2023-10-01',
+                    startHour: '10:00',
+                    endHour: '11:00',
+                    status: 'upcoming',
+                    cancelledReason: null,
+                    comment: null,
+                },
+                {
+                    id: 'appointment2',
+                    date: '2023-10-02',
+                    startHour: '12:00',
+                    endHour: '13:00',
+                    status: 'completed',
+                    cancelledReason: null,
+                    comment: ''
+                },
+                {
+                    id: 'appointment3',
+                    date: '2023-10-02',
+                    startHour: '12:00',
+                    endHour: '13:00',
+                    status: 'cancelled-excused',
+                    comment: 'Follow-up needed',
+                    cancelledReason: null,
+                },
+            ],
             createdAt: new Date().toISOString(),
         }));
     }),

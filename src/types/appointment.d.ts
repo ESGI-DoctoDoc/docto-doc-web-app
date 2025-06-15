@@ -1,3 +1,5 @@
+export type AppointmentStatus = 'upcoming' | 'cancelled-excused' | 'cancelled-unexcused' | 'completed' | 'waiting-room';
+
 export interface Appointment {
     id: string
     patient: {
@@ -9,7 +11,7 @@ export interface Appointment {
     }
     start: string
     startHour: string
-    status: 'upcoming' | 'past' | 'cancelled' | 'no-show'
+    status: AppointmentStatus
     doctorNotes?: string
     createdAt: string
     updatedAt: string

@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 
 
-import type {Patient} from "~/types/patient";
+import type {Patient, PatientAppointment, PatientDetails} from "~/types/patient";
 import {patientsApi} from "~/services/patients/patient.api";
 import {useSession} from "~/composables/auth/useSession";
 import {useClipboard} from "@vueuse/core";
+import AppointmentListItem, {type AppointmentListItemType} from "~/components/appointments/AppointmentListItem.vue";
 
 const isOpen = defineModel('isOpen', {
   type: Boolean,
@@ -25,7 +26,7 @@ const {getUser} = useSession()
 
 
 const loading = ref(false)
-const patientDetail = ref<Patient>()
+const patientDetail = ref<PatientDetails>()
 const permissions = ref({
   canUpdate: false,
   canDelete: false,
@@ -75,6 +76,21 @@ function formatPhoneNumber(phone: string): string {
   const number = phone.startsWith('+33') ? '0' + phone.slice(3) : phone;
   return number.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
 }
+
+function toAppointment(appointment: PatientAppointment): AppointmentListItemType {
+  return {
+    id: appointment.id,
+    date: appointment.date,
+    status: appointment.status,
+    startHour: appointment.startHour,
+    endHour: appointment.endHour,
+    patient: {
+      id: props.patient.id,
+      firstname: props.patient.firstname,
+      lastname: props.patient.lastname,
+    },
+  }
+}
 </script>
 
 <template>
@@ -82,7 +98,7 @@ function formatPhoneNumber(phone: string): string {
       v-model:open="isOpen"
       aria-describedby="patient-detail-description"
       aria-description="Patient Detail Slideover"
-      class="max-w-lg"
+      class="max-w-xl"
       close
       @after:leave="$emit('on-close')"
   >
@@ -130,6 +146,21 @@ function formatPhoneNumber(phone: string): string {
           <div class="cursor-pointer" @click="copyToClipboard(formatPhoneNumber(patientDetail.phone))">
             {{ formatPhoneNumber(patientDetail.phone) }}
           </div>
+        </div>
+
+        <div class="flex justify-between items-baseline pt-6">
+          <h2 class="text-xl font-medium">Historique de rendez-vous</h2>
+          <p class="text-sm font-medium cursor-pointer">Voir tous</p>
+        </div>
+        <AppDivider class="w-full pb-4 pt-2"/>
+        <div class="space-y-2">
+          <div v-if="patientDetail.appointments.length == 0">
+            <div class="text-center text-gray-500">Aucun rendez-vous trouvé pour ce patient.</div>
+          </div>
+          <AppointmentListItem
+              v-for="(appointment, index) in patientDetail.appointments" :key="index"
+              :appointment="toAppointment(appointment)"
+          />
         </div>
       </div>
     </template>

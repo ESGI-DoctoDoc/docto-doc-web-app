@@ -23,6 +23,17 @@ export const getPatientByIdResponseSchema = z.object({
     phone: z.string(),
     birthdate: z.string(),
     gender: z.enum(['MALE', 'FEMALE']),
+    appointments: z.array(
+        z.object({
+            id: z.string(),
+            date: z.string(),
+            startHour: z.string(),
+            endHour: z.string(),
+            cancelledReason: z.string().nullable().optional(),
+            comment: z.string().nullable().optional(),
+            status: z.enum(['upcoming', 'cancelled-excused', 'cancelled-unexcused', 'completed', 'waiting-room']),
+        })
+    ),
     createdAt: z.string(),
 })
 export type GetPatientByIdResponse = z.infer<typeof getPatientByIdResponseSchema>

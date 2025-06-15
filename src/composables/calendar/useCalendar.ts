@@ -107,6 +107,7 @@ export const useCalendar = () => {
 
     return {
         doctorSlotsTemplate,
+        convertDateToIsoString,
         mapSlotToCalendarEvent,
         mapDoctorAbsenceToCalendarEvent,
         mapCalendarEventToDoctorAbsence,

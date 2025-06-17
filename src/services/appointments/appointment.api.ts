@@ -1,5 +1,10 @@
 import {RequestBuilder} from '~/api/request-builder'
-import {type GetAppointmentsResponse, getAppointmentsSchema,} from "~/services/appointments/dto/get-appointments.dto";
+import {
+    type GetAppointmentByIdResponse,
+    getAppointmentByIdResponseSchema,
+    type GetAppointmentsResponse,
+    getAppointmentsSchema,
+} from "~/services/appointments/dto/get-appointments.dto";
 import type {
     CreateAppointmentDto,
     UpdateAppointmentDto
@@ -63,6 +68,7 @@ export const appointmentApi = () => {
     function fetchAppointmentById(id: string) {
         return new RequestBuilder(BASE_API_URL)
             .get(`/doctors/appointments/${id}`)
+            .withResponse<GetAppointmentByIdResponse>(getAppointmentByIdResponseSchema)
             .execute()
     }
 

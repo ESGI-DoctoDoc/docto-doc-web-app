@@ -83,11 +83,11 @@ function getAppointmentOptions(row: Appointment): DropdownMenuItem[] {
     })
   }
   if (ableTo.canPostponed) {
-    options.push({
-      label: 'Déplacer le rendez-vous',
-      icon: 'i-lucide-calendar-check',
-      onClick: () => emits('onReschedule', row),
-    })
+    // options.push({
+    //   label: 'Déplacer le rendez-vous',
+    //   icon: 'i-lucide-calendar-check',
+    //   onClick: () => emits('onReschedule', row),
+    // })
   }
   if (ableTo.canReschedule) {
     // options.push({

@@ -90,11 +90,11 @@ function getAppointmentOptions(row: Appointment): DropdownMenuItem[] {
     })
   }
   if (ableTo.canReschedule) {
-    options.push({
-      label: 'Reprogrammer le rendez-vous',
-      icon: 'i-lucide-calendar-plus',
-      onClick: () => emits('onReschedule', row),
-    })
+    // options.push({
+    //   label: 'Reprogrammer le rendez-vous',
+    //   icon: 'i-lucide-calendar-plus',
+    //   onClick: () => emits('onReschedule', row),
+    // })
   }
   if (ableTo.canCancel) {
     options.push({

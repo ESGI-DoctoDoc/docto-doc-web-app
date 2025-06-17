@@ -52,7 +52,7 @@ async function onSaveQuestions(form: CreateMedicalConcernQuestionForm) {
   isLoading.value = true;
   try {
     await saveMedicalConcernQuestions({
-      medicalConcernId: currentMedicalConcern.value!.id,
+      medicalConcern: currentMedicalConcern.value!.id,
       questions: form.questions,
     });
     await fetchMedicalConcerns();

@@ -3,12 +3,12 @@ import {medicalConcernsMockHandlers} from "~/mocks/handlers/medical-concerns.han
 // import {absencesMockHandlers} from "~/mocks/handlers/absences.handler";
 import {patientsMockHandlers} from "~/mocks/handlers/patients.handler";
 import {appointmentsMockHandlers} from "~/mocks/handlers/appointments.handler";
-// import {slotsMockHandlers} from "~/mocks/handlers/slots.handler";
+import {slotsMockHandlers} from "~/mocks/handlers/slots.handler";
 
 export const handlers = [
     ...authMockHandlers,
     ...medicalConcernsMockHandlers,
-    // ...slotsMockHandlers,
+    ...slotsMockHandlers,
     // ...absencesMockHandlers,
     ...patientsMockHandlers,
     ...appointmentsMockHandlers,

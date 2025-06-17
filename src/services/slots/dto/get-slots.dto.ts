@@ -1,13 +1,32 @@
 import {z} from "zod";
 
+export interface GetSlotAvailableDto {
+    startDate: string
+    medicalConcernId: string
+}
+
 export interface GetSlotDto {
     startDate: string
 }
+
+export const getSlotAvailableQuerySchema = z.object({
+    date: z.string(),
+})
+export type GetSlotsAvailableQuery = z.infer<typeof getSlotAvailableQuerySchema>;
 
 export const getSlotQuerySchema = z.object({
     startDate: z.string()
 })
 export type GetSlotsQuery = z.infer<typeof getSlotQuerySchema>;
+
+export const getSlotsAvailableResponseSchema = z.array(z.object({
+    id: z.string(),
+    date: z.string(),
+    start: z.string(),
+    end: z.string(),
+    isBooked: z.boolean(),
+}));
+export type GetSlotsAvailableResponse = z.infer<typeof getSlotsAvailableResponseSchema>;
 
 export const getSlotsResponseSchema = z.array(
     z.object({

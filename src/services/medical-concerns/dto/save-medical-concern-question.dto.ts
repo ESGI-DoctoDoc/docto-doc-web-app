@@ -4,7 +4,7 @@ export interface SaveMedicalConcernDto {
     medicalConcernId: string;
     questions: {
         question: string;
-        type: "text" | "list" | "yes_no" | "date";
+        type: "text" | "list" | "yes_no";
         options?: { label: string, value: string }[];
         isMandatory: boolean;
     }[];

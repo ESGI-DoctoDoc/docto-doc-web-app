@@ -7,10 +7,15 @@ import {
     createSlotWeeklyBodySchema,
 } from "~/services/slots/dto/save-slot.dto";
 import {
+    type GetSlotAvailableDto,
+    getSlotAvailableQuerySchema,
     type GetSlotByIdResponse,
     getSlotByIdResponseSchema,
     type GetSlotDto,
     getSlotQuerySchema,
+    type GetSlotsAvailableQuery,
+    type GetSlotsAvailableResponse,
+    getSlotsAvailableResponseSchema,
     type GetSlotsQuery,
     type GetSlotsResponse,
     getSlotsResponseSchema
@@ -19,6 +24,17 @@ import {
 export const slotApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
 
+    async function getSlotsAvailable(requestDtp: GetSlotAvailableDto) {
+        return new RequestBuilder(BASE_API_URL)
+            .get(`/patients/doctors/medical-concerns/${requestDtp.medicalConcernId}/get-appointments-availability`)
+            .withQuery<GetSlotsAvailableQuery>(getSlotAvailableQuerySchema)
+            .withResponse<GetSlotsAvailableResponse>(getSlotsAvailableResponseSchema)
+            .execute({
+                query: {
+                    date: requestDtp.startDate,
+                }
+            })
+    }
 
     async function getSlots(getSlotDto: GetSlotDto) {
         return new RequestBuilder(BASE_API_URL)
@@ -73,6 +89,7 @@ export const slotApi = () => {
 
 
     return {
+        getSlotsAvailable,
         getSlots,
         getSlotById,
         createSlot

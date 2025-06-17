@@ -15,6 +15,10 @@ import {
     saveMedicalConcernQuestionBody,
     type SaveMedicalConcernQuestionBody,
 } from "~/services/medical-concerns/dto/save-medical-concern-question.dto";
+import {
+    type GetMedicalConcernsQuestionsResponse,
+    getMedicalConcernsQuestionsResponseSchema
+} from "~/services/medical-concerns/dto/get-medical-concern-questions.dto";
 
 
 export const medicalConcernsApi = () => {
@@ -63,11 +67,19 @@ export const medicalConcernsApi = () => {
             })
     }
 
+    function getQuestionsByMedicalConcernId(medicalConcernId: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .get(`/doctors/medical-concerns/${medicalConcernId}/questions`)
+            .withResponse<GetMedicalConcernsQuestionsResponse>(getMedicalConcernsQuestionsResponseSchema)
+            .execute()
+    }
+
     return {
         fetchMedicalConcerns,
         createMedicalConcern,
         editDoctorMedicalConcerns,
         removeMedicalConcern,
         saveMedicalConcernQuestions,
+        getQuestionsByMedicalConcernId
     }
 }

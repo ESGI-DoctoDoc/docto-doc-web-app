@@ -3,7 +3,7 @@
 import {medicalConcernsApi} from "~/services/medical-concerns/medical-concerns.api";
 
 const medicalConcern = defineModel('medicalConcern', {
-  type: [String, Array] as PropType<string[]>,
+  type: [String, Array] as PropType<string[] | string>,
   required: true,
 })
 
@@ -58,7 +58,7 @@ onMounted(() => {
         :items="medicalConcernsItems"
         :loading="loading"
         class="w-full"
-        multiple
+        :multiple
         placeholder="Sélectionnez un motif de consultation"
     />
   </UFormField>

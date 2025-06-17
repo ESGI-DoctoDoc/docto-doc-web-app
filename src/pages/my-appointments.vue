@@ -171,6 +171,7 @@ onMounted(() => {
         v-model:open="openAppointmentDetail"
         :appointment="currentAppointment"
         @on-close="onClose()"
+        @on-update="onShowUpdate($event)"
     />
   </div>
 </template>

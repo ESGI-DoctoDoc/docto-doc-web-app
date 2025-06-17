@@ -15,7 +15,7 @@ const props = defineProps<{
   appointment: Appointment
 }>()
 
-const emits = defineEmits(['on-close', 'on-update', 'on-delete'])
+defineEmits(['on-close', 'on-update', 'on-delete'])
 
 
 const {showError, showSuccess} = useNotify()
@@ -29,6 +29,9 @@ const appointmentDetail = ref<Appointment>()
 const permissions = ref({
   canDelete: false,
 })
+
+const isCancelled = computed(() => appointmentDetail.value?.status === 'cancelled-excused' || appointmentDetail.value?.status === 'cancelled-unexcused');
+const isEnded = computed(() => appointmentDetail.value?.status === 'completed');
 
 async function fetchAppointmentDetails() {
   loading.value = true
@@ -149,13 +152,10 @@ function formatPhoneNumber(phone: string): string {
     </template>
     <template #footer>
       <div class="fit flex flex-col space-y-2">
-        <UButton block color="primary" @click="$emit('on-update', appointmentDetail!)">
+        <UButton v-if="!isEnded && !isCancelled" block color="primary" @click="$emit('on-update', appointmentDetail!)">
           Modifier
         </UButton>
-        <UButton block color="primary" icon="i-lucide-calendar" variant="subtle">
-          Replanifier
-        </UButton>
-        <UButton block color="error" icon="i-lucide-x-circle" variant="subtle">
+        <UButton v-if="!isEnded && !isCancelled" block color="error" icon="i-lucide-x-circle" variant="subtle">
           Annuler le rendez-vous
         </UButton>
         <UButton v-if="permissions.canDelete" block color="error" @click="$emit('on-delete', appointmentDetail!)">

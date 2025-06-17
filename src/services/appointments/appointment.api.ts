@@ -41,7 +41,7 @@ export const appointmentApi = () => {
 
     function fetchAppointments() {
         return new RequestBuilder(BASE_API_URL)
-            .get('/appointments')
+            .get('/doctors/appointments')
             .withResponse<GetAppointmentsResponse>(getAppointmentsSchema)
             .execute()
     }

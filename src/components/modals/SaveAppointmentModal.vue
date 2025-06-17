@@ -12,13 +12,14 @@ import PatientsSelect from "~/components/inputs/PatientsSelect.vue";
 import CareTrackingSelect from "~/components/inputs/CareTrackingSelect.vue";
 import AnswerQuestions from "~/components/questions/AnswerQuestions.vue";
 import SlotAvailableSelect from "~/components/slots/SlotAvailableSelect.vue";
+import dayjs from "dayjs";
 
 const open = defineModel('open', {
   type: Boolean,
   default: false,
 })
 
-defineProps<{
+const props = defineProps<{
   appointment?: Appointment
 }>()
 
@@ -29,13 +30,16 @@ const emit = defineEmits<{
 const {showError} = useNotify()
 
 const form = ref<CreateAppointmentForm & { hasToAnswerQuestions: boolean }>({
-  patient: '',
-  medicalConcern: '',
-  start: '',
-  startHour: '',
-  careTracking: '',
-  answers: [],
-  notes: '',
+  patient: props?.appointment?.patient?.id ?? '',
+  medicalConcern: props?.appointment?.medicalConcern?.id ?? '',
+  start: dayjs(props?.appointment?.start).format('YYYY-MM-DD') ?? '',
+  startHour: props?.appointment?.startHour ?? '',
+  careTracking: props?.appointment?.careTracking?.id ?? '',
+  answers: props?.appointment?.answers?.map(answer => ({
+    questionId: answer.id,
+    answer: answer.answer,
+  })) ?? [],
+  notes: props?.appointment?.doctorNotes ?? '',
   hasToAnswerQuestions: true,
 })
 
@@ -161,8 +165,7 @@ function onError(event: FormErrorEvent) {
         <UButton
             v-if="appointment"
             block
-            color="error"
-            form="create-appointment-formform"
+            form="create-appointment-form"
             label="Mettre à jour le rendez-vous"
             type="submit"
         />

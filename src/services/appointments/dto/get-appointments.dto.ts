@@ -10,9 +10,37 @@ export const getAppointmentsSchema = z.array(
             phone: z.string(),
             birthdate: z.string(),
         }),
+        medicalConcern: z.object({
+            id: z.string(),
+            name: z.string(),
+        }),
+        careTracking: z
+            .object({
+                id: z.string(),
+                name: z.string(),
+            })
+            .nullable()
+            .optional(),
+        answers: z
+            .array(
+                z.object({
+                    id: z.string(),
+                    answer: z.string(),
+                })
+            )
+            .nullable()
+            .optional(),
         start: z.string(),
         startHour: z.string(),
-        status: z.enum(['upcoming', 'cancelled-excused', 'cancelled-unexcused', 'completed', 'waiting-room']),
+        status: z.enum([
+            'upcoming',
+            'confirmed',
+            'locked',
+            'cancelled-excused',
+            'cancelled-unexcused',
+            'completed',
+            'waiting-room'
+        ]),
         doctorNotes: z.union([z.string(), z.null()]).optional(),
         createdAt: z.string(),
     })

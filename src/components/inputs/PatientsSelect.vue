@@ -25,7 +25,7 @@ async function patientsToList() {
       email: patient.email || '',
       value: patient.id,
     }));
-    if (patientsItems.value.length > 0 && patient) {
+    if (patientsItems.value.length > 0 && patient.value) {
       const selectedPatient = patientsItems.value.find(p => p.value === patient.value);
       if (selectedPatient) {
         patientLocal.value = selectedPatient;

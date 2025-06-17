@@ -4,7 +4,10 @@ import {useNotify} from '~/composables/useNotify'
 import type {Appointment} from '~/types/appointment'
 import AppointmentsTable from "~/components/table/AppointmentsTable.vue";
 import AppointmentDetailSlideover from "~/components/slideover/AppointmentDetailSlideover.vue";
-import type {CreateAppointmentForm} from "~/components/inputs/validators/appointment-form.validator";
+import type {
+  CreateAppointmentForm,
+  UpdateAppointmentForm
+} from "~/components/inputs/validators/appointment-form.validator";
 import SaveAppointmentModal from "~/components/modals/SaveAppointmentModal.vue";
 
 definePageMeta({
@@ -16,13 +19,14 @@ definePageMeta({
 
 const {retrieveDeeplinkId, retrieveDeeplinkFilter, filterDeeplinkToQuery, resetDeeplink} = useDeeplink()
 const {showError} = useNotify()
-const {fetchAppointments, createAppointment} = appointmentApi()
+const {fetchAppointments, createAppointment, updateAppointment} = appointmentApi()
 
 const isLoading = ref(true)
 const myAppointments = ref<Appointment[]>([])
 const currentAppointment = ref<Appointment>()
 const openAppointmentDetail = ref(false)
 const openCreateAppointment = ref(false)
+const openUpdateAppointment = ref(false)
 
 async function onCreate(form: CreateAppointmentForm) {
   isLoading.value = true
@@ -42,6 +46,36 @@ async function onCreate(form: CreateAppointmentForm) {
       showError('Erreur lors de la création du rendez-vous', error.message)
     } else {
       showError('Erreur inconnue lors de la création du rendez-vous')
+    }
+  } finally {
+    isLoading.value = false
+  }
+}
+
+async function onUpdate(form: UpdateAppointmentForm) {
+  isLoading.value = true
+  try {
+    if (!currentAppointment.value) {
+      showError('Aucun rendez-vous sélectionné pour la mise à jour')
+      return
+    }
+
+    await updateAppointment({
+      id: currentAppointment.value?.id,
+      patientId: form.patient,
+      medicalConcernId: form.medicalConcern,
+      start: form.start,
+      startHour: form.startHour,
+      careTrackingId: form.careTracking,
+      notes: form.notes,
+      answers: form.answers,
+    });
+    await getAppointments()
+  } catch (error) {
+    if (error instanceof Error) {
+      showError('Erreur lors de la mise à jour du rendez-vous', error.message)
+    } else {
+      showError('Erreur inconnue lors de la mise à jour du rendez-vous')
     }
   } finally {
     isLoading.value = false
@@ -79,9 +113,14 @@ async function getAppointmentsByFilter(filters: Record<string, string>) {
   }
 }
 
-function onDetail(appointment: Appointment) {
+function onShowDetail(appointment: Appointment) {
   currentAppointment.value = appointment
   openAppointmentDetail.value = true
+}
+
+function onShowUpdate(appointment: Appointment) {
+  currentAppointment.value = appointment
+  openUpdateAppointment.value = true
 }
 
 function onClose() {
@@ -93,7 +132,7 @@ function onClose() {
 onMounted(() => {
   const appointmentId = retrieveDeeplinkId()
   if (appointmentId) {
-    onDetail({id: appointmentId} as Appointment)
+    onShowDetail({id: appointmentId} as Appointment)
   }
 
   const filters = retrieveDeeplinkFilter()
@@ -110,8 +149,9 @@ onMounted(() => {
     <AppointmentsTable
         v-model:loading="isLoading"
         :data="myAppointments"
-        @on-detail="onDetail"
+        @on-detail="onShowDetail"
         @on-create="openCreateAppointment = true"
+        @on-update="onShowUpdate"
     />
 
     <SaveAppointmentModal
@@ -120,14 +160,14 @@ onMounted(() => {
     />
 
     <SaveAppointmentModal
-        v-if="currentAppointment"
-        v-model:open="openCreateAppointment"
+        v-if="currentAppointment && openUpdateAppointment"
+        v-model:open="openUpdateAppointment"
         :appointment="currentAppointment"
-        @on-submit="onCreate"
+        @on-submit="onUpdate"
     />
 
     <AppointmentDetailSlideover
-        v-if="currentAppointment"
+        v-if="currentAppointment && !openUpdateAppointment"
         v-model:open="openAppointmentDetail"
         :appointment="currentAppointment"
         @on-close="onClose()"

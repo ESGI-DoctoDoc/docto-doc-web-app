@@ -4,14 +4,19 @@ import type {
     CreateAppointmentDto,
     UpdateAppointmentDto
 } from "~/components/inputs/validators/appointment-form.validator";
+import {
+    type CreateAppointmentBody,
+    saveAppointmentBodySchema,
+    type UpdateAppointmentBody,
+} from "~/services/appointments/dto/save-appointment";
 
 export const appointmentApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
 
     function createAppointment(requestDto: CreateAppointmentDto) {
         return new RequestBuilder(BASE_API_URL)
-            .post('/appointments')
-            .withBody()
+            .post('/doctors/appointments')
+            .withBody<CreateAppointmentBody>(saveAppointmentBodySchema)
             .execute({
                 body: {
                     patientId: requestDto.patientId,
@@ -19,22 +24,31 @@ export const appointmentApi = () => {
                     start: requestDto.start,
                     startHour: requestDto.startHour,
                     careTrackingId: requestDto.careTrackingId,
-                    notes: requestDto.notes
+                    notes: requestDto.notes,
+                    answers: requestDto.answers?.map(answer => ({
+                        questionId: answer.questionId,
+                        answer: answer.answer
+                    }))
                 }
             })
     }
 
     function updateAppointment(requestDto: UpdateAppointmentDto) {
         return new RequestBuilder(BASE_API_URL)
-            .put(`/appointments/${requestDto.id}`)
-            .withBody()
+            .put(`/doctors/appointments/${requestDto.id}`)
+            .withBody<UpdateAppointmentBody>(saveAppointmentBodySchema)
             .execute({
                 body: {
                     patientId: requestDto.patientId,
                     medicalConcernId: requestDto.medicalConcernId,
                     start: requestDto.start,
                     startHour: requestDto.startHour,
-                    careTrackingId: requestDto.careTrackingId
+                    careTrackingId: requestDto.careTrackingId,
+                    notes: requestDto.notes,
+                    answers: requestDto.answers?.map(answer => ({
+                        questionId: answer.questionId,
+                        answer: answer.answer
+                    }))
                 }
             })
     }
@@ -48,7 +62,7 @@ export const appointmentApi = () => {
 
     function fetchAppointmentById(id: string) {
         return new RequestBuilder(BASE_API_URL)
-            .get(`/appointments/${id}`)
+            .get(`/doctors/appointments/${id}`)
             .execute()
     }
 

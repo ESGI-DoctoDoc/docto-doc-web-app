@@ -64,29 +64,50 @@ onMounted(() => {
 })
 
 function getAppointmentOptions(row: Appointment): DropdownMenuItem[] {
-  const options: DropdownMenuItem[] = [
-    {
+  const isEnded = row.status === 'completed';
+  const isCancelled = row.status === 'cancelled-excused' || row.status === 'cancelled-unexcused';
+  const ableTo = {
+    canUpdate: !isEnded && !isCancelled,
+    canPostponed: !isEnded && !isCancelled,
+    canReschedule: true, // Assuming rescheduling is always allowed
+    canCancel: !isEnded && !isCancelled,
+    canDelete: !isEnded && !isCancelled && permissions.value.canDelete,
+  }
+
+  const options: DropdownMenuItem[] = []
+  if (ableTo.canUpdate) {
+    options.push({
       label: 'Modifier le rendez-vous',
       icon: 'i-lucide-edit',
       onClick: () => emits('onUpdate', row),
-    },
-    {
-      label: 'Replanifier le rendez-vous',
+    })
+  }
+  if (ableTo.canPostponed) {
+    options.push({
+      label: 'Déplacer le rendez-vous',
       icon: 'i-lucide-calendar-check',
       onClick: () => emits('onReschedule', row),
-    },
-    {
+    })
+  }
+  if (ableTo.canReschedule) {
+    options.push({
+      label: 'Reprogrammer le rendez-vous',
+      icon: 'i-lucide-calendar-plus',
+      onClick: () => emits('onReschedule', row),
+    })
+  }
+  if (ableTo.canCancel) {
+    options.push({
       label: 'Annuler le rendez-vous',
       icon: 'i-lucide-x-circle',
       onClick: () => emits('onCancel', row),
-    }
-  ]
-
-  if (permissions.value.canDelete) {
+    })
+  }
+  if (ableTo.canDelete) {
     options.push({
       label: 'Supprimer le rendez-vous',
       icon: 'i-lucide-trash-2',
-      onSelect: () => emits('onDelete', row),
+      onClick: () => emits('onDelete', row),
     })
   }
 

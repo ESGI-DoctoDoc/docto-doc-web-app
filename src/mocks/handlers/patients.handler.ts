@@ -2,7 +2,7 @@ import {http, HttpResponse} from "msw";
 import {rejectRequestMock, resolveRequestMock} from "~/mocks/handlers/utils.mock";
 
 export const patientsMockHandlers = [
-    http.get('http://localhost:8080/api/v1/patients', async () => {
+    http.get('http://localhost:8080/api/v1/doctors/patients', async () => {
         return HttpResponse.json(await resolveRequestMock([
             {
                 id: 'b5bbedc2-b469-460c-9174-336801abb8ea',

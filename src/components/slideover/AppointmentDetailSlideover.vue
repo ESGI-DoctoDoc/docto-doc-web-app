@@ -15,7 +15,7 @@ const props = defineProps<{
   appointment: Appointment
 }>()
 
-defineEmits(['on-close', 'on-update', 'on-delete'])
+defineEmits(['on-close', 'on-update', 'on-delete', 'on-cancel'])
 
 
 const {showError, showSuccess} = useNotify()
@@ -155,7 +155,8 @@ function formatPhoneNumber(phone: string): string {
         <UButton v-if="!isEnded && !isCancelled" block color="primary" @click="$emit('on-update', appointmentDetail!)">
           Modifier
         </UButton>
-        <UButton v-if="!isEnded && !isCancelled" block color="error" icon="i-lucide-x-circle" variant="subtle">
+        <UButton v-if="!isEnded && !isCancelled" block color="error" icon="i-lucide-x-circle" variant="subtle"
+                 @click="$emit('on-cancel', appointmentDetail!)">
           Annuler le rendez-vous
         </UButton>
         <UButton v-if="permissions.canDelete" block color="error" @click="$emit('on-delete', appointmentDetail!)">

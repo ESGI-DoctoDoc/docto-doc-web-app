@@ -9,6 +9,7 @@ import type {
   UpdateAppointmentForm
 } from "~/components/inputs/validators/appointment-form.validator";
 import SaveAppointmentModal from "~/components/modals/SaveAppointmentModal.vue";
+import {useModals} from "~/composables/useModal";
 
 definePageMeta({
   title: 'Mes rendez-vous',
@@ -18,8 +19,9 @@ definePageMeta({
 })
 
 const {retrieveDeeplinkId, retrieveDeeplinkFilter, filterDeeplinkToQuery, resetDeeplink} = useDeeplink()
-const {showError} = useNotify()
-const {fetchAppointments, createAppointment, updateAppointment} = appointmentApi()
+const {showError, showSuccess} = useNotify()
+const {fetchAppointments, createAppointment, updateAppointment, cancelAppointment} = appointmentApi()
+const {showCancelAppointmentReasonModal} = useModals()
 
 const isLoading = ref(true)
 const myAppointments = ref<Appointment[]>([])
@@ -113,6 +115,37 @@ async function getAppointmentsByFilter(filters: Record<string, string>) {
   }
 }
 
+async function onShowCancel() {
+  if (!currentAppointment.value) {
+    showError("Aucun rendez-vous sélectionné pour l'annulation");
+    return;
+  }
+
+  isLoading.value = true;
+  try {
+    const instance = showCancelAppointmentReasonModal();
+    const result = await instance.result as { reason: string };
+    const reason = result.reason.trim();
+    if (!reason) {
+      showError('Annulation échouée', "Veuillez fournir une raison pour l'annulation.");
+      return;
+    }
+
+    await cancelAppointment(currentAppointment.value.id, reason);
+    showSuccess('Rendez-vous annulé avec succès');
+    openAppointmentDetail.value = false;
+    await getAppointments();
+  } catch (error) {
+    if (error instanceof Error) {
+      showError("Erreur lors de l'annulation", error.message);
+    } else {
+      showError("Erreur inconnue lors de l'annulation");
+    }
+  } finally {
+    isLoading.value = false;
+  }
+}
+
 function onShowDetail(appointment: Appointment) {
   currentAppointment.value = appointment
   openAppointmentDetail.value = true
@@ -152,6 +185,7 @@ onMounted(() => {
         @on-detail="onShowDetail"
         @on-create="openCreateAppointment = true"
         @on-update="onShowUpdate"
+        @on-cancel="onShowCancel"
     />
 
     <SaveAppointmentModal

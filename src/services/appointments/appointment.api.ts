@@ -14,6 +14,10 @@ import {
     saveAppointmentBodySchema,
     type UpdateAppointmentBody,
 } from "~/services/appointments/dto/save-appointment";
+import {
+    type CancelAppointmentBody,
+    cancelAppointmentBodySchema
+} from "~/services/appointments/dto/update-appontment.dto";
 
 export const appointmentApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
@@ -72,10 +76,20 @@ export const appointmentApi = () => {
             .execute()
     }
 
+    function cancelAppointment(id: string, reason: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .patch(`/doctors/appointments/${id}`)
+            .withBody<CancelAppointmentBody>(cancelAppointmentBodySchema)
+            .execute({
+                body: {reason}
+            })
+    }
+
     return {
         fetchAppointments,
         fetchAppointmentById,
         createAppointment,
         updateAppointment,
+        cancelAppointment,
     }
 }

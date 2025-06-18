@@ -46,8 +46,9 @@ const form = ref<CreateAppointmentForm & { hasToAnswerQuestions: boolean }>({
 function onSubmit(formEvent: FormSubmitEvent<CreateAppointmentForm>) {
   if (!form.value.hasToAnswerQuestions) {
     emit('on-submit', formEvent.data);
+  } else {
+    showError('Répondre aux questions', 'Veuillez répondre aux questions avant de soumettre le formulaire.');
   }
-  showError('Répondre aux questions', 'Veuillez répondre aux questions avant de soumettre le formulaire.');
 }
 
 function onError(event: FormErrorEvent) {

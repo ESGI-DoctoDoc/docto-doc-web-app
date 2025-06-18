@@ -26,7 +26,7 @@ export const slotApi = () => {
 
     async function getSlotsAvailable(requestDtp: GetSlotAvailableDto) {
         return new RequestBuilder(BASE_API_URL)
-            .get(`/patients/doctors/medical-concerns/${requestDtp.medicalConcernId}/get-appointments-availability`)
+            .get(`/doctors/medical-concerns/${requestDtp.medicalConcernId}/get-appointments-availability`)
             .withQuery<GetSlotsAvailableQuery>(getSlotAvailableQuerySchema)
             .withResponse<GetSlotsAvailableResponse>(getSlotsAvailableResponseSchema)
             .execute({

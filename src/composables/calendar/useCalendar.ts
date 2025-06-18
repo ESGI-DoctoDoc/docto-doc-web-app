@@ -3,6 +3,7 @@ import type {Slot} from "~/types/slot";
 import 'dayjs/locale/fr'
 import type {EventApi, EventInput} from "@fullcalendar/core";
 import type {Absence} from "~/types/absence";
+import type {Appointment} from "~/types/appointment";
 
 dayjs.locale('fr');
 
@@ -77,7 +78,25 @@ export const useCalendar = () => {
                 }
             }
         }
+    }
 
+    function mapAppointmentToCalendarEvent(appointment: Appointment) {
+        return {
+            id: appointment.id,
+            start: convertDateToIsoString(appointment.start, appointment.startHour),
+            end: convertDateToIsoString(appointment.start, appointment.startHour), //todo donner la durée
+            title: `RDV: ${appointment.patient.name}`,
+            extraParams: {
+                type: 'appointment',
+                patientId: appointment.patient.id,
+                medicalConcernId: appointment.medicalConcern.id,
+                careTrackingId: appointment.careTracking?.id || null,
+                notes: appointment.doctorNotes || '',
+                answers: appointment.answers || [],
+                status: appointment.status,
+                createdAt: dayjs(appointment.createdAt).toISOString(),
+            }
+        }
     }
 
     function mapCalendarEventToDoctorAbsence(event: EventApi): Absence {
@@ -111,5 +130,6 @@ export const useCalendar = () => {
         mapSlotToCalendarEvent,
         mapDoctorAbsenceToCalendarEvent,
         mapCalendarEventToDoctorAbsence,
+        mapAppointmentToCalendarEvent,
     };
 }

@@ -13,7 +13,7 @@ const props = defineProps<{
   loading: boolean
 }>()
 
-const emits = defineEmits(['onDetail', 'onUpdate', 'onReschedule', 'onCreate', 'onCancel', 'onDelete'])
+const emits = defineEmits(['onDetail', 'onUpdate', 'onReschedule', 'onCancel', 'onDelete'])
 
 const {getUser} = useSession()
 
@@ -120,10 +120,8 @@ function getAppointmentOptions(row: Appointment): DropdownMenuItem[] {
   <div class="flex-1 divide-y divide-accented w-full">
     <TableHeaderDefault
         v-model:search="search"
-        button-label="Ajouter un rendez-vous"
         searchable
         @update:search="table?.tableApi?.getColumn('name')?.setFilterValue($event)"
-        @button-click="$emit('onCreate')"
     />
 
     <UTable

@@ -7,10 +7,18 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
 import SaveDoctorAbsence from "~/components/modals/SaveDoctorAbsence.vue";
+import SaveAppointmentModal from '~/components/modals/SaveAppointmentModal.vue';
+import AppointmentDetailSlideover from '~/components/slideover/AppointmentDetailSlideover.vue';
 import type {CreateDoctorAbsenceForm} from "~/components/inputs/validators/doctor-absence-form.validator";
+import type {
+  CreateAppointmentForm,
+  UpdateAppointmentForm
+} from '~/components/inputs/validators/appointment-form.validator';
 import {doctorAbsenceApi} from "~/services/absences/doctorAbsenceApi";
+import {appointmentApi} from '~/services/appointments/appointment.api';
 import {useCalendar} from "~/composables/calendar/useCalendar";
 import type {Absence, dayOfWeek} from "~/types/absence";
+import type {Appointment} from '~/types/appointment';
 import type {ContextMenuItem} from "#ui/components/ContextMenu.vue";
 
 const props = defineProps({
@@ -25,15 +33,21 @@ defineEmits<{
   (e: 'on-calendar-type'): void
 }>()
 
-const {showError, showSuccess} = useNotify()
+const {showCancelAppointmentReasonModal} = useModals()
+const {handleError, showSuccess, showError} = useNotify()
 const {createAbsence, getAbsences} = doctorAbsenceApi();
-const {mapDoctorAbsenceToCalendarEvent, mapCalendarEventToDoctorAbsence} = useCalendar()
+const {createAppointment, cancelAppointment, updateAppointment, fetchAppointments} = appointmentApi();
+const {mapDoctorAbsenceToCalendarEvent, mapAppointmentToCalendarEvent, mapCalendarEventToDoctorAbsence} = useCalendar()
 const calendarRef = useTemplateRef('calendarRef');
 
 const loading = ref(false);
 const showCreateAbsence = ref(false);
 const showUpdateAbsence = ref(false);
+const showCreateAppointment = ref(false);
+const showAppointmentDetail = ref(false);
+const showUpdateAppointment = ref(false);
 const currentAbsence = ref<Absence>();
+const currentAppointment = ref<Appointment | null>(null);
 const selectedHours = ref<[dayOfWeek, string, string]>(); // [date, startHour, endHour]
 const items = [
   {label: 'Créer une absence', onSelect: () => onActions('absence')},
@@ -101,7 +115,9 @@ const calendarOptions = ref<CalendarOptions>({
     }, 200);
   },
   eventClick(arg) {
-    if (arg.event.id) {
+    if (arg.event.extendedProps?.type === 'appointment') {
+      onShowAppointmentDetail(arg.event.extendedProps.appointment);
+    } else if (arg.event.id) {
       currentAbsence.value = mapCalendarEventToDoctorAbsence(arg.event);
       showUpdateAbsence.value = true;
     }
@@ -129,7 +145,14 @@ function onActions(action: 'absence' | 'exceptional_opening' | 'appointment') {
     showCreateAbsence.value = true;
   } else if (action === 'exceptional_opening') {
     //todo
+  } else if (action === 'appointment') {
+    showCreateAppointment.value = true;
   }
+}
+
+function onShowAppointmentDetail(appointment: Appointment) {
+  currentAppointment.value = appointment;
+  showAppointmentDetail.value = true;
 }
 
 async function onSaveAbsence(form: CreateDoctorAbsenceForm) {
@@ -140,31 +163,90 @@ async function onSaveAbsence(form: CreateDoctorAbsenceForm) {
     showSuccess('Absence créée avec succès');
     showCreateAbsence.value = false;
   } catch (error) {
-    if (error instanceof Error) {
-      showError("Erreur lors de la création de l'absence", error.message);
-    } else {
-      showError("Erreur inconnue lors de la création de l'absence");
-    }
+    handleError("Erreur lors de la création de l'absence", error)
   } finally {
     loading.value = false;
   }
 }
 
-async function fetchAbsences() {
+async function onCreateAppointment(form: CreateAppointmentForm) {
+  loading.value = true;
   try {
-    const absences = await getAbsences();
-    calendarOptions.value.events = absences.map((absence) => mapDoctorAbsenceToCalendarEvent(absence as Absence));
+    await createAppointment({
+      patientId: form.patient,
+      medicalConcernId: form.medicalConcern,
+      start: form.start,
+      startHour: form.startHour,
+      careTrackingId: form.careTracking,
+      notes: form.notes,
+      answers: form.answers,
+    });
+    showSuccess('Rendez-vous créé avec succès');
+    showCreateAppointment.value = false;
+    // TODO: rafraîchir les événements du calendrier si besoin
   } catch (error) {
-    if (error instanceof Error) {
-      showError('Erreur lors de la récupération des absences', error.message);
-    } else {
-      showError('Erreur inconnue lors de la récupération des absences');
-    }
+    handleError("Erreur lors de la création du rendez-vous", error)
   } finally {
     loading.value = false;
   }
 }
 
+async function onUpdateAppointment(form: UpdateAppointmentForm) {
+  loading.value = true
+  try {
+    if (!currentAppointment.value) {
+      showError('Aucun rendez-vous sélectionné pour la mise à jour')
+      return
+    }
+
+    await updateAppointment({
+      id: currentAppointment.value?.id,
+      patientId: form.patient,
+      medicalConcernId: form.medicalConcern,
+      start: form.start,
+      startHour: form.startHour,
+      careTrackingId: form.careTracking,
+      notes: form.notes,
+      answers: form.answers,
+    });
+    // await getAppointments()
+  } catch (error) {
+    handleError("Erreur lors de la mise à jour du rendez-vous", error)
+  } finally {
+    loading.value = false
+  }
+}
+
+async function onShowCancel() {
+  if (!currentAppointment.value) {
+    showError("Aucun rendez-vous sélectionné pour l'annulation");
+    return;
+  }
+
+  loading.value = true;
+  try {
+    const instance = showCancelAppointmentReasonModal();
+    const result = await instance.result as { reason: string };
+    const reason = result.reason.trim();
+    if (!reason) {
+      showError('Annulation échouée', "Veuillez fournir une raison pour l'annulation.");
+      return;
+    }
+
+    await cancelAppointment(currentAppointment.value.id, reason);
+    showSuccess('Rendez-vous annulé avec succès');
+    showAppointmentDetail.value = false;
+  } catch (error) {
+    handleError("Erreur lors de l'annulation du rendez-vous", error)
+  } finally {
+    loading.value = false;
+  }
+}
+
+function onShowUpdate(appointment: Appointment) {
+  currentAppointment.value = appointment
+  showUpdateAppointment.value = true
+}
 
 async function onDeleteAbsence(id: string) {
   loading.value = true;
@@ -172,15 +254,31 @@ async function onDeleteAbsence(id: string) {
     await fetchAbsences();
     showSuccess('Absence supprimée avec succès');
   } catch (error) {
-    if (error instanceof Error) {
-      showError("Erreur lors de la suppression de l'absence", error.message);
-    } else {
-      showError("Erreur inconnue lors de la suppression de l'absence");
-    }
+    handleError("Erreur lors de la suppression de l'absence", error)
   } finally {
     loading.value = false;
   }
 }
+
+async function getAppointments() {
+  try {
+    const appointments = await fetchAppointments();
+    calendarOptions.value.events = appointments.map((appointment) => mapAppointmentToCalendarEvent(appointment));
+  } catch (error) {
+    handleError("Erreur lors de la récupération des rendez-vous", error)
+  }
+}
+
+async function fetchAbsences() {
+  try {
+    const absences = await getAbsences();
+    //Todo add au fur et à mesure les absences au calendrier
+    // calendarOptions.value.events = absences.map((absence) => mapDoctorAbsenceToCalendarEvent(absence as Absence));
+  } catch (error) {
+    handleError("Erreur lors de la récupération des absences", error)
+  }
+}
+
 
 function onNext() {
   calendarRef.value?.getApi().next();
@@ -196,8 +294,11 @@ function onCancelContextMenu(open: boolean) {
   }
 }
 
-onMounted(() => {
-  fetchAbsences();
+onMounted(async () => {
+  loading.value = true;
+  await getAppointments()
+  await fetchAbsences();
+  loading.value = false;
 })
 
 </script>
@@ -230,6 +331,26 @@ onMounted(() => {
         :absence="currentAbsence"
         @on-submit="onSaveAbsence"
         @on-delete="onDeleteAbsence"
+    />
+    <SaveAppointmentModal
+        v-if="showCreateAppointment"
+        v-model:open="showCreateAppointment"
+        :hours="selectedHours"
+        @on-submit="onCreateAppointment"
+    />
+    <SaveAppointmentModal
+        v-if="currentAppointment && showUpdateAppointment"
+        v-model:open="showUpdateAppointment"
+        :appointment="currentAppointment"
+        @on-submit="onUpdateAppointment"
+    />
+    <AppointmentDetailSlideover
+        v-if="currentAppointment && showAppointmentDetail"
+        v-model:open="showAppointmentDetail"
+        :appointment="currentAppointment"
+        @on-close="showAppointmentDetail = false; currentAppointment = null"
+        @on-update="onShowUpdate($event)"
+        @on-cancel="onShowCancel()"
     />
   </div>
 </template>

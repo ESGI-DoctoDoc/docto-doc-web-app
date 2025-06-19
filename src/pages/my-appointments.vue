@@ -59,7 +59,7 @@ async function onUpdate(form: UpdateAppointmentForm) {
 async function getAppointments() {
   isLoading.value = true
   try {
-    myAppointments.value = await fetchAppointments()
+    myAppointments.value = await fetchAppointments({})
   } catch (error) {
     if (error instanceof Error) {
       showError('Erreur lors du chargement des rendez-vous', error.message)
@@ -75,7 +75,7 @@ async function getAppointmentsByFilter(filters: Record<string, string>) {
   isLoading.value = true
   try {
     console.log(`Fetching appointments with filters: "${filterDeeplinkToQuery(filters)}"`)
-    myAppointments.value = await fetchAppointments()
+    myAppointments.value = await fetchAppointments({})
   } catch (error) {
     if (error instanceof Error) {
       showError('Erreur lors du chargement des rendez-vous', error.message)

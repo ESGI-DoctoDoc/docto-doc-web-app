@@ -1,11 +1,11 @@
 import {z} from 'zod';
 
 export interface GetAppointmentsDto {
-    startDate: string;
+    startDate?: string;
 }
 
 export const getAppointmentsQuerySchema = z.object({
-    startDate: z.string(),
+    startDate: z.string().optional(),
 })
 export type GetAppointmentsQuery = z.infer<typeof getAppointmentsQuerySchema>;
 

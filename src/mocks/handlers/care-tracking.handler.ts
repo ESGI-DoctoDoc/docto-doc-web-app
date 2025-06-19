@@ -42,6 +42,7 @@ export const careTrackingMockHandlers = [
                 email: 'john.doe@example.com',
                 phone: '+33675704647',
             },
+            appointments: [],
             createdAt: new Date().toISOString(),
         }));
     }),

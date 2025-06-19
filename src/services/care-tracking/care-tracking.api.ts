@@ -1,7 +1,7 @@
 import {RequestBuilder} from '~/api/request-builder';
 import {
-    type CareTracking,
-    careTrackingSchema,
+    type GetCareTrackingByIdResponse,
+    getCareTrackingByIdResponseSchema,
     type GetCareTrackingsResponse,
     getCareTrackingsResponseSchema
 } from './dto/get-care-tracking.dto';
@@ -27,7 +27,7 @@ export const careTrackingApi = () => {
     function fetchCareTrackingById(id: string) {
         return new RequestBuilder(BASE_API_URL)
             .get(`/doctors/care-tracking/${id}`)
-            .withResponse<CareTracking>(careTrackingSchema)
+            .withResponse<GetCareTrackingByIdResponse>(getCareTrackingByIdResponseSchema)
             .execute();
     }
 

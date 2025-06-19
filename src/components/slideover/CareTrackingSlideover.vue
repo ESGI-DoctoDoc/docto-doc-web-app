@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type {CareTracking} from '~/types/care-tracking';
+import type {CareTracking, CareTrackingDetail} from '~/types/care-tracking';
 import {careTrackingApi} from "~/services/care-tracking/care-tracking.api";
 
 const isOpen = defineModel('open', {type: Boolean, required: true});
@@ -10,7 +10,7 @@ const {showError, handleError} = useNotify();
 const {fetchCareTrackingById} = careTrackingApi();
 
 const loading = ref(true);
-const careTrackingDetail = ref<CareTracking | null>(null);
+const careTrackingDetail = ref<CareTrackingDetail>();
 
 async function getCareTrackingDetails() {
   loading.value = true;

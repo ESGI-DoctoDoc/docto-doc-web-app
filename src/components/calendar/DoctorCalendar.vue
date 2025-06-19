@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
-import type {CalendarOptions, EventContentArg} from '@fullcalendar/core'
+import type {CalendarOptions, EventContentArg, EventInput} from '@fullcalendar/core'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -17,9 +17,10 @@ import type {
 import {doctorAbsenceApi} from "~/services/absences/doctorAbsenceApi";
 import {appointmentApi} from '~/services/appointments/appointment.api';
 import {useCalendar} from "~/composables/calendar/useCalendar";
-import type {Absence, dayOfWeek} from "~/types/absence";
+import type {Absence} from "~/types/absence";
 import type {Appointment} from '~/types/appointment';
 import type {ContextMenuItem} from "#ui/components/ContextMenu.vue";
+import dayjs from "dayjs";
 
 const props = defineProps({
   events: {
@@ -48,7 +49,7 @@ const showAppointmentDetail = ref(false);
 const showUpdateAppointment = ref(false);
 const currentAbsence = ref<Absence>();
 const currentAppointment = ref<Appointment | null>(null);
-const selectedHours = ref<[dayOfWeek, string, string]>(); // [date, startHour, endHour]
+const selectedHours = ref<[string, string, string]>(); // [date, startHour, endHour]
 const items = [
   {label: 'Créer une absence', onSelect: () => onActions('absence')},
   {label: 'Créer une ouverture exceptionnelle', onSelect: () => onActions('exceptional_opening')},
@@ -91,11 +92,11 @@ const calendarOptions = ref<CalendarOptions>({
       return `${hours}:${minutes}`;
     }
 
-    const dateStr = start.toLocaleDateString('en-US', {weekday: 'long'})
+    const dateStr = dayjs(start).format('YYYY-MM-DD')
     const startTime = formatTime(start);
     const endTime = formatTime(end);
 
-    selectedHours.value = [dateStr?.toLowerCase() as dayOfWeek, startTime, endTime]
+    selectedHours.value = [dateStr, startTime, endTime]
     setTimeout(() => {
       const highlight = document.querySelector('.fc-highlight');
       if (highlight) {
@@ -272,8 +273,7 @@ async function getAppointments() {
 async function fetchAbsences() {
   try {
     const absences = await getAbsences();
-    //Todo add au fur et à mesure les absences au calendrier
-    // calendarOptions.value.events = absences.map((absence) => mapDoctorAbsenceToCalendarEvent(absence as Absence));
+    absences.forEach((absence) => (calendarOptions.value.events as EventInput[]).push(mapDoctorAbsenceToCalendarEvent(absence as Absence)))
   } catch (error) {
     handleError("Erreur lors de la récupération des absences", error)
   }

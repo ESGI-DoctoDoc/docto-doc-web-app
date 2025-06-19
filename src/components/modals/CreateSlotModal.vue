@@ -4,6 +4,7 @@ import type {FormErrorEvent, FormSubmitEvent} from "@nuxt/ui";
 import DoctorMedicalConcernsSelect from "~/components/inputs/DoctorMedicalConcernsSelect.vue";
 import {type CreateSlotForm, createSlotSchema} from "~/components/inputs/validators/slot-form.validator";
 import dayjs from 'dayjs';
+import type {dayOfWeek} from "~/types/absence";
 
 const open = defineModel('open', {
   type: Boolean,
@@ -11,7 +12,7 @@ const open = defineModel('open', {
 })
 
 const props = defineProps<{
-  hours?: [string, string, string]; // [date, startHour, endHour]
+  hours?: [string, string, string]; // [string, startHour, endHour]
 }>();
 const emit = defineEmits<{
   (e: 'onSubmit', value: CreateSlotForm): void;
@@ -19,33 +20,45 @@ const emit = defineEmits<{
 
 const {showError} = useNotify()
 
-const form = ref<CreateSlotForm>({
-  startHour: props?.hours?.[1] ?? '',
-  endHour: props?.hours?.[2] ?? '',
-  recurrence: 'none',
-  day: props?.hours?.[0] ?? '',
-  dayNumber: 1,
-  start: dayjs().format('YYYY-MM-DD'),
-  end: '',
-  medicalConcerns: [],
-})
-
 const daysOfWeek = [
+  {label: 'Dimanche', value: 'sunday'},
   {label: 'Lundi', value: 'monday'},
   {label: 'Mardi', value: 'tuesday'},
   {label: 'Mercredi', value: 'wednesday'},
   {label: 'Jeudi', value: 'thursday'},
   {label: 'Vendredi', value: 'friday'},
   {label: 'Samedi', value: 'saturday'},
-  {label: 'Dimanche', value: 'sunday'}
 ]
-
 const recurrences = [
   {label: 'Aucune (exceptionnel)', value: 'none'},
   {label: 'Hebdomadaire', value: 'weekly'},
   {label: 'Mensuel', value: 'monthly'},
 ]
 
+const form = ref<CreateSlotForm>({
+  startHour: props?.hours?.[1] ?? '',
+  endHour: props?.hours?.[2] ?? '',
+  recurrence: 'none',
+  day: formatDateToWeekDay(),
+  dayNumber: 1,
+  start: formatDateToStart(),
+  end: '',
+  medicalConcerns: [],
+})
+
+function formatDateToWeekDay(): dayOfWeek {
+  if (props?.hours?.[0]) {
+    return daysOfWeek[dayjs(props?.hours?.[0]).day()].value as dayOfWeek;
+  }
+  return daysOfWeek[dayjs().day()].value as dayOfWeek;
+}
+
+function formatDateToStart(): string {
+  if (props?.hours?.[0]) {
+    return dayjs(props?.hours?.[0]).format('YYYY-MM-DD')
+  }
+  return dayjs().format('YYYY-MM-DD')
+}
 
 function onSubmit(form: FormSubmitEvent<CreateSlotForm>) {
   console.log("form is accepted", form.data);

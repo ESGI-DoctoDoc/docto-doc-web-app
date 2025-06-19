@@ -71,7 +71,7 @@ const calendarOptions = ref<CalendarOptions>({
       return `${hours}:${minutes}`;
     }
 
-    const dateStr = start.toLocaleDateString('en-US', {weekday: 'long'}); // format "Monday", "Tuesday", etc.
+    const dateStr = dayjs(start).format('YYYY-MM-DD')
     const startTime = formatTime(start);
     const endTime = formatTime(end);
 

@@ -6,7 +6,7 @@ import {
   type CreateDoctorAbsenceForm,
   createDoctorAbsenceSchema
 } from "~/components/inputs/validators/doctor-absence-form.validator";
-import type {Absence, dayOfWeek} from "~/types/absence";
+import type {Absence} from "~/types/absence";
 import InputAreaBase from "~/components/inputs/base/InputAreaBase.vue";
 
 const open = defineModel('open', {
@@ -15,7 +15,7 @@ const open = defineModel('open', {
 })
 
 const props = defineProps<{
-  hours?: [dayOfWeek, string, string]; // [date, startHour, endHour]
+  hours?: [string, string, string]; // [date, startHour, endHour]
   absence?: Absence
 }>()
 
@@ -30,33 +30,12 @@ const {showError} = useNotify()
 const allDay = ref(props?.absence?.date !== '' && props?.hours?.[0] === undefined);
 const form = ref<CreateDoctorAbsenceForm>({
   date: props?.absence?.date || '',
-  start: props?.absence?.start || convertDayToDate(props?.hours?.[0]) || dayjs().format('YYYY-MM-DD'),
-  end: props?.absence?.end || convertDayToDate(props?.hours?.[0]) || '',
+  start: props?.absence?.start || props?.hours?.[0] || dayjs().format('YYYY-MM-DD'),
+  end: props?.absence?.end || props?.hours?.[0] || '',
   startHour: props?.absence?.startHour || props?.hours?.[1] || '',
   endHour: props?.absence?.endHour || props?.hours?.[2] || '',
   description: props?.absence?.description || '',
 });
-
-// const repeatItems = [
-//   { label: 'Ne pas répéter', value: 'none' },
-//   { label: 'Chaque jour', value: 'daily' },
-//   { label: 'Chaque semaine', value: 'weekly' },
-//   { label: 'Chaque mois', value: 'monthly' },
-// ]
-
-function convertDayToDate(day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday' | undefined): string {
-  if (!day) return '';
-  const days = {
-    monday: 1,
-    tuesday: 2,
-    wednesday: 3,
-    thursday: 4,
-    friday: 5,
-    saturday: 6,
-    sunday: 0
-  }
-  return dayjs().day(days[day]).format('YYYY-MM-DD');
-}
 
 function onSubmit(form: FormSubmitEvent<CreateDoctorAbsenceForm>) {
   emit('on-submit', form.data);

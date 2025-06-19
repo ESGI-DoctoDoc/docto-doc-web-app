@@ -20,7 +20,8 @@ const open = defineModel('open', {
 })
 
 const props = defineProps<{
-  appointment?: Appointment
+  appointment?: Appointment;
+  hours?: [string, string, string]; // [date, startHour, endHour]
 }>()
 
 const emit = defineEmits<{
@@ -32,7 +33,7 @@ const {showError} = useNotify()
 const form = ref<CreateAppointmentForm & { hasToAnswerQuestions: boolean }>({
   patient: props?.appointment?.patient?.id ?? '',
   medicalConcern: props?.appointment?.medicalConcern?.id ?? '',
-  start: dayjs(props?.appointment?.start).format('YYYY-MM-DD') ?? '',
+  start: props?.hours?.[0] ?? dayjs(props?.appointment?.start).format('YYYY-MM-DD') ?? '',
   startHour: props?.appointment?.startHour ?? '',
   careTracking: props?.appointment?.careTracking?.id ?? '',
   answers: props?.appointment?.answers?.map(answer => ({

@@ -54,8 +54,8 @@ export const useCalendar = () => {
         if (absence.date) {
             return {
                 id: absence.id,
-                start: dayjs(absence.date).startOf('day').toISOString(),
-                end: dayjs(absence.date).endOf('day').toISOString(),
+                start: convertDateToIsoString(absence.start!, absence.startHour!),
+                end: convertDateToIsoString(absence.end!, absence.endHour!),
                 extraParams: {
                     title: 'Absence journée',
                     description: absence.description?.slice(0, 30),

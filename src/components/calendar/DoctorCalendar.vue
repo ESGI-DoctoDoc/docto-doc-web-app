@@ -41,6 +41,7 @@ const {createAppointment, cancelAppointment, updateAppointment, fetchAppointment
 const {mapDoctorAbsenceToCalendarEvent, mapAppointmentToCalendarEvent, mapCalendarEventToDoctorAbsence} = useCalendar()
 const calendarRef = useTemplateRef('calendarRef');
 
+const currentStartDate = ref(dayjs().startOf('week').format('YYYY-MM-DD'));
 const loading = ref(false);
 const showCreateAbsence = ref(false);
 const showUpdateAbsence = ref(false);
@@ -59,6 +60,7 @@ const items = [
 const calendarOptions = ref<CalendarOptions>({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
   initialView: 'timeGridWeek',
+  initialDate: dayjs().startOf('week').format('YYYY-MM-DD'),
   locale: frLocale,
   headerToolbar: false,
   selectable: true,
@@ -261,18 +263,20 @@ async function onDeleteAbsence(id: string) {
   }
 }
 
-async function getAppointments() {
+async function getAppointments(start?: string) {
   try {
-    const appointments = await fetchAppointments();
+    const date = start ?? dayjs().startOf('week').format('YYYY-MM-DD');
+    const appointments = await fetchAppointments({startDate: date});
     calendarOptions.value.events = appointments.map((appointment) => mapAppointmentToCalendarEvent(appointment));
   } catch (error) {
     handleError("Erreur lors de la récupération des rendez-vous", error)
   }
 }
 
-async function fetchAbsences() {
+async function fetchAbsences(start?: string) {
   try {
-    const absences = await getAbsences();
+    const date = start ?? dayjs().startOf('week').format('YYYY-MM-DD');
+    const absences = await getAbsences({startDate: date});
     absences.forEach((absence) => (calendarOptions.value.events as EventInput[]).push(mapDoctorAbsenceToCalendarEvent(absence as Absence)))
   } catch (error) {
     handleError("Erreur lors de la récupération des absences", error)
@@ -280,12 +284,24 @@ async function fetchAbsences() {
 }
 
 
-function onNext() {
+async function onNext() {
   calendarRef.value?.getApi().next();
+  currentStartDate.value = dayjs(currentStartDate.value)
+      .add(1, 'week')
+      .startOf('week')
+      .format('YYYY-MM-DD');
+  await getAppointments(currentStartDate.value)
+  await fetchAbsences(currentStartDate.value);
 }
 
-function onPrev() {
+async function onPrev() {
   calendarRef.value?.getApi().prev();
+  currentStartDate.value = dayjs(currentStartDate.value)
+      .subtract(1, 'week')
+      .startOf('week')
+      .format('YYYY-MM-DD');
+  await getAppointments(currentStartDate.value)
+  await fetchAbsences(currentStartDate.value);
 }
 
 function onCancelContextMenu(open: boolean) {

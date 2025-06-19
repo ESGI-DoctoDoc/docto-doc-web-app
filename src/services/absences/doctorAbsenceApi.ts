@@ -7,6 +7,9 @@ import {
     createDoctorAbsenceRangeBodySchema,
 } from "~/services/absences/dto/save-absence.dto";
 import {
+    type GetDoctorAbsenceDto,
+    type GetDoctorAbsencesQuery,
+    getDoctorAbsencesQuerySchema,
     type GetDoctorAbsencesResponse,
     getDoctorAbsencesResponseSchema
 } from "~/services/absences/dto/get-absences.dto";
@@ -42,11 +45,16 @@ export const doctorAbsenceApi = () => {
             });
     }
 
-    function getAbsences() {
+    function getAbsences(requestDto: GetDoctorAbsenceDto) {
         return new RequestBuilder(BASE_API_URL)
             .get('/doctors/absences')
+            .withQuery<GetDoctorAbsencesQuery>(getDoctorAbsencesQuerySchema)
             .withResponse<GetDoctorAbsencesResponse>(getDoctorAbsencesResponseSchema)
-            .execute();
+            .execute({
+                query: {
+                    startDate: requestDto.startDate,
+                }
+            });
     }
 
     return {

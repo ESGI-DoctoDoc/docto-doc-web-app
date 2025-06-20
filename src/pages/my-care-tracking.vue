@@ -75,6 +75,7 @@ async function onCreateCareTracking(form: CreateCareTrackingForm) {
   try {
     await createCareTracking({
       name: form.name,
+      description: form.description,
       patientId: form.patient,
     });
     showSuccess('Suivi créé');
@@ -93,6 +94,7 @@ async function onUpdateCareTracking(form: UpdateCareTrackingForm) {
     if (currentCareTracking.value) {
       await updateCareTracking({
         id: currentCareTracking.value.id,
+        description: form.description,
         name: form.name,
       });
       showSuccess('Suivi mis à jour');
@@ -138,6 +140,7 @@ onMounted(() => {
     <SaveCareTrackingModal
         v-if="currentCareTracking && openUpdateModal"
         v-model:open="openUpdateModal"
+        :care-tracking="currentCareTracking"
         @on-submit="onUpdateCareTracking"
         @on-close="openCreateModal = false; openUpdateModal = false; currentCareTracking = null"
     />

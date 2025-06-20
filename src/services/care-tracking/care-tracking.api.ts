@@ -38,6 +38,7 @@ export const careTrackingApi = () => {
             .execute({
                 body: {
                     name: requestDto.name,
+                    description: requestDto.description,
                     patient: requestDto.patientId,
                 }
             });
@@ -50,6 +51,7 @@ export const careTrackingApi = () => {
             .execute({
                 body: {
                     name: requestDto.name,
+                    description: requestDto.description,
                 }
             });
     }

@@ -6,6 +6,7 @@ import {
   createCareTrackingSchema
 } from "~/components/inputs/validators/care-tracking-form.validator";
 import type {FormErrorEvent, FormSubmitEvent} from "@nuxt/ui";
+import InputAreaBase from "~/components/inputs/base/InputAreaBase.vue";
 
 const open = defineModel('open', {
   type: Boolean,
@@ -22,6 +23,7 @@ const {showError} = useNotify();
 
 const form = ref<CreateCareTrackingForm>({
   name: props?.careTracking?.name ?? '',
+  description: props?.careTracking?.description ?? '',
   patient: props?.careTracking?.patient?.id ?? ''
 });
 
@@ -55,8 +57,11 @@ function onError(event: FormErrorEvent) {
           @error="onError"
           @submit.prevent="onSubmit"
       >
-        <UFormField class="w-full" label="Nom du suivi" required>
+        <UFormField class="w-full" label="Nom du suivi" name="name" required>
           <UInput v-model="form.name" class="w-full" placeholder="Nom du suivi de dossier" required/>
+        </UFormField>
+        <UFormField class="w-full" label="Description du suivi" name="description">
+          <InputAreaBase v-model="form.description" class="w-full" placeholder="Description du suivi de dossier"/>
         </UFormField>
         <PatientsSelect v-if="!careTracking" v-model:patient="form.patient"/>
       </UForm>

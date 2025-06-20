@@ -1,5 +1,11 @@
 import {z} from 'zod';
 
+export const getCareTrackingsQuerySchema = z.object({
+    page: z.number().optional(),
+    size: z.number().optional(),
+})
+export type GetCareTrackingsQuery = z.infer<typeof getCareTrackingsQuerySchema>;
+
 export const careTrackingPatientSchema = z.object({
     id: z.string(),
     firstName: z.string(),

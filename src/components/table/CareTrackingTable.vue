@@ -9,7 +9,9 @@ const props = defineProps<{
   loading: boolean
 }>()
 
-const emits = defineEmits(['onUpdate', 'onRemove', 'onCreate', 'onDetail'])
+const emits = defineEmits(['onUpdate', 'onRemove', 'onCreate', 'onDetail', 'onLoadMore'])
+const tableBodyRef = ref<HTMLElement | null>(null)
+const isLoadingMore = ref(false)
 
 const search = ref('')
 const table = ref('table')
@@ -63,6 +65,19 @@ function onSelect(row: TableRow<CareTracking>) {
   emits('onDetail', careTracking);
 }
 
+function onTableScroll() {
+  const el = tableBodyRef.value
+  if (!el) return
+  const scrollBottom = el.scrollTop + el.clientHeight
+  const isAtBottom = scrollBottom >= el.scrollHeight - 10
+  if (isAtBottom && !isLoadingMore.value) {
+    isLoadingMore.value = true
+    emits('onLoadMore', () => {
+      isLoadingMore.value = false
+    })
+  }
+}
+
 </script>
 
 <template>
@@ -75,28 +90,36 @@ function onSelect(row: TableRow<CareTracking>) {
         @button-click="onAddClick"
     />
 
-    <UTable
-        ref="table"
-        :columns="columns"
-        :data="data"
-        sticky
-        style="height: calc(100vh - 8vh - 60px - 55px);"
-        @select="onSelect"
+    <div
+        ref="tableBodyRef"
+        style="overflow-y: auto; height: calc(100vh - 8vh - 60px - 55px);"
+        @scroll="onTableScroll"
     >
-      <template #expanded="{ row }">
-        <pre>{{ row.original }}</pre>
-      </template>
-      <template #actions-cell="{ row }">
-        <UDropdownMenu :items="getCareTrackingOptions(row.original)" :popper="{ placement: 'bottom-end' }">
-          <UButton
-              aria-label="Actions"
-              color="neutral"
-              icon="i-lucide-ellipsis-vertical"
-              variant="ghost"
-          />
-        </UDropdownMenu>
-      </template>
-    </UTable>
+      <UTable
+          ref="table"
+          :columns="columns"
+          :data="data"
+          sticky
+          @select="onSelect"
+      >
+        <template #expanded="{ row }">
+          <pre>{{ row.original }}</pre>
+        </template>
+        <template #actions-cell="{ row }">
+          <UDropdownMenu :items="getCareTrackingOptions(row.original)" :popper="{ placement: 'bottom-end' }">
+            <UButton
+                aria-label="Actions"
+                color="neutral"
+                icon="i-lucide-ellipsis-vertical"
+                variant="ghost"
+            />
+          </UDropdownMenu>
+        </template>
+      </UTable>
+    </div>
+    <div class="flex justify-end px-4 py-3.5 text-sm text-muted">
+      Nombre d'éléments : {{ data.length }}
+    </div>
   </div>
 </template>
 

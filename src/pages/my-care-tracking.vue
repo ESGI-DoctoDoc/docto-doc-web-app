@@ -9,6 +9,7 @@ import type {
   CreateCareTrackingForm,
   UpdateCareTrackingForm
 } from "~/components/inputs/validators/care-tracking-form.validator";
+import {usePagination} from "~/composables/usePagination";
 
 definePageMeta({
   title: 'Suivi de dossier',
@@ -31,15 +32,32 @@ const {
   updateCareTracking,
   removeCareTracking
 } = careTrackingApi();
+const {resetPagination, nextPage} = usePagination()
 
 async function getCareTrackings() {
   isLoading.value = true;
   try {
-    myCareTrackings.value = await fetchCareTracking();
+    myCareTrackings.value = await fetchCareTracking({
+      page: 0,
+      size: 10,
+    });
   } catch (error) {
     handleError('Erreur lors du chargement des suivis de dossier', error);
   } finally {
     isLoading.value = false;
+  }
+}
+
+async function onLoadMore(stopLoading: () => void) {
+  isLoading.value = true
+  try {
+    const moreCareTracking = await nextPage(fetchCareTracking)
+    myCareTrackings.value.push(...moreCareTracking);
+    stopLoading();
+  } catch (error) {
+    handleError('Erreur lors du chargement des patients supplémentaires', error)
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -78,7 +96,7 @@ async function onCreateCareTracking(form: CreateCareTrackingForm) {
       description: form.description,
       patientId: form.patient,
     });
-    showSuccess('Suivi créé');
+    showSuccess('Suivi de dossier créé');
     openCreateModal.value = false;
     await getCareTrackings();
   } catch (error) {
@@ -114,6 +132,7 @@ function onEnd() {
 }
 
 onMounted(() => {
+  resetPagination();
   getCareTrackings();
 });
 </script>
@@ -127,6 +146,7 @@ onMounted(() => {
         @on-update="onShowUpdate"
         @on-remove="onRemove"
         @on-create="onShowCreate"
+        @on-load-more="onLoadMore"
     />
 
     <!-- Create   -->

@@ -2,6 +2,8 @@ import {RequestBuilder} from '~/api/request-builder';
 import {
     type GetCareTrackingByIdResponse,
     getCareTrackingByIdResponseSchema,
+    type GetCareTrackingsQuery,
+    getCareTrackingsQuerySchema,
     type GetCareTrackingsResponse,
     getCareTrackingsResponseSchema
 } from './dto/get-care-tracking.dto';
@@ -13,15 +15,22 @@ import {
     updateCareTrackingBodySchema,
     type UpdateCareTrackingDto
 } from './dto/create-care-tracking.dto';
+import type {AppPagination} from "~/api/app-pagination.type";
 
 export const careTrackingApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
 
-    function fetchCareTracking() {
+    function fetchCareTracking(requestDto: AppPagination<unknown>) {
         return new RequestBuilder(BASE_API_URL)
             .get('/doctors/care-tracking')
+            .withQuery<GetCareTrackingsQuery>(getCareTrackingsQuerySchema)
             .withResponse<GetCareTrackingsResponse>(getCareTrackingsResponseSchema)
-            .execute();
+            .execute({
+                query: {
+                    page: requestDto.page,
+                    size: requestDto.size
+                }
+            });
     }
 
     function fetchCareTrackingById(id: string) {

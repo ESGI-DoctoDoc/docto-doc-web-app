@@ -12,10 +12,27 @@ const props = defineProps<{
   loading: boolean
 }>()
 
-const emits = defineEmits(['onDetail', 'onUpdate', 'onCreate', 'onRemove'])
+const emits = defineEmits(['onDetail', 'onUpdate', 'onCreate', 'onRemove', 'onLoadMore'])
 
 const {getUser} = useSession()
+const tableBodyRef = ref<HTMLElement | null>(null)
 
+const isLoadingMore = ref(false)
+
+function onTableScroll() {
+  const el = tableBodyRef.value
+  if (!el) return
+
+  const scrollBottom = el.scrollTop + el.clientHeight
+  const isAtBottom = scrollBottom >= el.scrollHeight - 10
+
+  if (isAtBottom && !isLoadingMore.value) {
+    isLoadingMore.value = true
+    emits('onLoadMore', () => {
+      isLoadingMore.value = false
+    })
+  }
+}
 
 const permissions = ref({
   canCreate: false,
@@ -127,28 +144,33 @@ function getPatientOptions(row: Patient): DropdownMenuItem[] {
         @button-click="onAddClick"
     />
 
-    <UTable
-        ref="table"
-        :columns="columns"
-        :data="data"
-        sticky
-        style="height: calc(100vh - 8vh - 60px - 55px);"
-        @select="onSelect"
+    <div
+        ref="tableBodyRef"
+        style="overflow-y: auto; height: calc(100vh - 8vh - 60px - 55px);"
+        @scroll="onTableScroll"
     >
-      <template #expanded="{ row }">
-        <pre>{{ row.original }}</pre>
-      </template>
-      <template #actions-cell="{ row }">
-        <UDropdownMenu :items="getPatientOptions(row.original)">
-          <UButton
-              aria-label="Actions"
-              color="neutral"
-              icon="i-lucide-ellipsis-vertical"
-              variant="ghost"
-          />
-        </UDropdownMenu>
-      </template>
-    </UTable>
+      <UTable
+          ref="table"
+          :columns="columns"
+          :data="data"
+          sticky
+          @select="onSelect"
+      >
+        <template #expanded="{ row }">
+          <pre>{{ row.original }}</pre>
+        </template>
+        <template #actions-cell="{ row }">
+          <UDropdownMenu :items="getPatientOptions(row.original)">
+            <UButton
+                aria-label="Actions"
+                color="neutral"
+                icon="i-lucide-ellipsis-vertical"
+                variant="ghost"
+            />
+          </UDropdownMenu>
+        </template>
+      </UTable>
+    </div>
 
     <div class="flex justify-end px-4 py-3.5 text-sm text-muted">
       Nombre d'éléments : {{ data.length }}

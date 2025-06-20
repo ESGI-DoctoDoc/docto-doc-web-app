@@ -3,18 +3,27 @@ import type {Patient, PatientDetails} from '~/types/patient'
 import {
     type GetPatientByIdResponse,
     getPatientByIdResponseSchema,
+    getPatientsQuerySchema,
+    type GetPatientsQuerySchema,
     type GetPatientsResponse,
     getPatientsResponseSchema
 } from "~/services/patients/dto/get-patients.dto";
+import type {AppPagination} from "~/api/app-pagination.type";
 
 export const patientsApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
 
-    function fetchPatients() {
+    function fetchPatients(requestDto: AppPagination<unknown>) {
         return new RequestBuilder(BASE_API_URL)
             .get('/doctors/patients')
+            .withQuery<GetPatientsQuerySchema>(getPatientsQuerySchema)
             .withResponse<GetPatientsResponse>(getPatientsResponseSchema)
-            .execute() as Promise<Patient[]>
+            .execute({
+                query: {
+                    page: requestDto.page,
+                    size: requestDto.size
+                }
+            }) as Promise<Patient[]>
     }
 
     function fetchPatientById(id: string) {

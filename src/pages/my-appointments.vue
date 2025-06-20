@@ -7,6 +7,7 @@ import AppointmentDetailSlideover from "~/components/slideover/AppointmentDetail
 import type {UpdateAppointmentForm} from "~/components/inputs/validators/appointment-form.validator";
 import SaveAppointmentModal from "~/components/modals/SaveAppointmentModal.vue";
 import {useModals} from "~/composables/useModal";
+import {usePagination} from "~/composables/usePagination";
 
 definePageMeta({
   title: 'Mes rendez-vous',
@@ -16,9 +17,10 @@ definePageMeta({
 })
 
 const {retrieveDeeplinkId, retrieveDeeplinkFilter, filterDeeplinkToQuery, resetDeeplink} = useDeeplink()
-const {showError, showSuccess} = useNotify()
+const {showError, showSuccess, handleError} = useNotify()
 const {fetchAppointments, updateAppointment, cancelAppointment} = appointmentApi()
 const {showCancelAppointmentReasonModal} = useModals()
+const {nextPage, resetPagination} = usePagination()
 
 const isLoading = ref(true)
 const myAppointments = ref<Appointment[]>([])
@@ -59,7 +61,10 @@ async function onUpdate(form: UpdateAppointmentForm) {
 async function getAppointments() {
   isLoading.value = true
   try {
-    myAppointments.value = await fetchAppointments({})
+    myAppointments.value = await fetchAppointments({
+      page: 0,
+      size: 10,
+    })
   } catch (error) {
     if (error instanceof Error) {
       showError('Erreur lors du chargement des rendez-vous', error.message)
@@ -134,7 +139,21 @@ function onClose() {
   resetDeeplink();
 }
 
+async function onLoadMore(stopLoading: () => void) {
+  isLoading.value = true
+  try {
+    const moreAppointments = await nextPage(fetchAppointments)
+    myAppointments.value.push(...moreAppointments)
+    stopLoading();
+  } catch (error) {
+    handleError('Erreur lors du chargement des rendez-vous supplémentaires', error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
 onMounted(() => {
+  resetPagination();
   const appointmentId = retrieveDeeplinkId()
   if (appointmentId) {
     onShowDetail({id: appointmentId} as Appointment)
@@ -151,12 +170,14 @@ onMounted(() => {
 
 <template>
   <div class="fit">
+    <UProgress v-if="isLoading" class="absolute top-0 left-0 right-0 z-50"/>
     <AppointmentsTable
         v-model:loading="isLoading"
         :data="myAppointments"
         @on-detail="onShowDetail"
         @on-update="onShowUpdate"
         @on-cancel="onShowCancel"
+        @on-load-more="onLoadMore"
     />
 
     <SaveAppointmentModal

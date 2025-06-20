@@ -1,10 +1,11 @@
 import {z} from 'zod';
+import {appPaginationSchema} from "~/api/app-pagination.schema";
 
 export interface GetAppointmentsDto {
     startDate?: string;
 }
 
-export const getAppointmentsQuerySchema = z.object({
+export const getAppointmentsQuerySchema = appPaginationSchema.extend({
     startDate: z.string().optional(),
 })
 export type GetAppointmentsQuery = z.infer<typeof getAppointmentsQuerySchema>;

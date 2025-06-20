@@ -21,6 +21,7 @@ import {
     type CancelAppointmentBody,
     cancelAppointmentBodySchema
 } from "~/services/appointments/dto/update-appontment.dto";
+import type {AppPagination} from "~/api/app-pagination.type";
 
 export const appointmentApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
@@ -65,7 +66,7 @@ export const appointmentApi = () => {
             })
     }
 
-    function fetchAppointments(requestDto: GetAppointmentsDto) {
+    function fetchAppointments(requestDto: AppPagination<GetAppointmentsDto>) {
         return new RequestBuilder(BASE_API_URL)
             .get('/doctors/appointments')
             .withQuery<GetAppointmentsQuery>(getAppointmentsQuerySchema)
@@ -73,6 +74,8 @@ export const appointmentApi = () => {
             .execute({
                 query: {
                     startDate: requestDto.startDate,
+                    page: requestDto.page,
+                    size: requestDto.size,
                 }
             })
     }

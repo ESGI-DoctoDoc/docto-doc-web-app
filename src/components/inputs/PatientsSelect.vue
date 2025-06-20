@@ -19,7 +19,10 @@ const patientLocal = ref<{ label: string, value: string, email: string }>();
 async function patientsToList() {
   loading.value = true;
   try {
-    const patients = await fetchPatients();
+    const patients = await fetchPatients({
+      page: 0,
+      size: 100,
+    });
     patientsItems.value = patients.map(patient => ({
       label: `${patient.firstname} ${patient.lastname}`,
       email: patient.email || '',

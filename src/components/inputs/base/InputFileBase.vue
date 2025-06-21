@@ -19,6 +19,10 @@ const isHovering = ref(false)
 const urls = ref<string[]>([])
 
 async function processFile(file: File) {
+  if (urls.value.length >= (props.max ?? 2)) {
+    alert(`Nombre maximal de fichiers atteint (${props.max})`);
+    return;
+  }
   // Example: process file and emit base64 preview
   const reader = new FileReader()
   reader.onload = (e) => {
@@ -45,13 +49,18 @@ async function uploadFile(file: File): Promise<string> {
 function handleClick() {
   const input = document.createElement('input');
   input.type = 'file';
+  input.multiple = props.multiple;
   input.onchange = (event: Event) => {
-    const files = (event.target as HTMLInputElement).files
-    //todo gérer le nombre max de fichiers
+    const files = (event.target as HTMLInputElement).files;
     if (files && files.length > 0) {
-      const maxFiles = props.multiple ? (props.max ?? 2) - urls.value.length : 1
-      for (const file of Array.from(files).slice(0, maxFiles)) {
-        processFile(file)
+      const remaining = (props.max ?? 2) - urls.value.length;
+      if (remaining <= 0) {
+        alert(`Nombre maximal de fichiers atteint (${props.max})`);
+        return;
+      }
+      const selectedFiles = Array.from(files).slice(0, remaining);
+      for (const file of selectedFiles) {
+        processFile(file);
       }
     }
   };
@@ -59,13 +68,18 @@ function handleClick() {
 }
 
 function handleDrop(event: DragEvent) {
-  isHovering.value = false
-  event.preventDefault()
-  const files = event.dataTransfer?.files
+  isHovering.value = false;
+  event.preventDefault();
+  const files = event.dataTransfer?.files;
   if (files && files.length > 0) {
-    const maxFiles = props.multiple ? (props.max ?? 2) - urls.value.length : 1
-    for (const file of Array.from(files).slice(0, maxFiles)) {
-      processFile(file)
+    const remaining = (props.max ?? 2) - urls.value.length;
+    if (remaining <= 0) {
+      alert(`Nombre maximal de fichiers atteint (${props.max})`);
+      return;
+    }
+    const droppedFiles = Array.from(files).slice(0, remaining);
+    for (const file of droppedFiles) {
+      processFile(file);
     }
   }
 }

@@ -33,7 +33,7 @@ watch(
         <PictureInput v-model="avatar" class="w-20 h-20"/>
       </div>
       <div class="w-5/6">
-        <InputFileBase v-model:urls="files" class="h-full" max:="1"/>
+        <InputFileBase v-model:urls="files" :max="1" class="h-full"/>
       </div>
     </div>
   </UFormField>

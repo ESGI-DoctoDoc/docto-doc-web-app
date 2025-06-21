@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 
+import {careTrackingApi} from "~/services/care-tracking/care-tracking.api";
+
 const careTracking = defineModel('careTracking', {
   type: String as PropType<string>,
   required: false,
@@ -9,8 +11,8 @@ withDefaults(defineProps<{ required?: boolean }>(), {
   required: false,
 })
 
-// const {fetchPatients} = careTrackingApi();
 const {showError} = useNotify();
+const {fetchCareTracking} = careTrackingApi()
 
 const loading = ref(true);
 
@@ -19,7 +21,14 @@ const careTrackingItems = ref<{ label: string, value: string }[]>([]);
 async function careTrackingToList() {
   loading.value = true;
   try {
-    // const patients = await fetchPatients();
+    const careTracking = await fetchCareTracking({
+      page: 0,
+      size: 1000,
+    });
+    careTrackingItems.value = careTracking.map(item => ({
+      label: item.name,
+      value: item.id,
+    }));
   } catch (e) {
     if (e instanceof Error) {
       showError('Erreur lors du chargement des suivis de dossier', e.message);

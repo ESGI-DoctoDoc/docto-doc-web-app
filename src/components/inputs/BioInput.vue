@@ -11,7 +11,9 @@ const modelValue = defineModel('modelValue', {
 </script>
 
 <template>
-  <InputAreaBase v-model="modelValue" :rows="3" placeholder="Votre bio."/>
+  <UFormField :required="false" label="Bio" name="bio">
+    <InputAreaBase v-model="modelValue" :rows="3" placeholder="Votre bio."/>
+  </UFormField>
 </template>
 
 <style scoped>

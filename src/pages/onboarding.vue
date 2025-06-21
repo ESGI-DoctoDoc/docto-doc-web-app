@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 
-import {type OnboardingForm, onboardingSchema} from "~/components/inputs/validators/user-form.validator";
+import {type OnboardingForm1, onboardingSchema1} from "~/components/inputs/validators/user-form.validator";
 import AuthLayout from "~/layouts/AuthLayout.vue";
-import type {FormSubmitEvent} from "@nuxt/ui";
+import type {FormErrorEvent, FormSubmitEvent} from "@nuxt/ui";
 import {useSession} from "~/composables/auth/useSession";
 import AvatarFileInput from "~/components/inputs/AvatarFileInput.vue";
 import FirstNameInput from "~/components/inputs/FirstNameInput.vue";
@@ -23,9 +23,9 @@ const {showSuccess, showError} = useNotify()
 const {process, isLoading} = useOnboardingApi()
 
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
-const form = reactive<Partial<OnboardingForm>>({
-  rpps: '123456789011',
-  speciality: 'Cardiology',
+const form = reactive<OnboardingForm1>({
+  rpps: '10000668540',
+  speciality: '',
   experienceYears: 0,
   gender: 'FEMALE',
   acceptPublicCoverage: false,
@@ -34,8 +34,8 @@ const form = reactive<Partial<OnboardingForm>>({
   birthDate: '',
   bio: '',
   profilePictureUrl: '',
-  languages: ['', ''],
-  doctorDocuments: ['', '']
+  languages: [],
+  doctorDocuments: []
 })
 
 const currentStep = ref(0)
@@ -139,6 +139,11 @@ async function onSubmit(event: FormSubmitEvent<OnboardingForm>) {
   }, 2000)
 }
 
+function onError(event: FormErrorEvent) {
+  console.log(event);
+  showError('Erreur de validation', 'Veuillez corriger les erreurs dans le formulaire.');
+}
+
 function validateAccount() {
   console.log("Account validated");
   isAccepted.value = true;
@@ -149,7 +154,7 @@ function validateAccount() {
 
 <template>
   <AuthLayout>
-    <div class="flex flex-col gap-2" style="width: 50vw; height: 68vh">
+    <div class="flex flex-col gap-2 max-w-3xl min-w-xs" style="height: 68vh">
       <div
           class="flex flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden h-full"
           style="min-width: 600px">
@@ -160,74 +165,68 @@ function validateAccount() {
               <h1 class="text-2xl font-bold">{{ steps[currentStep].formTitle }}</h1>
               <p class="pt-4 pb-8">{{ steps[currentStep].formSubtitle }}</p>
             </div>
-            <div class="">
-              <UForm :schema="onboardingSchema" :state="form" @submit.prevent="onSubmit">
-                <!-- Step 1           -->
-                <div v-if="currentStep === 0" class="w-full text-center" style="">
-                  <div class="space-y-4">
-                    <AvatarFileInput/>
-                    <div class="flex flex-row gap-6">
-                      <FirstNameInput v-model="form.firstName" class="w-1/2"/>
-                      <LastNameInput v-model="form.lastName" class="w-1/2"/>
-                    </div>
-                    <BirthDateInput v-model="form.birthDate"/>
-                    <URadioGroup
-                        v-model="form.gender"
-                        :items="[{label: 'Femme', value: 'FEMALE'}, {label: 'Homme', value: 'MALE'}]"
-                        orientation="horizontal"
-                    />
-                    <BioInput v-model="form.bio" class="mb-4"/>
+            <UForm id="form" :schema="onboardingSchema1" :state="form" @error="onError" @submit.prevent="onSubmit">
+              <!-- Step 1           -->
+              <div v-if="currentStep === 0" class="w-full text-center" style="">
+                <div class="space-y-4">
+                  <AvatarFileInput/>
+                  <div class="flex flex-row gap-4">
+                    <FirstNameInput v-model="form.firstName" class="w-1/2"/>
+                    <LastNameInput v-model="form.lastName" class="w-1/2"/>
                   </div>
+                  <BirthDateInput v-model="form.birthDate"/>
+                  <URadioGroup
+                      v-model="form.gender"
+                      :items="[{label: 'Femme', value: 'FEMALE'}, {label: 'Homme', value: 'MALE'}]"
+                      orientation="horizontal"
+                  />
                 </div>
+              </div>
 
-                <!-- Step 2           -->
-                <div v-if="currentStep === 1" class="w-full text-center" style="">
-                  <div class="space-y-4">
-                    <DoctorSpecialitySelect v-model="form.speciality"/>
-                    <YearExperienceInput v-model="form.experienceYears"/>
-                    <LanguageSelect v-model="form.languages"/>
-                  </div>
+              <!-- Step 2           -->
+              <div v-if="currentStep === 1" class="w-full text-center" style="">
+                <div class="space-y-4">
+                  <DoctorSpecialitySelect v-model:speciality="form.speciality"/>
+                  <YearExperienceInput v-model="form.experienceYears"/>
+                  <LanguageSelect v-model:language="form.languages"/>
+                  <BioInput v-model="form.bio" class="mb-4"/>
                 </div>
+              </div>
 
-                <!-- Step 3           -->
-                <div v-if="currentStep === 2" class="w-full text-center" style="">
-                  <div class="space-y-4">
-                    <RPPSInput v-model="form.rpps"/>
-                    <IdentityCardInput v-model="form.doctorDocuments"/>
-                    <UButton :loading="isLoading" block class="px-6" color="primary" type="submit"
-                             @click="goToDashboard()">
-                      {{ translate('onboarding.finalSubmit') }}
-                    </UButton>
-                  </div>
+              <!-- Step 3           -->
+              <div v-if="currentStep === 2" class="w-full text-center" style="">
+                <div class="space-y-4">
+                  <RPPSInput v-model="form.rpps"/>
+                  <IdentityCardInput v-model="form.doctorDocuments"/>
                 </div>
+              </div>
 
-                <!-- Step 4           -->
-                <div v-if="currentStep === 3 && isOnWaiting">
-                  <div class="space-y-4 text-gray-700 text-sm leading-6 text-left px-2">
-                    <p>{{ translate('onboarding.step4.paragraph1') }}</p>
-                    <p>{{ translate('onboarding.step4.paragraph2') }}</p>
-                    <p v-html="translate('onboarding.step4.paragraph3')"></p>
-                  </div>
-                  <UButton v-if="isAccepted" :loading="isLoading" block class="mt-6 px-6" color="primary" @click="validateAccount">
-                    {{ translate('onboarding.step4.buttonNext') }}
-                  </UButton>
-                  <UButton v-else block class="mt-6 px-6" color="primary" disabled loading>
-                    {{ translate('onboarding.step4.buttonPending') }}
-                  </UButton>
+              <!-- Step 4           -->
+              <div v-if="currentStep === 3 && isOnWaiting">
+                <div class="space-y-4 text-gray-700 text-sm leading-6 text-left px-2">
+                  <p>{{ translate('onboarding.step4.paragraph1') }}</p>
+                  <p>{{ translate('onboarding.step4.paragraph2') }}</p>
+                  <p v-html="translate('onboarding.step4.paragraph3')"></p>
                 </div>
+                <UButton v-if="isAccepted" :loading="isLoading" block class="mt-6 px-6" color="primary">
+                  {{ translate('onboarding.step4.buttonNext') }}
+                </UButton>
+                <UButton v-else block class="mt-6 px-6" color="primary" disabled loading>
+                  {{ translate('onboarding.step4.buttonPending') }}
+                </UButton>
+              </div>
 
-                <!-- Step 5           -->
-                <div v-if="currentStep === 4 && isAccepted">
-                  <div class="space-y-4 text-gray-700 text-sm leading-6 text-left px-2">
-                    <p>{{ translate('onboarding.step5.paragraph1') }}</p>
-                    <p>{{ translate('onboarding.step5.paragraph2') }}</p>
-                  </div>
-                  <UButton :loading="isLoading" block class="mt-6 px-6" color="primary" @click="redirectToStripeCheckout">
-                    {{ translate('onboarding.step5.button') }}
-                  </UButton>
+              <!-- Step 5           -->
+              <div v-if="currentStep === 4 && isAccepted">
+                <div class="space-y-4 text-gray-700 text-sm leading-6 text-left px-2">
+                  <p>{{ translate('onboarding.step5.paragraph1') }}</p>
+                  <p>{{ translate('onboarding.step5.paragraph2') }}</p>
                 </div>
-              </UForm>
-            </div>
+                <UButton :loading="isLoading" block class="mt-6 px-6" color="primary">
+                  {{ translate('onboarding.step5.button') }}
+                </UButton>
+              </div>
+            </UForm>
           </div>
         </div>
 
@@ -249,6 +248,9 @@ function validateAccount() {
               <div class="text-gray-600 text-sm" style="max-width: 180px">{{ step.shortDescription }}</div>
             </div>
           </div>
+          <UButton :loading="isLoading" block class="px-6 mt-2" color="primary" form="form" type="submit">
+            {{ translate('onboarding.finalSubmit') }}
+          </UButton>
         </div>
       </div>
       <p class="text-center text-xs mt-2 font-medium">

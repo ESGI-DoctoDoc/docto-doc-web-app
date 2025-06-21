@@ -35,11 +35,7 @@ export const nameSchema = z
 
 const genderEnumSchema = z.enum(["MALE", "FEMALE"]);
 
-export const bioSchema = z
-    .string()
-    .trim()
-    .min(1, "form.bio.required")
-    .max(200, "form.bio.invalid")
+export const bioSchema = z.string()
 
 export const avatarSchema = z
     .string()
@@ -52,11 +48,7 @@ export const rppsSchema = z
     .min(1, "form.rpps.required")
     .regex(/^[0-9]{11}$/, "form.rpps.invalid");
 
-export const specialitySchema = z
-    .string()
-    .trim()
-    .min(1, "form.speciality.required")
-    .regex(/^[a-zA-ZÀ-ÿ '-]+$/, "form.speciality.invalid");
+export const specialitySchema = z.string().min(1, "form.speciality.required")
 
 export const medicalConcernsSchema = z
     .string()
@@ -76,7 +68,7 @@ export const birthDateSchema = z
 
 export const languagesSchema = z
     .array(z.string())
-    .nonempty("form.languages.required");
+    .min(1, "form.languages.required")
 
 export const doctorDocumentsSchema = z
     .array(z.string().url())
@@ -120,19 +112,21 @@ export const profileSchema = z.object({
 })
 export type ProfileForm = z.infer<typeof profileSchema>;
 
-export const onboardingSchema = z.object({
-    rpps: rppsSchema,
-    speciality: specialitySchema,
-    gender: genderEnumSchema,
-    experienceYears: experienceYearsSchema,
-    acceptPublicCoverage: acceptPublicCoverageSchema,
+export const onboardingSchema1 = z.object({
+    profilePictureUrl: avatarSchema,
     firstName: nameSchema,
     lastName: nameSchema,
-    bio: bioSchema,
     birthDate: birthDateSchema,
-    profilePictureUrl: avatarSchema,
+    gender: genderEnumSchema,
+    speciality: specialitySchema,
+    experienceYears: experienceYearsSchema,
+    bio: bioSchema.optional(),
     languages: languagesSchema,
+    rpps: rppsSchema,
+    acceptPublicCoverage: acceptPublicCoverageSchema,
     doctorDocuments: doctorDocumentsSchema
 })
+export const onboardingSchema2 = z.object({})
 
-export type OnboardingForm = z.infer<typeof onboardingSchema>;
+export type OnboardingForm1 = z.infer<typeof onboardingSchema1>;
+export type OnboardingForm2 = z.infer<typeof onboardingSchema2>;

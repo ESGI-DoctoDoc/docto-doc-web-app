@@ -16,14 +16,14 @@ export const specialityApi = () => {
 
     async function getSpecialities() {
         return new RequestBuilder(BASE_API_URL)
-            .get('/specialities')
+            .get('/doctors/specialities')
             .withResponse<GetSpecialitiesResponse>(getSpecialitiesResponseSchema)
             .execute()
     }
 
     async function createSpeciality(request: CreateSpecialityDto) {
         return new RequestBuilder(BASE_API_URL)
-            .post('/specialities')
+            .post('/doctors/specialities')
             .withBody<CreateSpecialityBody>(createSpecialityBodySchema)
             .withResponse<CreateSpecialityResponse>(createSpecialityResponseSchema)
             .execute({

@@ -1,27 +1,34 @@
 <script lang="ts" setup>
-import {ref} from 'vue';
 
-import InputSelectMultipleBase from "~/components/inputs/base/InputSelectMultipleBase.vue";
+const language = defineModel('language', {
+  type: Array as PropType<string[]>,
+  default: 'Français',
+});
 
 const languages = [
   {id: 'french', name: 'Français'},
-  {id: 'english', name: 'English'},
-  {id: 'spanish', name: 'Español'},
-  {id: 'german', name: 'Deutsch'},
+  {id: 'english', name: 'Englais'},
+  {id: 'spanish', name: 'Espagnol'},
+  {id: 'german', name: 'Allemand'},
 ];
 
-const selectedLanguage = ref(languages[0].id);
+const items = languages.map(s => ({
+  label: s.name,
+  value: s.id,
+}));
+
 </script>
 
 <template>
-  <UFormField label="Langue(s) parlée(s)" required>
-    <InputSelectMultipleBase
-        v-model="selectedLanguage"
-        :items="languages.map(s => ({
-          label: s.name,
-          value: s.id,
-        }))"
+  <UFormField class="w-full" label="Langue(s) parlée(s)" name="languages" required>
+    <USelect
+        v-model="language"
+        :items="items"
+        class="w-full"
         placeholder="Sélectionnez une ou plusieurs langues"
+        color="primary"
+        multiple
+        variant="outline"
     />
   </UFormField>
 </template>

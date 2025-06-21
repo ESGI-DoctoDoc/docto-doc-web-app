@@ -12,7 +12,8 @@ defineProps<{
 </script>
 
 <template>
-    <UAvatar :src="modelValue" size="3xl" />
+  <UAvatar v-if="modelValue" :src="modelValue" size="3xl"/>
+  <UAvatar v-else size="3xl"/>
 </template>
 
 <style scoped>

@@ -107,7 +107,7 @@ function redirectToStripeCheckout() {
   currentStep.value = 7;
 }
 
-async function onSubmit(event: FormSubmitEvent<OnboardingForm>) {
+async function onSubmit(event: FormSubmitEvent<OnboardingForm1>) {
   try {
     await process({
       rpps: event.data.rpps,
@@ -168,8 +168,8 @@ function validateAccount() {
             <UForm id="form" :schema="onboardingSchema1" :state="form" @error="onError" @submit.prevent="onSubmit">
               <!-- Step 1           -->
               <div v-if="currentStep === 0" class="w-full text-center" style="">
-                <div class="space-y-4">
-                  <AvatarFileInput/>
+                <div class="flex flex-col justify-start space-y-4">
+                  <AvatarFileInput v-model:avatar="form.profilePictureUrl" name="profilePictureUrl"/>
                   <div class="flex flex-row gap-4">
                     <FirstNameInput v-model="form.firstName" class="w-1/2"/>
                     <LastNameInput v-model="form.lastName" class="w-1/2"/>

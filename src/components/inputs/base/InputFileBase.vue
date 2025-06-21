@@ -2,13 +2,16 @@
 import {defineEmits, defineProps, ref} from 'vue'
 
 interface InputFileProps {
-  modelValue?: string | null
   maxHeightPreview?: number
   preview?: boolean
   multiple?: boolean
   max?: number
 }
 
+const modelValue = defineModel('urls', {
+  type: Array as PropType<string[]>,
+  required: true,
+})
 const props = defineProps<InputFileProps>()
 const emit = defineEmits(['update:modelValue', 'uploaded'])
 
@@ -27,7 +30,9 @@ async function processFile(file: File) {
   // Example: upload file and emit URL
   const url = await uploadFile(file);
   console.log('File uploaded:', url)
+  console.log(modelValue.value)
   urls.value.push(url);
+  modelValue.value.push(url);
 }
 
 async function uploadFile(file: File): Promise<string> {
@@ -67,9 +72,7 @@ function handleDrop(event: DragEvent) {
 
 function removeFile(index: number) {
   urls.value.splice(index, 1)
-  if (urls.value.length === 0) {
-    emit('update:modelValue', null)
-  }
+  modelValue.value.splice(index, 1)
 }
 </script>
 

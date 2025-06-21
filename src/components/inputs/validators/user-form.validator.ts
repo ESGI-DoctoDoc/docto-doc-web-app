@@ -35,12 +35,12 @@ export const nameSchema = z
 
 const genderEnumSchema = z.enum(["MALE", "FEMALE"]);
 
-export const bioSchema = z.string()
+export const bioSchema = z.string().min(1, "form.bio.required").max(255, "form.bio.invalid");
 
 export const avatarSchema = z
     .string()
     .trim()
-    .url();
+    .url('form.avatar.invalid');
 
 export const rppsSchema = z
     .string()
@@ -71,8 +71,8 @@ export const languagesSchema = z
     .min(1, "form.languages.required")
 
 export const doctorDocumentsSchema = z
-    .array(z.string().url())
-    .nonempty("form.doctor-documents.required");
+    .array(z.string())
+    .min(1, "form.doctor-documents.required")
 
 /* forms */
 export const loginSchema = z.object({
@@ -120,7 +120,7 @@ export const onboardingSchema1 = z.object({
     gender: genderEnumSchema,
     speciality: specialitySchema,
     experienceYears: experienceYearsSchema,
-    bio: bioSchema.optional(),
+    bio: bioSchema,
     languages: languagesSchema,
     rpps: rppsSchema,
     acceptPublicCoverage: acceptPublicCoverageSchema,

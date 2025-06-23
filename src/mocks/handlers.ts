@@ -5,6 +5,7 @@ import {careTrackingMockHandlers} from "~/mocks/handlers/care-tracking.handler";
 import {patientsMockHandlers} from "~/mocks/handlers/patients.handler";
 // import {appointmentsMockHandlers} from "~/mocks/handlers/appointments.handler";
 // import {slotsMockHandlers} from "~/mocks/handlers/slots.handler";
+import {subscriptionMockHandlers} from "~/mocks/handlers/subscription.handler";
 
 export const handlers = [
     ...authMockHandlers,
@@ -14,4 +15,5 @@ export const handlers = [
     // ...absencesMockHandlers,
     ...patientsMockHandlers,
     // ...appointmentsMockHandlers,
+    ...subscriptionMockHandlers
 ]

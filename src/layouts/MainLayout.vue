@@ -2,9 +2,13 @@
 import {useRoute} from 'vue-router'
 import {useSession} from "~/composables/auth/useSession";
 import SidebarMenu from '~/components/SidebarMenu.vue'
+import {subscriptionApi} from "~/services/subscriptions/subscription.api";
 
 const route = useRoute()
+const router = useRouter()
+const {handleError, showSuccess} = useNotify()
 const {logoutUser, getUser, hasLicenseActive} = useSession()
+const {checkoutLicense, checkoutLicenseConfirmation} = subscriptionApi();
 
 const image = new URL('@/assets/images/logo.png', import.meta.url).href
 const userRole = getUser()?.user?.role || 'doctor'
@@ -23,30 +27,108 @@ const showLicensePayment = computed(() => {
 })
 
 const bannerVisible = ref(showLicensePayment.value)
+const confirmingPayment = ref(false)
+const confirmingPaymentError = ref(false)
 
 function setDismissBanner() {
   const localStorageKey = 'dismissLicenseBanner'
   const dismissUntil = new Date()
-  dismissUntil.setDate(dismissUntil.getDate() + 7) // Dismiss for 7 days
+  dismissUntil.setDate(dismissUntil.getDate() + 7)
   localStorage.setItem(localStorageKey, dismissUntil.toISOString())
-  bannerVisible.value = false // Cacher la bannière immédiatement
+  bannerVisible.value = false
 }
 
+async function redirectToCheckout() {
+  if (hasLicenseActive.value) {
+    return
+  }
+
+  try {
+    const response = await checkoutLicense();
+    if (response.redirectUrl) {
+      window.location.href = response.redirectUrl;
+    }
+  } catch (error) {
+    handleError("Une erreur est survenue lors de la redirection vers le paiement.", error)
+  }
+}
+
+async function verifyPayment(paymentId: string) {
+  try {
+    await checkoutLicenseConfirmation(paymentId)
+    setTimeout(() => {
+      confirmingPayment.value = false
+      localStorage.removeItem('dismissLicenseBanner')
+      bannerVisible.value = false
+      router.replace({
+        query: {},
+      })
+      showSuccess('Votre licence a été activée avec succès !')
+    }, 700)
+  } catch (error) {
+    handleError("Une erreur est survenue lors de la confirmation du paiement.", error)
+    confirmingPayment.value = false
+    confirmingPaymentError.value = true
+  }
+}
+
+onMounted(() => {
+  const paymentId = route.query['session_id']
+  if (typeof paymentId === 'string') {
+    const isSuccess = route.query['success'] === 'true'
+    if (!isSuccess) {
+      confirmingPaymentError.value = true
+      setTimeout(() => {
+        confirmingPaymentError.value = false
+        router.replace({
+          query: {},
+        })
+      }, 5000)
+      return
+    }
+    confirmingPayment.value = true
+    verifyPayment(paymentId)
+  }
+})
 </script>
 
 <template>
   <div class="layout relative">
 
-    <div v-if="bannerVisible"
-         class="w-screen bg-yellow-200 text-yellow-800 flex items-center justify-between px-6 py-2 z-10 border-b border-b-gray-400 fixed top-0 left-0">
+    <div
+        v-if="bannerVisible && !confirmingPayment && !confirmingPaymentError"
+        class="top-banner w-screen bg-yellow-200 text-yellow-800 flex items-center justify-between px-6 py-2 z-10 border-b border-b-gray-400 fixed top-0 left-0"
+    >
       <p class="text-sm font-medium">
         Vous n'avez pas de licence active.
-        <a class="underline text-yellow-900 hover:text-yellow-700 ml-1" href="/payment-portal">Cliquez ici pour
-          l'obtenir.</a>
+        <a
+            class="underline text-yellow-900 hover:text-yellow-700 ml-1"
+            @click="redirectToCheckout"
+        >
+          Cliquez ici pour l'obtenir.
+        </a>
       </p>
       <UButton class="text-yellow-700" icon="i-heroicons-x-mark" variant="ghost" @click="setDismissBanner()"/>
     </div>
 
+    <div
+        v-if="confirmingPayment"
+        class="top-banner w-screen bg-blue-100 text-blue-800 flex items-center justify-between px-6 py-2 z-10 border-b border-b-gray-400 fixed top-0 left-0"
+    >
+      <p class="text-sm font-medium flex items-center gap-2">
+        <UIcon class="animate-spin" name="i-heroicons-arrow-path"/>
+        Confirmation de votre paiement en cours... Votre licence est en cours d’activation.
+      </p>
+    </div>
+    <div
+        v-if="confirmingPaymentError"
+        class="top-banner w-screen bg-red-100 text-red-800 flex items-center justify-between px-6 py-2 z-10 border-b border-b-gray-400 fixed top-0 left-0"
+    >
+      <p class="text-sm font-medium flex items-center gap-2">
+        <UIcon name="i-heroicons-x-mark"/>
+        Vous avez annulé le paiement ou une erreur est survenue. Veuillez réessayer.
+      </p>
+    </div>
 
     <!-- Ligne du haut : Logo + NavBar -->
     <div class="top-row">

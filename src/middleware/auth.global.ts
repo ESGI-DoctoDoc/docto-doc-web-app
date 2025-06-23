@@ -1,12 +1,15 @@
 import {useSession} from '~/composables/auth/useSession'
+import {useAuthApi} from "~/services/auth/auth.api";
+import type {UserAuth} from "~/types/auth";
 
-export default defineNuxtRouteMiddleware((to) => {
+export default defineNuxtRouteMiddleware(async (to) => {
     const {
-        isAuthenticated,
-        hasOtpValidated,
-        hasCompletedOnboarding,
-        getUser,
+        getToken,
+        hasDoubleAuth,
+        setUserFromAuth,
+        logoutUser,
     } = useSession()
+    const {getDoctorMe} = useAuthApi()
 
     const publicPages = [
         '/auth/login',
@@ -17,37 +20,83 @@ export default defineNuxtRouteMiddleware((to) => {
 
     const otpPage = '/otp'
     const onboardingPage = '/onboarding'
+    const loginPage = '/auth/login'
 
     const isPublicPage = publicPages.includes(to.fullPath)
     const isOtpPage = to.fullPath === otpPage
     const isOnboardingPage = to.fullPath === onboardingPage
 
-    // 1. Pas connecté
-    if (!isAuthenticated.value) {
-        if (!isPublicPage) return navigateTo('/auth/login')
+    // check if the user has a token
+    if (!getToken()) {
+        if (!isPublicPage) {
+            return navigateTo(loginPage)
+        }
         return
     }
 
-    // 2. Connecté, OTP non validé
-    if (!hasOtpValidated.value) {
-        if (!isOtpPage) return navigateTo(otpPage)
+    // check if the user has double auth
+    if (!hasDoubleAuth.value) {
+        if (!isOtpPage) {
+            return navigateTo(otpPage)
+        }
         return
     }
 
-    // 3. OTP validé, onboarding non complété
-    if (!hasCompletedOnboarding.value) {
-        if (!isOnboardingPage) return navigateTo(onboardingPage)
-        return
+    // now we can fetch the user data
+    try {
+        const currentUser = await getDoctorMe() as UserAuth;
+
+        // set the user data
+        setUserFromAuth(currentUser);
+
+        // check if the user is admin
+        if (currentUser.user.role === 'admin') {
+            if (isPublicPage) return navigateTo('/')
+            return
+        }
+
+        // check if the user has verified their email
+        if (!currentUser.user?.isEmailVerified) {
+            logoutUser();
+            return
+        }
+
+        // check if the user has set up double authentication
+        if (!currentUser.user?.isDoubleAuthActive) {
+            if (!isOtpPage) {
+                return navigateTo(otpPage)
+            }
+            return
+        }
+
+        //doctor check
+        if (currentUser?.doctor) {
+            // check if the doctor has completed onboarding
+            if (!currentUser.doctor?.isOnboardingCompleted) {
+                if (!isOnboardingPage) {
+                    return navigateTo(onboardingPage)
+                }
+                return
+            }
+
+            //check if the user is verified by the admin
+            if (!currentUser.doctor?.isVerified) {
+                if (!isOnboardingPage) {
+                    return navigateTo(onboardingPage)
+                }
+                return
+            }
+        }
+
+        // check if the user can go to the private pages
+        if (to.fullPath.startsWith('/admin')) {
+            return navigateTo('/')
+        }
+
+        // doctor can now access the app
+    } catch (error) {
+        // assume the user is not authenticated
+        console.error(error)
+        logoutUser();
     }
-
-    // 4. Utilisateur connecté mais sur une page publique → redirection vers l'accueil
-    if (isPublicPage) return navigateTo('/')
-
-    // 5. Accès admin restreint
-    const user = getUser();
-    if (to.fullPath.startsWith('/admin') && user?.role !== 'admin') {
-        return navigateTo('/')
-    }
-
-    // ✅ Accès autorisé
 })

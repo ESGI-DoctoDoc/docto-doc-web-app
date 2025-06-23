@@ -11,7 +11,7 @@ import {useSession} from "~/composables/auth/useSession";
 const {showSuccess, showError} = useNotify()
 const {translate} = useTranslate()
 const {login, isLoading} = useAuthApi()
-const {setToken, setUser} = useSession()
+const {setToken, setUser, setDoubleAuth} = useSession()
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
 
 const form = reactive<Partial<LoginForm>>({
@@ -27,6 +27,7 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
     })
 
     setToken(data.token);
+    setDoubleAuth(false)
     navigateTo('/')
 
     showSuccess(

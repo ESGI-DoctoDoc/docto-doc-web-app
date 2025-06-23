@@ -4,10 +4,10 @@ import {useSession} from "~/composables/auth/useSession";
 const {getUser, logoutUser} = useSession()
 
 onMounted(() => {
-  const user = getUser();
-  if (user?.role === 'admin') {
+  const userAuth = getUser();
+  if (userAuth?.user?.role === 'admin') {
     navigateTo('/admin/dashboard')
-  } else if (user?.role === 'doctor') {
+  } else if (userAuth?.user?.role === 'doctor') {
     navigateTo('/my-calendar')
   } else {
     logoutUser();

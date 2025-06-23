@@ -4,38 +4,73 @@ import {useSession} from "~/composables/auth/useSession";
 import SidebarMenu from '~/components/SidebarMenu.vue'
 
 const route = useRoute()
-const {logoutUser, getUser} = useSession()
+const {logoutUser, getUser, hasLicenseActive} = useSession()
 
 const image = new URL('@/assets/images/logo.png', import.meta.url).href
-const userRole = getUser()?.role || 'doctor'
+const userRole = getUser()?.user?.role || 'doctor'
 
 const pageTitle = computed(() => {
   return route.meta.title || route.name?.toString().replace('-', ' ') || 'Page'
 })
 
+const showLicensePayment = computed(() => {
+  const localStorageKey = 'dismissLicenseBanner'
+  const dismissBannerUntil = localStorage.getItem(localStorageKey) as string | null
+  if (!dismissBannerUntil) {
+    return true;
+  }
+  return !hasLicenseActive.value && new Date(dismissBannerUntil) < new Date();
+})
+
+const bannerVisible = ref(showLicensePayment.value)
+
+function setDismissBanner() {
+  const localStorageKey = 'dismissLicenseBanner'
+  const dismissUntil = new Date()
+  dismissUntil.setDate(dismissUntil.getDate() + 7) // Dismiss for 7 days
+  localStorage.setItem(localStorageKey, dismissUntil.toISOString())
+  bannerVisible.value = false // Cacher la bannière immédiatement
+}
+
 </script>
 
 <template>
-  <div class="layout">
+  <div class="layout relative">
+
+    <div v-if="bannerVisible"
+         class="w-screen bg-yellow-200 text-yellow-800 flex items-center justify-between px-6 py-2 z-10 border-b border-b-gray-400 fixed top-0 left-0">
+      <p class="text-sm font-medium">
+        Vous n'avez pas de licence active.
+        <a class="underline text-yellow-900 hover:text-yellow-700 ml-1" href="/payment-portal">Cliquez ici pour
+          l'obtenir.</a>
+      </p>
+      <UButton class="text-yellow-700" icon="i-heroicons-x-mark" variant="ghost" @click="setDismissBanner()"/>
+    </div>
+
+
     <!-- Ligne du haut : Logo + NavBar -->
     <div class="top-row">
       <div class="logo-container">
-        <img :src="image" alt="Logo" class="h-full object-contain"/>
+        <img :src="image" alt="Logo" class="h-full object-contain">
       </div>
       <header class="navbar">
         <h1 class="text-2xl font-bold mt-2 ml-2">{{ pageTitle }}</h1>
         <div class="flex space-x-4 justify-center items-center">
-          <UButton class="flex p-2.5 justify-center items-center rounded-xl text-black text-xl border-1 border-gray-200"
-                   icon="i-heroicons-bell"
-                   style="background: #F1F5F9"/>
+          <UButton
+              class="flex p-2.5 justify-center items-center rounded-xl text-black text-xl border-1 border-gray-200"
+              icon="i-heroicons-bell"
+              style="background: #F1F5F9"
+          />
           <UDropdownMenu
               :items="[
               { label: 'Paramètres', icon: 'i-heroicons-cog-6-tooth', to: '/settings' },
               { label: 'Se déconnecter', icon: 'i-heroicons-arrow-right-on-rectangle', onSelect: () => logoutUser(), }
             ]"
           >
-            <div class="flex space-x-2 items-center py-1 pl-3 pr-1 rounded-lg border-1 border-gray-200"
-                 style="background: #F1F5F9;">
+            <div
+                class="flex space-x-2 items-center py-1 pl-3 pr-1 rounded-lg border-1 border-gray-200"
+                style="background: #F1F5F9;"
+            >
               <UAvatar
                   alt="User Avatar"
                   size="md"

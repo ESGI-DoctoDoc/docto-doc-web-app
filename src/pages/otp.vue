@@ -11,7 +11,7 @@ import AppDivider from "~/components/AppDivider.vue";
 const {showSuccess, showError} = useNotify()
 const {translate} = useTranslate()
 const {verifyOtp, isLoading} = useAuthApi()
-const {logoutUser, setUser} = useSession()
+const {logoutUser, setDoubleAuth} = useSession()
 const {setToken} = useSession()
 
 const form = reactive<Partial<OtpVerificationForm>>({
@@ -24,17 +24,8 @@ async function onSubmit(event: FormSubmitEvent<OtpVerificationForm>) {
       doubleAuthCode: event.data.code.join(''),
     });
     setToken(data.token);
-    setUser({
-      userId: data.id,
-      email: data.email,
-      firstname: data.firstName,
-      lastname: data.lastName,
-      phone: data.phoneNumber,
-      hasOnBoardingDone: data.hasOnBoardingDone,
-      role: 'doctor',
-    });
+    setDoubleAuth(true)
     navigateTo('/')
-    console.log(data.hasOnBoardingDone)
 
     showSuccess(
         translate('auth.otp.success.title'),

@@ -15,9 +15,8 @@ import YearExperienceInput from "~/components/inputs/YearExperienceInput.vue";
 import RPPSInput from "~/components/inputs/RPPSInput.vue";
 import IdentityCardInput from "~/components/inputs/IdentityCardInput.vue";
 import {useOnboardingApi} from "~/services/onboarding/onboarding.api";
-import type {User} from "~/types/user";
 
-const {logoutUser, hasCompletedOnboarding, setUser} = useSession()
+const {logoutUser, getUser} = useSession()
 const {translate} = useTranslate()
 const {showSuccess, showError} = useNotify()
 const {process, isLoading} = useOnboardingApi()
@@ -41,7 +40,6 @@ const form = reactive<OnboardingForm1>({
 const currentStep = ref(0)
 const isOnWaiting = ref(false)
 const isAccepted = ref(false)
-const hasPaid = ref(false)
 
 const steps = [
   {
@@ -82,30 +80,15 @@ const steps = [
   }
 ]
 
-function goToDashboard() {
-  const user: User = {
-    userId: '00000000-0000-0000-0000-000000000001',
-    firstname: 'Doctor',
-    lastname: 'One',
-    email: 'doctor1@example.com',
-    phone: '+33100000001',
-    hasOnBoardingDone: true,
-    role: "doctor",
-  };
-  setUser(user)
-}
-
 onMounted(() => {
-  if (hasCompletedOnboarding.value) {
-    navigateTo('/')
+  const user = getUser();
+  if (user?.doctor?.isVerified) {
+    navigateTo('/');
+  } else if (user?.doctor?.isOnboardingCompleted) {
+    isOnWaiting.value = true;
+    currentStep.value = 3;
   }
 })
-
-function redirectToStripeCheckout() {
-  console.log("Redirecting to Stripe checkout...");
-  hasPaid.value = true;
-  currentStep.value = 7;
-}
 
 async function onSubmit(event: FormSubmitEvent<OnboardingForm1>) {
   try {
@@ -127,27 +110,17 @@ async function onSubmit(event: FormSubmitEvent<OnboardingForm1>) {
         translate('auth.login.success.title'),
         translate('auth.login.success.message')
     )
+    isOnWaiting.value = true;
+    currentStep.value = 3;
   } catch (e) {
     console.log(e)
     showError('Erreur', 'Onboarding échoué.')
   }
-  isOnWaiting.value = true;
-  currentStep.value = 3;
-
-  setTimeout(() => {
-    validateAccount();
-  }, 2000)
 }
 
 function onError(event: FormErrorEvent) {
   console.log(event);
   showError('Erreur de validation', 'Veuillez corriger les erreurs dans le formulaire.');
-}
-
-function validateAccount() {
-  console.log("Account validated");
-  isAccepted.value = true;
-  currentStep.value = 4;
 }
 
 </script>
@@ -197,7 +170,7 @@ function validateAccount() {
               <div v-if="currentStep === 2" class="w-full text-center" style="">
                 <div class="space-y-4">
                   <RPPSInput v-model="form.rpps"/>
-                  <IdentityCardInput v-model="form.doctorDocuments"/>
+                  <IdentityCardInput v-model:files="form.doctorDocuments"/>
                 </div>
               </div>
 

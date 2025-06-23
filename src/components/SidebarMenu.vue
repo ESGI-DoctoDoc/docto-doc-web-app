@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const props = defineProps<{
-  role: 'doctor' | 'admin'
+  role: 'doctor' | 'admin' | 'patient'
 }>()
 
 const route = useRoute()

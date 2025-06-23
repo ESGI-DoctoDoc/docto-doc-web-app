@@ -1,5 +1,5 @@
 export async function resolveRequestMock(data: unknown) {
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 250));
     return {
         success: true,
         data: data,

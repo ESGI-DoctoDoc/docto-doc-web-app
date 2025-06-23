@@ -14,10 +14,20 @@ import {
     type OtpResponse,
     otpResponseSchema
 } from "~/services/auth/dto/otp.dto";
+import {type GetDoctorMeResponse, getDoctorMeSchema} from "~/services/auth/dto/get-me.dto";
 
 export const useAuthApi = () => {
     const AUTH_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
     const isLoading = ref(false)
+
+    const getDoctorMe = async () => {
+        isLoading.value = true
+        return new RequestBuilder(AUTH_API_URL)
+            .get('/doctors/auth/me')
+            .withResponse<GetDoctorMeResponse>(getDoctorMeSchema)
+            .execute()
+            .finally(() => (isLoading.value = false))
+    }
 
     const login = async (loginDto: LoginDto) => {
         isLoading.value = true
@@ -68,5 +78,6 @@ export const useAuthApi = () => {
         login,
         register,
         verifyOtp,
+        getDoctorMe,
     }
 }

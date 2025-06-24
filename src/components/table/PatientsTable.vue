@@ -88,9 +88,9 @@ function onSelect(row: TableRow<Patient>) {
 onMounted(() => {
   const user = getUser()
   if (user) {
-    permissions.value.canCreate = user.role === 'admin';
-    permissions.value.canDelete = user.role === 'admin';
-    permissions.value.canUpdate = user.role === 'admin';
+    permissions.value.canCreate = user.user.role === 'admin';
+    permissions.value.canDelete = user.user.role === 'admin';
+    permissions.value.canUpdate = user.user.role === 'admin';
   }
 })
 

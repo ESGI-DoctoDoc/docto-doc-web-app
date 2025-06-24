@@ -57,8 +57,8 @@ async function fetchPatientDetails() {
 onMounted(() => {
   const user = getUser()
   if (user) {
-    permissions.value.canUpdate = user.role === 'admin';
-    permissions.value.canDelete = user.role === 'admin';
+    permissions.value.canUpdate = user.user.role === 'admin';
+    permissions.value.canDelete = user.user.role === 'admin';
   }
   fetchPatientDetails();
 });

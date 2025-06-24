@@ -56,8 +56,9 @@ const columns: TableColumn<Appointment>[] = [
     }
   },
   {
-    accessorKey: 'birthdate',
-    header: 'Date de naissance',
+    accessorKey: 'medicalConcern',
+    header: 'Motif de consultation',
+    cell: ({row}) => row.original?.medicalConcern?.name || 'Aucun motif spécifié',
   },
   {
     accessorKey: 'status',
@@ -77,7 +78,7 @@ function onSelect(row: TableRow<Appointment>) {
 onMounted(() => {
   const user = getUser()
   if (user) {
-    permissions.value.canDelete = user.role === 'admin';
+    permissions.value.canDelete = user.user.role === 'admin';
   }
 })
 

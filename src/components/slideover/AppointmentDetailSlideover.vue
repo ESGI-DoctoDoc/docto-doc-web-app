@@ -5,6 +5,7 @@ import type {Appointment} from "~/types/appointment";
 import {useSession} from "~/composables/auth/useSession";
 import {useClipboard} from "@vueuse/core";
 import {appointmentApi} from "~/services/appointments/appointment.api";
+import dayjs from "dayjs";
 
 const isOpen = defineModel('isOpen', {
   type: Boolean,
@@ -32,6 +33,10 @@ const permissions = ref({
 
 const isCancelled = computed(() => appointmentDetail.value?.status === 'cancelled-excused' || appointmentDetail.value?.status === 'cancelled-unexcused');
 const isEnded = computed(() => appointmentDetail.value?.status === 'completed');
+const formatStart = computed(() => {
+  const start = appointmentDetail.value?.start;
+  return dayjs(start).format('DD/MM/YYYY') + ' ' + appointmentDetail.value?.startHour;
+});
 
 async function fetchAppointmentDetails() {
   loading.value = true
@@ -57,7 +62,7 @@ async function fetchAppointmentDetails() {
 onMounted(() => {
   const user = getUser()
   if (user) {
-    permissions.value.canDelete = user.role === 'admin';
+    permissions.value.canDelete = user.user.role === 'admin';
   }
   fetchAppointmentDetails();
 });
@@ -119,12 +124,6 @@ function formatPhoneNumber(phone: string): string {
           </div>
         </div>
         <div class="flex justify-between space-y-1">
-          <div>Date de naissance</div>
-          <div class="cursor-pointer">
-            {{ appointmentDetail.patient.birthdate }}
-          </div>
-        </div>
-        <div class="flex justify-between space-y-1">
           <div>Email</div>
           <div class="cursor-pointer" @click="copyToClipboard(appointmentDetail.patient.email)">
             {{ appointmentDetail.patient.email }}
@@ -138,7 +137,11 @@ function formatPhoneNumber(phone: string): string {
         </div>
         <div class="flex justify-between space-y-1">
           <div>Début</div>
-          <div>{{ appointmentDetail.startHour }} - {{ appointmentDetail.start }}</div>
+          <div>{{ formatStart }}</div>
+        </div>
+        <div class="flex justify-between space-y-1">
+          <div>Motif de consultation</div>
+          <div>{{ appointmentDetail.medicalConcern.name }}</div>
         </div>
         <div class="flex justify-between space-y-1">
           <div>Statut</div>

@@ -8,9 +8,8 @@ import {
 
 export const subscriptionApi = () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
-    const successUrl = `${origin}/payment/success`;
-    const cancelUrl = `${origin}/payment/cancel`;
-    const defaultPriceId = "";
+    const successUrl = `${origin}/my-calendar`;
+    const cancelUrl = `${origin}/my-calendar`;
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
 
     function checkoutLicense() {
@@ -20,16 +19,15 @@ export const subscriptionApi = () => {
             .withResponse<CheckoutLicenseResponse>(checkoutLicenseResponseSchema)
             .execute({
                 body: {
-                    priceId: defaultPriceId,
                     cancelUrl: cancelUrl,
                     successUrl: successUrl,
                 }
             })
     }
 
-    function checkoutLicenseConfirmation(paymentId: string) {
+    function checkoutLicenseConfirmation(sessionId: string) {
         return new RequestBuilder(BASE_API_URL)
-            .post(`/doctors/subscriptions/${paymentId}/confirm`)
+            .post(`/doctors/subscriptions/${sessionId}/confirm`)
             .execute() as Promise<void>
     }
 

@@ -8,34 +8,32 @@ export const authMockHandlers = [
     }),
     http.get('http://localhost:8080/api/v1/doctors/auth/me', async () => {
         return HttpResponse.json(await resolveRequestMock({
-            // user: {
-            //     id: 'user-id',
-            //     email: 'c.lechene@myges.fr',
-            //     firstName: 'Cyril',
-            //     lastName: 'Lechene',
-            //     phoneNumber: '+33612345678',
-            //     isEmailVerified: true,
-            //     isDoubleAuthActive: true,
-            //     role: 'admin'
-            // },
-
-            /* doctor connexion */
             user: {
                 id: 'user-id',
                 email: 'c.lechene@myges.fr',
-                firstName: 'Cyril',
-                lastName: 'Lechene',
                 phoneNumber: '+33612345678',
                 isEmailVerified: true,
                 isDoubleAuthActive: true,
-                role: 'doctor'
+                role: 'admin'
             },
-            doctor: {
-                id: 'doctor-id',
-                isVerified: true,
-                isOnboardingCompleted: true,
-                isLicenseActivated: false,
-            }
+
+            /* doctor connexion */
+            // user: {
+            //     id: 'user-id',
+            //     email: 'c.lechene@myges.fr',
+            //     phoneNumber: '+33612345678',
+            //     isEmailVerified: true,
+            //     isDoubleAuthActive: true,
+            //     role: 'doctor'
+            // },
+            // doctor: {
+            //     id: 'doctor-id',
+            //     firstName: 'Cyril',
+            //     lastName: 'Lechene',
+            //     isVerified: true,
+            //     isOnboardingCompleted: true,
+            //     isLicenseActivated: false,
+            // }
         } satisfies GetDoctorMeResponse))
     })
 ]

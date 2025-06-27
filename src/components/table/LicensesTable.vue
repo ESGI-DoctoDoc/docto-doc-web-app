@@ -4,6 +4,7 @@ import {ref} from 'vue'
 import type {TableColumn} from "@nuxt/ui";
 import type {Subscription} from "~/types/subscription";
 import dayjs from "dayjs";
+import TableHeaderDefault from "~/components/table/TableHeaderDefault.vue";
 
 const props = defineProps<{
   data: Subscription[]
@@ -11,14 +12,27 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits(['onCheckout', 'onViewInvoice'])
+const search = ref('')
 
-const addButton = computed(() => {
-  const hasActive = props.data.some(sub => sub.status === 'active')
-  return hasActive ? '' : 'Ajouter une licence'
-})
+// const addButton = computed(() => {
+//   const hasActive = props.data.some(sub => sub.status === 'active')
+//   return hasActive ? '' : 'Ajouter une licence'
+// })
 
 const table = ref('table')
 const columns: TableColumn<Subscription>[] = [
+  {
+    header: 'ID',
+    accessorKey: 'id',
+  },
+  {
+    id: 'doctor',
+    header: 'Docteur',
+    accessorFn: (row) => row.doctor?.email,
+    cell: ({row}) => {
+      return row.original?.doctor?.email;
+    },
+  },
   {
     header: 'Nom',
     cell: () => 'Licence 1 an',
@@ -60,13 +74,11 @@ function getRowActions(subscription: Subscription) {
 
 <template>
   <div class="flex-1 divide-y divide-accented w-full">
-    <div v-if="addButton !== '' " class="flex justify-end p-2">
-      <UButton
-          :label="addButton"
-          color="primary"
-          @click="$emit('onCheckout')"
-      />
-    </div>
+    <TableHeaderDefault
+        v-model:search="search"
+        searchable
+        @update:search="table?.tableApi?.getColumn('doctor')?.setFilterValue(search)"
+    />
 
     <UTable
         ref="table"

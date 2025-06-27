@@ -2,10 +2,16 @@ import {http, HttpResponse} from "msw";
 import {resolveRequestMock} from "~/mocks/handlers/utils.mock";
 
 export const subscriptionMockHandlers = [
-    http.get('http://localhost:8080/api/v1/doctors/subscriptions', async () => {
+    http.get('http://localhost:8080/api/v1/doctors/subscriptions?page=0&size=10', async () => {
         return HttpResponse.json(await resolveRequestMock([
             {
                 id: 'cs_test_a1b2c3d4e5f6g7h8i9j1',
+                doctor: {
+                    id: 'doctor-id',
+                    firstName: 'Cyril',
+                    lastName: 'Lechene',
+                    email: 'c.lechen@myg.esfr',
+                },
                 start: '2023-02-01T00:00:00Z',
                 end: '2024-02-01T00:00:00Z',
                 amount: 200,
@@ -14,6 +20,12 @@ export const subscriptionMockHandlers = [
             },
             {
                 id: 'cs_test_a1b2c3d4e5f6g7h8i9j0',
+                doctor: {
+                    id: 'doctor-id',
+                    firstName: 'Cyril',
+                    lastName: 'Lechene',
+                    email: 'iah@qdq.fr',
+                },
                 start: '2022-01-01T00:00:00Z',
                 end: '2023-01-01T00:00:00Z',
                 amount: 100,

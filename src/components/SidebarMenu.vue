@@ -20,6 +20,7 @@ const allLinks = {
     {label: 'Docteurs', to: '/admin/doctors', icon: 'i-heroicons-user'},
     {label: 'Rendez-vous', to: '/admin/appointments', icon: 'i-heroicons-calendar-days'},
     {label: 'Spécialités', to: '/admin/specialities', icon: 'i-heroicons-clipboard-document-list'},
+    {label: 'Abonnements', to: '/admin/subscriptions', icon: 'i-heroicons-credit-card'},
   ]
 }
 

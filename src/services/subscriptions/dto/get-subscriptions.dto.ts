@@ -8,6 +8,12 @@ export type GetSubscriptionsQuery = z.infer<typeof getSubscriptionsQuerySchema>;
 
 export const getSubscriptionsResponseSchema = z.array(z.object({
     id: z.string(),
+    doctor: z.object({
+        id: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
+        email: z.string(),
+    }),
     start: z.string(),
     end: z.string(),
     amount: z.number().nonnegative(),

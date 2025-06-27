@@ -30,8 +30,16 @@ export interface AppointmentAnswer {
     answer: string
 }
 
+export interface AppointmentDoctor {
+    id: string
+    firstName: string
+    lastName: string
+    email: string
+}
+
 export interface Appointment {
     id: string
+    doctor: AppointmentDoctor
     patient: AppointmentPatient
     medicalConcern: AppointmentMedicalConcern
     careTracking?: AppointmentCareTracking | null

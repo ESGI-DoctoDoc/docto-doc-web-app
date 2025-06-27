@@ -13,6 +13,12 @@ export type GetAppointmentsQuery = z.infer<typeof getAppointmentsQuerySchema>;
 export const getAppointmentsSchema = z.array(
     z.object({
         id: z.string(),
+        doctor: z.object({
+            id: z.string(),
+            firstName: z.string(),
+            lastName: z.string(),
+            email: z.string(),
+        }),
         patient: z.object({
             id: z.string(),
             name: z.string(),
@@ -59,6 +65,12 @@ export type GetAppointmentsResponse = z.infer<typeof getAppointmentsSchema>;
 
 export const getAppointmentByIdResponseSchema = z.object({
     id: z.string(),
+    doctor: z.object({
+        id: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
+        email: z.string(),
+    }),
     patient: z.object({
         id: z.string(),
         name: z.string(),

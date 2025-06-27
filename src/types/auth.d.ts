@@ -1,8 +1,6 @@
 export interface UserAuth {
     user: {
         id: string;
-        firstName: string;
-        lastName: string;
         email: string;
         role: 'admin' | 'doctor' | 'patient';
         phoneNumber: string;
@@ -11,6 +9,8 @@ export interface UserAuth {
     },
     doctor?: {
         id: string;
+        firstName: string;
+        lastName: string;
         isVerified: boolean;
         isOnboardingCompleted: boolean;
         isLicenseActivated: boolean;

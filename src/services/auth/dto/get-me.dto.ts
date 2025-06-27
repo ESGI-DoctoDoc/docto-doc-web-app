@@ -10,10 +10,10 @@ export const getDoctorMeSchema = z.object({
         isDoubleAuthActive: z.boolean(),
     }),
     doctor: z.object({
-        id: z.string(),
+        id: z.string().nullable(),
         isVerified: z.boolean(),
-        firstName: z.string(),
-        lastName: z.string(),
+        firstName: z.string().nullable(),
+        lastName: z.string().nullable(),
         isOnboardingCompleted: z.boolean(),
         isLicenseActivated: z.boolean(),
     }).nullable().optional(),

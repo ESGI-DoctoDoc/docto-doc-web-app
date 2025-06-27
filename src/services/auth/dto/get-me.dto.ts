@@ -3,8 +3,6 @@ import {z} from "zod";
 export const getDoctorMeSchema = z.object({
     user: z.object({
         id: z.string(),
-        firstName: z.string(),
-        lastName: z.string(),
         email: z.string().email(),
         role: z.enum(['admin', 'doctor', 'patient']),
         phoneNumber: z.string(),
@@ -14,6 +12,8 @@ export const getDoctorMeSchema = z.object({
     doctor: z.object({
         id: z.string(),
         isVerified: z.boolean(),
+        firstName: z.string(),
+        lastName: z.string(),
         isOnboardingCompleted: z.boolean(),
         isLicenseActivated: z.boolean(),
     }).nullable().optional(),

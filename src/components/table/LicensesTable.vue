@@ -14,7 +14,7 @@ const emits = defineEmits(['onCheckout', 'onViewInvoice'])
 
 const addButton = computed(() => {
   const hasActive = props.data.some(sub => sub.status === 'active')
-  return hasActive ? '' : 'Prendre ma licence'
+  return hasActive ? '' : 'Ajouter une licence'
 })
 
 const table = ref('table')
@@ -60,9 +60,9 @@ function getRowActions(subscription: Subscription) {
 
 <template>
   <div class="flex-1 divide-y divide-accented w-full">
-    <div class="flex justify-end">
+    <div v-if="addButton !== '' " class="flex justify-end p-2">
       <UButton
-          v-if="addButton"
+          :label="addButton"
           color="primary"
           @click="$emit('onCheckout')"
       />

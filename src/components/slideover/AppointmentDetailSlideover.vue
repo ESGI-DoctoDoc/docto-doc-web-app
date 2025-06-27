@@ -42,16 +42,16 @@ async function fetchAppointmentDetails() {
   loading.value = true
   try {
     if (!props?.appointment?.id) {
-      showError('Aucun patient sélectionné', 'Veuillez sélectionner un patient pour afficher les détails.')
+      showError('Aucun rendez-vous sélectionné', 'Veuillez sélectionner un rendez-vous pour afficher les détails.')
       return;
     }
 
     appointmentDetail.value = await fetchAppointmentById(props!.appointment.id);
   } catch (error) {
     if (error instanceof Error) {
-      showError('Erreur lors de la récupération des détails du patient', error.message);
+      showError('Erreur lors de la récupération des détails du rendez-vous', error.message);
     } else {
-      showError('Une erreur est survenue lors de la récupération des détails du patient.');
+      showError('Une erreur est survenue lors de la récupération des détails du rendez-vous.');
     }
   } finally {
     loading.value = false;

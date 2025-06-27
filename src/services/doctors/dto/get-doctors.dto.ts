@@ -11,6 +11,7 @@ const doctorSchema = z.object({
     firstName: z.string(),
     lastName: z.string(),
     email: z.string(),
+    rpps: z.string().nullable().optional(),
     phone: z.string(),
     speciality: z.object({
         id: z.string(),

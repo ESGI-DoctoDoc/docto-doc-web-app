@@ -11,7 +11,7 @@ import {useSession} from "~/composables/auth/useSession";
 const {showSuccess, showError} = useNotify()
 const {translate} = useTranslate()
 const {login, isLoading} = useAuthApi()
-const {setToken, setUser, setDoubleAuth} = useSession()
+const {setToken, setDoubleAuth} = useSession()
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
 
 const form = reactive<Partial<LoginForm>>({
@@ -40,21 +40,6 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
   }
 }
 
-async function fastlogin(role: 'admin' | 'doctor') {
-  console.log('Fast login clicked')
-  setToken('qsdqsd')
-  setUser({
-    userId: 'data.id',
-    email: 'data.email',
-    firstname: 'data.firstName',
-    lastname: 'data.lastName',
-    phone: 'data.phoneNumber',
-    hasOnBoardingDone: true,
-    role,
-  })
-  navigateTo('/')
-}
-
 </script>
 
 <template>
@@ -73,15 +58,9 @@ async function fastlogin(role: 'admin' | 'doctor') {
               <UButton :loading="isLoading" block color="primary" type="submit">
                 {{ translate('auth.login.button') }}
               </UButton>
-              <UButton :loading="isLoading" block color="primary" @click="fastlogin('doctor')">
-                {{ translate('doctor') }}
-              </UButton>
-              <UButton :loading="isLoading" block color="primary" @click="fastlogin('admin')">
-                {{ translate('admin') }}
-              </UButton>
             </UForm>
 
-            <AppDivider :title="translate('common.or')"/>
+            <AppDivider :title="translate('common.or')" class="mt-2"/>
 
             <div class="text-xs">
               <span class="pr-1">{{ translate('auth.login.no_account') }}</span>

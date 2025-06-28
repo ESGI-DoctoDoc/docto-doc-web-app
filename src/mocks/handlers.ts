@@ -8,6 +8,7 @@ import {authMockHandlers} from "~/mocks/handlers/auth.handler";
 import {subscriptionMockHandlers} from "~/mocks/handlers/subscription.handler";
 import {doctorsMockHandlers} from "~/mocks/handlers/doctors.handler";
 import {autocompleteHandlers} from "~/mocks/handlers/autocomplete.handler";
+import {mediaHandlers} from "~/mocks/handlers/media.handler";
 
 export const handlers = [
     ...authMockHandlers,
@@ -20,4 +21,5 @@ export const handlers = [
     ...subscriptionMockHandlers,
     ...doctorsMockHandlers,
     ...autocompleteHandlers,
+    ...mediaHandlers,
 ]

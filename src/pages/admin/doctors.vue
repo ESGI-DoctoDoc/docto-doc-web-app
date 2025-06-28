@@ -14,7 +14,7 @@ definePageMeta({
 })
 
 const {handleError} = useNotify()
-const {fetchDoctors} = doctorsApi()
+const {fetchDoctors, acceptDoctorVerification, rejectDoctorVerification} = doctorsApi()
 const {nextPage, resetPagination} = usePagination()
 
 const isLoading = ref(true)
@@ -22,7 +22,6 @@ const doctors = ref<Doctor[]>([])
 const currentDoctor = ref<Doctor>()
 const openDoctorDetail = ref(false)
 const openVerification = ref(false)
-const openMapCoverage = ref(true)
 
 async function getDoctors() {
   isLoading.value = true
@@ -53,12 +52,24 @@ function onClose() {
   currentDoctor.value = undefined
 }
 
-function onVerificationChanged() {
+async function onVerificationChanged(type: 'accept' | 'reject') {
   openVerification.value = false
   if (!currentDoctor.value) {
     return
   }
-  getDoctors();
+
+  try {
+    if (type === 'accept') {
+      await acceptDoctorVerification(currentDoctor.value.id);
+    } else {
+      await rejectDoctorVerification(currentDoctor.value.id);
+    }
+    await getDoctors();
+  } catch (error) {
+    handleError('Erreur lors de la mise à jour de la vérification du médecin', error)
+  } finally {
+    currentDoctor.value = undefined
+  }
 }
 
 async function onLoadMore(stopLoading: () => void) {
@@ -103,7 +114,7 @@ onMounted(() => {
         v-if="openVerification && currentDoctor"
         v-model:open="openVerification"
         :doctor="currentDoctor"
-        @on-submit="onVerificationChanged()"
+        @on-submit="onVerificationChanged($event)"
     />
   </div>
 </template>

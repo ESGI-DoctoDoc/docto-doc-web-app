@@ -32,8 +32,22 @@ export const doctorsApi = () => {
             .execute()
     }
 
+    function rejectDoctorVerification(id: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .post(`/admin/doctors/${id}/refuse`)
+            .execute();
+    }
+
+    function acceptDoctorVerification(id: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .post(`/admin/doctors/${id}/validate`)
+            .execute();
+    }
+
     return {
         fetchDoctors,
         fetchDoctorById,
+        rejectDoctorVerification,
+        acceptDoctorVerification,
     }
 }

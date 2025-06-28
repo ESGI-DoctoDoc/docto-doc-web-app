@@ -29,7 +29,7 @@ watch(
   <UFormField class="text-left" label="Votre photo de profil" name="profilePictureUrl" required>
     <UInput class="hidden"/>
     <div class="flex flex-row space-x-4 mt-3">
-      <div class="w-auto">
+      <div class="w-auto flex justify-center items-center">
         <PictureInput v-model="avatar" class="w-20 h-20 border-gray-300 border-1"/>
       </div>
       <div class="w-5/6">

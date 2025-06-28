@@ -112,6 +112,12 @@ onMounted(() => {
         <p class="text-sm text-gray-600 mt-2">
           Cette interface n'est pas disponible sur mobile.
         </p>
+        <UButton
+            block
+            class="mt-4"
+            label="Se déconnecter"
+            @click="logoutUser"
+        />
       </div>
     </div>
     <template v-else>

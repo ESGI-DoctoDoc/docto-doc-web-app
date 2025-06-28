@@ -44,10 +44,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-2 w-1/2">
-    <div class="flex flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden" style="min-width: 600px">
+  <div class="flex flex-col gap-2 w-full px-4 md:w-3/4 xl:w-1/2 mx-auto">
+    <div
+        class="flex flex-col md:flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden max-w-4xl mx-auto">
       <!-- Form     -->
-      <div class="w-1/2 p-8 flex justify-center items-center bg-white">
+      <div class="w-full md:w-1/2 p-6 md:p-8 flex justify-center items-center bg-white">
         <div class="w-full text-center">
           <h1 class="text-2xl font-bold">Vérification de l'email</h1>
           <div v-if="isLoading" class="mt-4 flex justify-center">
@@ -55,6 +56,11 @@ onMounted(() => {
           </div>
           <div v-else-if="isError" class="mt-4 text-red-600">
             Une erreur s'est produite lors de la vérification de l'email. Veuillez réessayer.
+            <div class="mt-4">
+              <UButton block class="w-full" color="primary" to="/auth/login">
+                Se connecter
+              </UButton>
+            </div>
           </div>
           <div v-else class="mt-4 text-green-600">
             <div>
@@ -70,7 +76,7 @@ onMounted(() => {
       </div>
 
       <!-- Image     -->
-      <div class="h-full w-1/2">
+      <div class="hidden md:block h-full w-1/2">
         <img :src="image" alt="patient" class="w-auto">
       </div>
     </div>

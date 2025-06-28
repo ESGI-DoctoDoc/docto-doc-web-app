@@ -14,6 +14,7 @@ const {verifyOtp, isLoading} = useAuthApi()
 const {logoutUser, setDoubleAuth} = useSession()
 const {setToken} = useSession()
 
+const image = new URL('@/assets/images/patient-pc.png', import.meta.url).href
 const form = reactive<Partial<OtpVerificationForm>>({
   code: ['0', '0', '0', '0', '0', '0'],
 })
@@ -41,9 +42,11 @@ async function onSubmit(event: FormSubmitEvent<OtpVerificationForm>) {
 
 <template>
   <AuthLayout>
-    <div class="flex flex-col gap-2">
-      <div class="flex flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden" style="min-width: 600px">
-        <div class="w-full text-center p-8 bg-white" style="">
+    <div class="flex flex-col gap-2 w-full px-4 md:w-3/4 xl:w-dull mx-auto">
+      <div
+          class="flex flex-col md:flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden max-w-4xl mx-auto">
+        <!-- Form     -->
+        <div class="w-full md:w-1/2 p-6 md:p-8 flex justify-center items-center bg-white">
           <div class="m-auto w-72">
             <h1 class="text-2xl font-bold">{{ translate('auth.otp.title') }}</h1>
             <p class="pt-1 pb-6">{{ translate('auth.otp.description') }}</p>
@@ -57,11 +60,16 @@ async function onSubmit(event: FormSubmitEvent<OtpVerificationForm>) {
 
             <AppDivider :title="translate('common.or')"/>
 
-            <div class="text-sm">
+            <div class="text-sm text-center">
               <ULink class="text-primary" @click="logoutUser()">{{ translate('auth.logout.button') }}</ULink>
               <span>.</span>
             </div>
           </div>
+        </div>
+
+        <!-- Image     -->
+        <div class="hidden md:block h-full w-1/2">
+          <img :src="image" alt="patient" class="w-auto">
         </div>
       </div>
     </div>

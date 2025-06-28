@@ -14,6 +14,7 @@ import {
     type GetSubscriptionsResponse,
     getSubscriptionsResponseSchema
 } from "~/services/subscriptions/dto/get-subscriptions.dto";
+import {useSession} from "~/composables/auth/useSession";
 
 export const subscriptionApi = () => {
     const origin = typeof window !== "undefined" ? window.location.origin : "";
@@ -22,6 +23,20 @@ export const subscriptionApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
 
     function getSubscriptions(requestDto: AppPagination<unknown>) {
+        const {getUser} = useSession()
+        const user = getUser()
+        if(user?.user.role === 'admin') {
+            return new RequestBuilder(BASE_API_URL)
+                .get('/admin/subscriptions')
+                .withQuery<GetSubscriptionsQuery>(getSubscriptionsQuerySchema)
+                .withResponse<GetSubscriptionsResponse>(getSubscriptionsResponseSchema)
+                .execute({
+                    query: {
+                        page: requestDto.page,
+                        size: requestDto.size
+                    }
+                })
+        }
         return new RequestBuilder(BASE_API_URL)
             .get('/doctors/subscriptions')
             .withQuery<GetSubscriptionsQuery>(getSubscriptionsQuerySchema)
@@ -35,6 +50,14 @@ export const subscriptionApi = () => {
     }
 
     function getSubscriptionInvoice(subscriptionId: string) {
+        const {getUser} = useSession()
+        const user = getUser()
+        if(user?.user.role === 'admin') {
+            return new RequestBuilder(BASE_API_URL)
+                .get(`/admin/subscriptions/${subscriptionId}/invoice`)
+                .withResponse<GetSubscriptionInvoice>(getSubscriptionInvoiceSchema)
+                .execute()
+        }
         return new RequestBuilder(BASE_API_URL)
             .get(`/doctors/subscriptions/${subscriptionId}/invoice`)
             .withResponse<GetSubscriptionInvoice>(getSubscriptionInvoiceSchema)

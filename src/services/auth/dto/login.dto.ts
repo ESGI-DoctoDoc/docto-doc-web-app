@@ -8,6 +8,7 @@ export interface LoginDto {
 export const loginBodySchema = z.object({
     identifier: z.string(),
     password: z.string(),
+    verificationUrl: z.string(),
 })
 export type LoginBody = z.infer<typeof loginBodySchema>
 

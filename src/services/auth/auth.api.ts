@@ -40,6 +40,7 @@ export const useAuthApi = () => {
                 body: {
                     identifier: loginDto.email,
                     password: loginDto.password,
+                    verificationUrl: `${origin}/auth/verify`,
                 }
             })
             .finally(() => (isLoading.value = false))

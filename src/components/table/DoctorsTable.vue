@@ -10,7 +10,7 @@ const props = defineProps<{
   loading: boolean
 }>()
 
-const emits = defineEmits(['onDetail', 'onLoadMore'])
+const emits = defineEmits(['onDetail', 'onLoadMore', 'onCoverage'])
 
 const tableBodyRef = ref<HTMLElement | null>(null)
 
@@ -77,7 +77,16 @@ function onSelect(row: TableRow<Doctor>) {
         v-model:search="search"
         searchable
         @update:search="table?.tableApi?.getColumn('name')?.setFilterValue($event)"
-    />
+    >
+      <template #left>
+        <UButton
+            icon="i-heroicons-chart-bar-20-solid"
+            label="Voir la couverture"
+            variant="subtle"
+            @click="$emit('onCoverage')"
+        />
+      </template>
+    </TableHeaderDefault>
 
     <div
         ref="tableBodyRef"

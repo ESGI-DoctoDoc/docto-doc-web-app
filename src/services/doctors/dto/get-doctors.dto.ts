@@ -13,6 +13,11 @@ const doctorSchema = z.object({
     email: z.string(),
     rpps: z.string().nullable().optional(),
     phone: z.string(),
+    address: z.object({
+        formatted: z.string(),
+        latitude: z.number(),
+        longitude: z.number(),
+    }).nullable().optional(),
     speciality: z.object({
         id: z.string(),
         name: z.string(),

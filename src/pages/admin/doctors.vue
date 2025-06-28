@@ -22,6 +22,7 @@ const doctors = ref<Doctor[]>([])
 const currentDoctor = ref<Doctor>()
 const openDoctorDetail = ref(false)
 const openVerification = ref(false)
+const openMapCoverage = ref(true)
 
 async function getDoctors() {
   isLoading.value = true
@@ -87,6 +88,7 @@ onMounted(() => {
         :data="doctors"
         @on-detail="onShowDetail"
         @on-load-more="onLoadMore"
+        @on-coverage="navigateTo('/admin/doctors/coverage')"
     />
 
     <DoctorDetailSlideover
@@ -98,7 +100,7 @@ onMounted(() => {
     />
 
     <DoctorConfirmationModal
-        v-if="openVerification"
+        v-if="openVerification && currentDoctor"
         v-model:open="openVerification"
         :doctor="currentDoctor"
         @on-submit="onVerificationChanged()"

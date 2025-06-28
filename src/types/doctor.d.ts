@@ -5,6 +5,11 @@ export interface Doctor {
     email: string;
     phone: string;
     rpps?: string | null;
+    address?: {
+        formatted: string;
+        latitude: number;
+        longitude: number;
+    }
     speciality?: {
         id: string;
         name: string;

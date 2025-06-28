@@ -21,11 +21,13 @@ defineEmits<{
         placeholder="Rechercher..."
         @update:model-value="$emit('update:search', $event)"
     />
-    <UButton
-        v-if="buttonLabel?.trim()"
-        :label="buttonLabel"
-        @click="$emit('button-click')"
-    />
+    <slot name="left">
+      <UButton
+          v-if="buttonLabel?.trim()"
+          :label="buttonLabel"
+          @click="$emit('button-click')"
+      />
+    </slot>
   </div>
 </template>
 

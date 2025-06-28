@@ -58,6 +58,13 @@ export class ApiClient {
                 console.error('Statut HTTP :', error.response?.status);
                 console.error('Corps de la réponse :', error.response?._data);
                 console.groupEnd();
+
+                if (error.response?.status === 401) {
+                    const {logoutUser} = useSession();
+                    console.info("Session expirée, déconnexion de l'utilisateur");
+                    logoutUser();
+                }
+
                 throw new Error(error.response?._data?.message ?? 'Erreur inconnue');
             }
             console.error('Erreur inconnue :', error);

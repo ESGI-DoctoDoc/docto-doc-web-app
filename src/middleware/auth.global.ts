@@ -16,6 +16,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
         '/auth/register',
         '/auth/forgotPassword',
         '/auth/verify',
+        '/terms',
+        '/privacy',
     ]
 
     const otpPage = '/otp'

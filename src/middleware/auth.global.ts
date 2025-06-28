@@ -15,14 +15,14 @@ export default defineNuxtRouteMiddleware(async (to) => {
         '/auth/login',
         '/auth/register',
         '/auth/forgotPassword',
-        '/auth/email-verified',
+        '/auth/verify',
     ]
 
     const otpPage = '/otp'
     const onboardingPage = '/onboarding'
     const loginPage = '/auth/login'
 
-    const isPublicPage = publicPages.includes(to.fullPath)
+    const isPublicPage = publicPages.includes(to.path)
     const isOtpPage = to.fullPath === otpPage
     const isOnboardingPage = to.fullPath === onboardingPage
 

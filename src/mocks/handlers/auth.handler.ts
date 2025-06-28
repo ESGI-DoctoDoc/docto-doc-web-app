@@ -1,5 +1,5 @@
 import {http, HttpResponse} from "msw";
-import {resolveRequestMock} from "~/mocks/handlers/utils.mock";
+import {rejectRequestMock, resolveRequestMock} from "~/mocks/handlers/utils.mock";
 import type {GetDoctorMeResponse} from "~/services/auth/dto/get-me.dto";
 
 export const authMockHandlers = [
@@ -35,5 +35,13 @@ export const authMockHandlers = [
             //     isLicenseActivated: false,
             // }
         } satisfies GetDoctorMeResponse))
-    })
+    }),
+    http.post('http://localhost:8080/api/v1/users/validate-email', async ({request}) => {
+        const {userId} = (await request.json() || {}) as { userId: string };
+        if (userId === 'error') {
+            return HttpResponse.json(await rejectRequestMock());
+        } else {
+            return HttpResponse.json(await resolveRequestMock({}));
+        }
+    }),
 ]

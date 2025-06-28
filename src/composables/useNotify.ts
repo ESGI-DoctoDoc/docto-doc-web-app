@@ -39,9 +39,9 @@ export const useNotify = () => {
 
     const handleError = (message: string, error: unknown) => {
         if (error instanceof Error) {
-            showError("Erreur lors de la suppression de l'absence", error.message);
+            showError(message, error.message);
         } else {
-            showError("Erreur inconnue lors de la suppression de l'absence");
+            showError(message);
         }
     }
 

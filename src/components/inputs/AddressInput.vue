@@ -1,25 +1,56 @@
 <script lang="ts" setup>
 
-import InputTextBase from "~/components/inputs/base/InputTextBase.vue"
+import {autocompleteApi} from "~/services/autocompleteApi/autocomplete.api";
 
 const modelValue = defineModel('modelValue', {
   type: String,
-  default: '3 rue des olives'
+  required: true,
 })
 
+const searchTerm = ref('')
+const suggestions = ref<string[]>([])
+const loading = ref(false)
+
+const {fetchAddressAutocomplete} = autocompleteApi()
+
+async function fetchAddresses(query: string) {
+  loading.value = true
+  suggestions.value = []
+  try {
+    const addresses = await fetchAddressAutocomplete({
+      address: query,
+    })
+    suggestions.value = addresses.map((address) => address.formattedAddress)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
+  }
+}
+
+watch(searchTerm, (term) => {
+  if (term.length >= 2) {
+    fetchAddresses(term)
+  } else {
+    suggestions.value = []
+  }
+})
 </script>
 
 <template>
-  <UFormField label="Adresse de consultation" name="address" required>
-    <InputTextBase
+  <UFormField class="w-full text-left" label="Adresse de consultation" name="address" required>
+    <UInputMenu
         v-model="modelValue"
-        autocomplete="address"
-        color="primary"
+        v-model:search-term="searchTerm"
+        :ignore-filter="true"
+        :items="suggestions"
+        :loading="loading"
+        class="w-full"
         name="address"
-        placeholder="Entrez votre adresse"
+        placeholder="Saisir une adresse..."
         required
+        size="md"
         type="text"
-        variant="outline"
     />
   </UFormField>
 </template>

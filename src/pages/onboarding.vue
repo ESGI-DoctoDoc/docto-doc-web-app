@@ -15,6 +15,7 @@ import RPPSInput from "~/components/inputs/RPPSInput.vue";
 import IdentityCardInput from "~/components/inputs/IdentityCardInput.vue";
 import {useOnboardingApi} from "~/services/onboarding/onboarding.api";
 import {onMounted, reactive, ref} from 'vue';
+import AddressInput from "~/components/inputs/AddressInput.vue";
 
 definePageMeta({
   layout: 'auth-layout',
@@ -37,6 +38,7 @@ const form = reactive<OnboardingForm1>({
   birthDate: '',
   bio: '',
   profilePictureUrl: '',
+  address: '',
   languages: [],
   doctorDocuments: []
 })
@@ -153,7 +155,7 @@ function onError(event: FormErrorEvent) {
       />
     </div>
   </div>
-  <div v-else class="flex flex-col gap-2 max-w-3xl min-w-xs" style="height: 68vh">
+  <div v-else class="flex flex-col gap-2 max-w-4xl min-w-xs" style="height: 68vh">
     <div
         class="flex flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden h-full"
         style="min-width: 600px">
@@ -185,10 +187,17 @@ function onError(event: FormErrorEvent) {
             <!-- Step 2           -->
             <div v-if="currentStep === 1" class="w-full text-center" style="">
               <div class="space-y-4">
-                <DoctorSpecialitySelect v-model:speciality="form.speciality"/>
-                <YearExperienceInput v-model="form.experienceYears"/>
+                <div class="flex space-x-2 items-center">
+                  <div class="w-3/5 flex flex-col">
+                    <DoctorSpecialitySelect v-model:speciality="form.speciality"/>
+                  </div>
+                  <div class="w-2/5 flex flex-col">
+                    <YearExperienceInput v-model="form.experienceYears"/>
+                  </div>
+                </div>
+                <AddressInput v-model="form.address" class="mb-4"/>
                 <LanguageSelect v-model:language="form.languages"/>
-                <BioInput v-model="form.bio" class="mb-4"/>
+                <BioInput v-model="form.bio"/>
               </div>
             </div>
 

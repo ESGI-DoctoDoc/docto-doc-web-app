@@ -28,9 +28,9 @@ watch(
 <template>
   <UFormField class="text-left" label="Votre photo de profil" name="profilePictureUrl" required>
     <UInput class="hidden"/>
-    <div class="flex flex-row gap-2 mt-3">
+    <div class="flex flex-row space-x-4 mt-3">
       <div class="w-auto">
-        <PictureInput v-model="avatar" class="w-20 h-20"/>
+        <PictureInput v-model="avatar" class="w-20 h-20 border-gray-300 border-1"/>
       </div>
       <div class="w-5/6">
         <InputFileBase v-model:urls="files" :max="1" class="h-full"/>

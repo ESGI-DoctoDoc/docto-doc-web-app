@@ -22,6 +22,7 @@ import {
     cancelAppointmentBodySchema
 } from "~/services/appointments/dto/update-appontment.dto";
 import type {AppPagination} from "~/api/app-pagination.type";
+import {useSession} from "~/composables/auth/useSession";
 
 export const appointmentApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
@@ -67,6 +68,21 @@ export const appointmentApi = () => {
     }
 
     function fetchAppointments(requestDto: AppPagination<GetAppointmentsDto>) {
+        const {getUser} = useSession()
+        const user = getUser()
+        if(user?.user.role === 'admin') {
+            return new RequestBuilder(BASE_API_URL)
+                .get('/admin/appointments')
+                .withQuery<GetAppointmentsQuery>(getAppointmentsQuerySchema)
+                .withResponse<GetAppointmentsResponse>(getAppointmentsSchema)
+                .execute({
+                    query: {
+                        startDate: requestDto.startDate,
+                        page: requestDto.page,
+                        size: requestDto.size,
+                    }
+                })
+        }
         return new RequestBuilder(BASE_API_URL)
             .get('/doctors/appointments')
             .withQuery<GetAppointmentsQuery>(getAppointmentsQuerySchema)
@@ -81,6 +97,14 @@ export const appointmentApi = () => {
     }
 
     function fetchAppointmentById(id: string) {
+        const {getUser} = useSession()
+        const user = getUser()
+        if(user?.user.role === 'admin') {
+            return new RequestBuilder(BASE_API_URL)
+                .get(`/admin/appointments/${id}`)
+                .withResponse<GetAppointmentByIdResponse>(getAppointmentByIdResponseSchema)
+                .execute()
+        }
         return new RequestBuilder(BASE_API_URL)
             .get(`/doctors/appointments/${id}`)
             .withResponse<GetAppointmentByIdResponse>(getAppointmentByIdResponseSchema)

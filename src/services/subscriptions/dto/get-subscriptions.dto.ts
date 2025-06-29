@@ -18,7 +18,7 @@ export const getSubscriptionsResponseSchema = z.array(z.object({
     end: z.string(),
     amount: z.number().nonnegative(),
     status: z.enum(['active', 'inactive', 'cancelled']),
-    createdAt: z.string().datetime(),
+    createdAt: z.string(),
 })).nonempty({
     message: 'No subscriptions found',
 })

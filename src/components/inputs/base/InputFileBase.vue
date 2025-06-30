@@ -1,82 +1,54 @@
 <script lang="ts" setup>
 import {defineEmits, defineProps, ref} from 'vue'
-import {useMediaApi} from "~/services/media/media.api";
 
-const {uploadFile} = useMediaApi()
-const {handleError, showSuccess} = useNotify()
+const {showError, show} = useNotify()
+
+type InputFileType = 'image/*' | 'application/pdf';
 
 interface InputFileProps {
-  maxHeightPreview?: number
-  preview?: boolean
-  multiple?: boolean
+  types: InputFileType[]
   max?: number
 }
 
-const modelValue = defineModel('urls', {
-  type: Array as PropType<string[]>,
+interface InputFileEmits {
+  (e: 'update:modelValue', value: string[]): void;
+
+  (e: 'on-files-selected', files: File[]): void;
+
+  (e: 'on-delete-file', id: string): void;
+}
+
+const uploadedFiles = defineModel('files', {
+  type: Array as PropType<{ url: string; id: string }[]>,
   required: true,
 })
+
 const props = defineProps<InputFileProps>()
-const emit = defineEmits(['update:modelValue', 'uploaded'])
+const emits = defineEmits<InputFileEmits>()
 
 const isHovering = ref(false)
 const isLoading = ref(false)
-const urls = ref<string[]>([])
+const previewError = ref<boolean[]>([]);
 
-async function processFile(file: File) {
-  if (urls.value.length >= (props.max ?? 2)) {
-    alert(`Nombre maximal de fichiers atteint (${props.max})`);
-    return;
+const acceptedTypes = computed(() => {
+  const allTypes = []
+  if (props.types.includes('image/*')) {
+    allTypes.push('image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp');
   }
-  // Example: process file and emit base64 preview
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    emit('update:modelValue', e.target?.result)
-    emit('uploaded', true)
+  if (props.types.includes('application/pdf')) {
+    allTypes.push('application/pdf');
   }
-  reader.readAsDataURL(file)
-
-  // Example: upload file and emit URL
-  const url = await handleUploadFile(file);
-  if (!url) {
-    return;
-  }
-  console.log('File uploaded:', url)
-  urls.value.push(url);
-  modelValue.value.push(url);
-}
-
-async function handleUploadFile(file: File): Promise<string> {
-  isLoading.value = true;
-  try {
-    const response = await uploadFile(file);
-    showSuccess('Fichier téléchargé avec succès');
-    return response.fileUrl;
-  } catch (error) {
-    handleError('Erreur lors du téléchargement du fichier', error);
-  } finally {
-    isLoading.value = false;
-  }
-  return "";
-}
+  return allTypes;
+})
 
 function handleClick() {
   const input = document.createElement('input');
   input.type = 'file';
-  input.multiple = props.multiple;
+  input.accept = acceptedTypes.value.join(',');
+  input.multiple = props.max !== 1;
   input.onchange = (event: Event) => {
     const files = (event.target as HTMLInputElement).files;
-    if (files && files.length > 0) {
-      const remaining = (props.max ?? 2) - urls.value.length;
-      if (remaining <= 0) {
-        alert(`Nombre maximal de fichiers atteint (${props.max})`);
-        return;
-      }
-      const selectedFiles = Array.from(files).slice(0, remaining);
-      for (const file of selectedFiles) {
-        processFile(file);
-      }
-    }
+    handleMaxFiles(Array.from(files || []));
   };
   input.click();
 }
@@ -85,31 +57,50 @@ function handleDrop(event: DragEvent) {
   isHovering.value = false;
   event.preventDefault();
   const files = event.dataTransfer?.files;
-  if (files && files.length > 0) {
-    const remaining = (props.max ?? 2) - urls.value.length;
-    if (remaining <= 0) {
-      alert(`Nombre maximal de fichiers atteint (${props.max})`);
-      return;
-    }
-    const droppedFiles = Array.from(files).slice(0, remaining);
-    for (const file of droppedFiles) {
-      processFile(file);
-    }
+  const filteredFiles = Array.from(files || []).filter(file => acceptedTypes.value.includes(file.type));
+  const ignoredFiles = Array.from(files || []).filter(file => !acceptedTypes.value.includes(file.type));
+  if (ignoredFiles.length === files?.length) {
+    showError('Type de fichier non autorisé', `Formats autorisés : ${acceptedTypes.value.map((type) => type.split('/')[1]).join(', ')}`);
+    return;
   }
+
+  if (ignoredFiles.length > 0) {
+    show({
+      color: 'warning',
+      title: 'Fichiers ignorés',
+      description: `Certains fichiers ont été ignorés car ils ne correspondent pas aux types autorisés : ${ignoredFiles.map(file => file.name).join(', ')}`,
+      icon: 'i-lucide-alert-triangle',
+    });
+  }
+  handleMaxFiles(filteredFiles);
 }
 
-async function removeFile(index: number) {
-  isLoading.value = true;
-  try {
-    // await deleteFile(modelValue.value[index]);
-    urls.value.splice(index, 1)
-    modelValue.value.splice(index, 1)
-    showSuccess('Fichier supprimé avec succès');
-  } catch (error) {
-    handleError('Erreur lors de la suppression du fichier', error);
-  } finally {
-    isLoading.value = false;
+
+function handleMaxFiles(files: File[]) {
+  const maxAllowed = props.max ?? Infinity;
+  const remainingSlots = maxAllowed - uploadedFiles.value.length;
+
+  if (remainingSlots <= 0) {
+    showError('Limite atteinte', `Vous pouvez télécharger jusqu'à ${maxAllowed} fichier(s).`);
+    return;
   }
+
+  const filesToEmit = files.slice(0, remainingSlots);
+
+  if (files.length > remainingSlots) {
+    show({
+      color: 'warning',
+      title: 'Trop de fichiers',
+      description: `Seuls ${remainingSlots} fichier(s) ont été acceptés.`,
+      icon: 'i-lucide-alert-triangle',
+    });
+  }
+
+  emits('on-files-selected', filesToEmit);
+}
+
+async function removeFile(id: string) {
+  emits('on-delete-file', id);
 }
 </script>
 
@@ -123,7 +114,7 @@ async function removeFile(index: number) {
       @dragleave.prevent="isHovering = false"
   >
     <UProgress v-if="isLoading" class="absolute top-0 left-0 w-full h-2 z-10"/>
-    <template v-if="urls.length === 0">
+    <template v-if="uploadedFiles.length === 0">
       <div>
         <UIcon class="size-5" name="i-lucide-lightbulb"/>
       </div>
@@ -131,11 +122,26 @@ async function removeFile(index: number) {
     </template>
     <template v-else>
       <div class="flex gap-2">
-        <div v-for="(url, index) in urls" :key="index" class="flex items-center relative">
+        <div v-for="(uploadedFile, index) in uploadedFiles" :key="index" class="flex items-center relative">
           <div class="absolute -top-0.5 right-0">
-            <UButton color="error" icon="i-lucide-x" size="xs" @click.stop="removeFile(index)"/>
+            <UButton color="error" icon="i-lucide-x" size="xs" @click.stop="removeFile(uploadedFile.id)"/>
           </div>
-          <img :alt="'Preview ' + index" :src="url" class="w-16 h-16 object-cover rounded-md"/>
+          <template v-if="!previewError[index]">
+            <img
+                :alt="'Preview ' + index"
+                :src="uploadedFile.url"
+                class="w-16 h-16 object-cover rounded-md"
+                @error="previewError[index] = true"
+            />
+          </template>
+          <template v-else>
+            <div class="h-16 w-16 flex items-center justify-center bg-gray-200 rounded-md border border-gray-300">
+              <UIcon
+                  class="w-16 h-16 text-gray-500"
+                  name="i-lucide-file-text"
+              />
+            </div>
+          </template>
         </div>
       </div>
     </template>
@@ -143,24 +149,4 @@ async function removeFile(index: number) {
 </template>
 
 <style scoped>
-.loader-border {
-  width: 32px;
-  height: 32px;
-  border: 4px solid transparent;
-  border-top: 4px solid #22c55e; /* green-500 */
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 0.5rem;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.border-loader {
-  border-color: #22c55e;
-  animation: spin 1s linear infinite;
-}
 </style>

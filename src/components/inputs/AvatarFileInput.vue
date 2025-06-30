@@ -2,26 +2,55 @@
 
 import PictureInput from "~/components/inputs/PictureInput.vue";
 import InputFileBase from "~/components/inputs/base/InputFileBase.vue";
+import {doctorsApi} from "~/services/doctors/doctors.api";
+import {useMediaApi} from "~/services/media/media.api";
 
 const avatar = defineModel('avatar', {
   type: String,
   required: true,
 });
 
-const files = ref<string[]>([]);
+const {handleError, showError} = useNotify()
+const {uploadDoctorProfilePicture} = doctorsApi()
+const {deleteFile} = useMediaApi()
 
-watch(
-    () => files.value,
-    (newFiles) => {
-      console.log("New files:", newFiles);
-      if (newFiles && newFiles.length > 0) {
-        avatar.value = newFiles[0];
-      } else {
-        avatar.value = '';
-      }
-    },
-    {deep: true, immediate: true}
-);
+const files = ref<{ url: string, id: string }[]>([]);
+const isLoading = ref(false);
+
+async function onUploadFiles(filesToUpload: File[]) {
+  isLoading.value = true;
+  try {
+    if (filesToUpload.length === 0) {
+      showError('Aucun fichier sélectionné');
+      return;
+    }
+
+    const profilePicture = await uploadDoctorProfilePicture(filesToUpload[0]);
+    files.value = [{
+      url: profilePicture.url,
+      id: profilePicture.id
+    }];
+    avatar.value = profilePicture.url; // Update the avatar with the new profile picture URL
+  } catch (error) {
+    handleError("Erreur lors de l'envoi de la photo de profil", error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+async function onDeleteFile(id: string) {
+  isLoading.value = true;
+  try {
+    //todo handle delete file properly
+    // await deleteFile(`/doctors/profile/${id}`);
+    files.value = files.value.filter(file => file.id !== id);
+    avatar.value = '';
+  } catch (error) {
+    handleError("Erreur lors de la suppression de la photo de profil", error);
+  } finally {
+    isLoading.value = false;
+  }
+}
 
 </script>
 
@@ -33,7 +62,14 @@ watch(
         <PictureInput v-model="avatar" class="w-20 h-20 border-gray-300 border-1"/>
       </div>
       <div class="w-5/6">
-        <InputFileBase v-model:urls="files" :max="1" class="h-full"/>
+        <InputFileBase
+            v-model:files="files"
+            v-model:loading="isLoading"
+            :max="3"
+            :types="['image/*']"
+            @on-files-selected="onUploadFiles($event)"
+            @on-delete-file="onDeleteFile($event)"
+        />
       </div>
     </div>
   </UFormField>

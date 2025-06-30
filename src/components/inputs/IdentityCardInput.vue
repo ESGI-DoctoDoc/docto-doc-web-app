@@ -3,14 +3,15 @@
 import InputFileBase from "~/components/inputs/base/InputFileBase.vue";
 import {doctorsApi} from "~/services/doctors/doctors.api";
 
-const files = defineModel('files', {
-  type: Array as () => { url: string, id: string }[],
+const modelValue = defineModel('files', {
+  type: Array as () => string[],
   default: () => []
 });
 const {showError, handleError} = useNotify();
 const {uploadDoctorDocuments} = doctorsApi();
 
 const isLoading = ref(false);
+const files = ref<{ url: string, id: string }[]>([]);
 
 async function onUploadFiles(filesToUpload: File[]) {
   isLoading.value = true;
@@ -32,6 +33,7 @@ async function onUploadFiles(filesToUpload: File[]) {
         id: file.id
       })
     });
+    modelValue.value = files.value.map(file => file.id);
   } catch (error) {
     handleError("Erreur lors de l'envoi de la photo de profil", error);
   } finally {

@@ -67,11 +67,7 @@ export const doctorsApi = () => {
             });
             const signedUrl = await getSignedUrl(`/doctors/onboarding/documents/upload-url/${document.id}`);
             await uploadFile(file, signedUrl.url);
-            // return getFile(`/doctors/onboarding/documents/${document.id}`);
-            return {
-                url: 'https://picsum.qsd.fr',
-                id: document.id
-            };
+            return getFile(`/doctors/onboarding/documents/${document.id}`);
         })
 
         const results = await Promise.allSettled(promises);

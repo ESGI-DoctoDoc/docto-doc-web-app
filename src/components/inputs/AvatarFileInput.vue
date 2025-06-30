@@ -30,7 +30,7 @@ async function onUploadFiles(filesToUpload: File[]) {
       url: profilePicture.url,
       id: profilePicture.id
     }];
-    avatar.value = profilePicture.url; // Update the avatar with the new profile picture URL
+    avatar.value = profilePicture.id; // Update the avatar with the new profile picture URL
   } catch (error) {
     handleError("Erreur lors de l'envoi de la photo de profil", error);
   } finally {

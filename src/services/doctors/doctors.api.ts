@@ -15,7 +15,7 @@ export const doctorsApi = () => {
 
     function fetchDoctors(requestDto: AppPagination<unknown>) {
         return new RequestBuilder(BASE_API_URL)
-            .get('/doctors')
+            .get('/admin/doctors')
             .withQuery<GetDoctorsQuery>(getDoctorsQuerySchema)
             .withResponse<GetDoctorsResponse>(getDoctorsResponseSchema)
             .execute({
@@ -28,20 +28,20 @@ export const doctorsApi = () => {
 
     function fetchDoctorById(id: string) {
         return new RequestBuilder(BASE_API_URL)
-            .get(`/doctors/${id}`)
+            .get(`/admin/doctors/${id}`)
             .withResponse<GetDoctorByIdResponse>(getDoctorByIdResponseSchema)
             .execute()
     }
 
     function rejectDoctorVerification(id: string) {
         return new RequestBuilder(BASE_API_URL)
-            .post(`/admin/doctors/${id}/refuse`)
+            .patch(`/admin/doctors/${id}/refuse`)
             .execute();
     }
 
     function acceptDoctorVerification(id: string) {
         return new RequestBuilder(BASE_API_URL)
-            .post(`/admin/doctors/${id}/validate`)
+            .patch(`/admin/doctors/${id}/validate`)
             .execute();
     }
 

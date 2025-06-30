@@ -52,14 +52,14 @@ function onClose() {
   currentDoctor.value = undefined
 }
 
-async function onVerificationChanged(type: 'accept' | 'reject') {
+async function onVerificationChanged(type: 'validated' | 'reject') {
   openVerification.value = false
   if (!currentDoctor.value) {
     return
   }
 
   try {
-    if (type === 'accept') {
+    if (type === 'validated') {
       await acceptDoctorVerification(currentDoctor.value.id);
     } else {
       await rejectDoctorVerification(currentDoctor.value.id);

@@ -54,9 +54,9 @@ onMounted(() => {
   <UFormField :label class="w-full" name="medicalConcerns" required>
     <USelect
         v-model="medicalConcern"
-        :disabled="loading"
         :items="medicalConcernsItems"
         :loading="loading"
+        :disabled="loading || medicalConcernsItems.length === 0"
         class="w-full"
         :multiple
         placeholder="Sélectionnez un motif de consultation"

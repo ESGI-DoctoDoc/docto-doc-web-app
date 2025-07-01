@@ -28,11 +28,10 @@ export const useCalendar = () => {
                 id: slot.id,
                 start: convertDateToIsoString(slot.date, slot.startHour),
                 end: convertDateToIsoString(slot.date, slot.endHour),
+                className: 'monthly-recurrence',
                 extraParams: {
-                    title: 'Ouverture récurrente mensuelle',
-                    startHour: slot.startHour,
-                    endHour: slot.endHour,
-                    dayNumber: slot.dayNumber,
+                    type: 'monthly-recurrence',
+                    slot: slot,
                 }
             }
         }
@@ -42,12 +41,12 @@ export const useCalendar = () => {
             id: slot.id,
             start: convertDateToIsoString(slot.date, slot.startHour),
             end: convertDateToIsoString(slot.date, slot.endHour),
+            className: isRecurring ? 'weekly-recurrence' : 'single-slot',
             extraParams: {
-                title: isRecurring ? 'Ouverture récurrente' : 'Ouverture',
-                startHour: slot.startHour,
-                endHour: slot.endHour,
+                type: isRecurring ? 'weekly-recurrence' : 'single-slot',
+                slot: slot,
             }
-        };
+        }
     }
 
     function mapDoctorAbsenceToCalendarEvent(absence: Absence): EventInput {
@@ -56,11 +55,10 @@ export const useCalendar = () => {
                 id: absence.id,
                 start: convertDateToIsoString(absence.start!, absence.startHour!),
                 end: convertDateToIsoString(absence.end!, absence.endHour!),
+                className: 'full-day-absence',
                 extraParams: {
-                    title: 'Absence journée',
-                    description: absence.description?.slice(0, 30),
-                    isFullDay: true,
-                    createdAt: dayjs(absence.createdAt).toISOString(),
+                    type: 'full-day-absence',
+                    absence: absence,
                 }
             }
         } else {
@@ -68,33 +66,24 @@ export const useCalendar = () => {
                 id: absence.id,
                 start: convertDateToIsoString(absence.start!, absence.startHour!),
                 end: convertDateToIsoString(absence.end!, absence.endHour!),
+                className: 'partial-day-absence',
                 extraParams: {
-                    title: 'Absence',
-                    startHour: absence.startHour || '',
-                    endHour: absence.endHour || '',
-                    description: absence.description?.slice(0, 30),
-                    isFullDay: false,
-                    createdAt: dayjs(absence.createdAt).toISOString(),
+                    type: 'partial-day-absence',
+                    absence: absence,
                 }
             }
         }
     }
 
-    function mapAppointmentToCalendarEvent(appointment: Appointment) {
+    function mapAppointmentToCalendarEvent(appointment: Appointment): EventInput {
         return {
             id: appointment.id,
             start: convertDateToIsoString(appointment.start, appointment.startHour),
-            end: convertDateToIsoString(appointment.start, appointment.startHour), //todo donner la durée
-            title: `RDV: ${appointment.patient.name}`,
+            end: convertDateToIsoString(appointment.start, appointment.endHour),
+            className: `appointment-${appointment.status}`,
             extraParams: {
                 type: 'appointment',
-                patientId: appointment.patient.id,
-                medicalConcernId: appointment.medicalConcern.id,
-                careTrackingId: appointment.careTracking?.id || null,
-                notes: appointment.doctorNotes || '',
-                answers: appointment.answers || [],
-                status: appointment.status,
-                createdAt: dayjs(appointment.createdAt).toISOString(),
+                appointment,
             }
         }
     }

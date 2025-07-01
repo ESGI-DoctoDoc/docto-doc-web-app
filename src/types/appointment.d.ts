@@ -46,6 +46,7 @@ export interface Appointment {
     answers?: AppointmentAnswer[] | null
     start: string
     startHour: string
+    endHour: string
     status: AppointmentStatus
     doctorNotes?: string | null
     createdAt: string

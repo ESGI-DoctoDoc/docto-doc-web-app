@@ -122,23 +122,83 @@ const calendarOptions = ref<CalendarOptions>({
     }, 200);
   },
   eventClick(arg) {
-    if (arg.event.extendedProps?.type === 'appointment') {
-      onShowAppointmentDetail(arg.event.extendedProps.appointment);
-    } else if (arg.event.id) {
-      currentAbsence.value = mapCalendarEventToDoctorAbsence(arg.event);
+    const event = arg.event;
+    const params = event.extendedProps.extraParams;
+    const eventType = params.type;
+
+    if (eventType === 'appointment') {
+      currentAppointment.value = params.appointment as Appointment;
+      showAppointmentDetail.value = true;
+    } else if (eventType === 'full-day-absence' || eventType === 'partial-day-absence') {
+      currentAbsence.value = params.absence as Absence;
       showUpdateAbsence.value = true;
     }
   },
   eventContent: (arg: EventContentArg) => {
-    return {
-      html: `
-        <div class="text-black">
-          <b>${arg.event.extendedProps.extraParams.title}</b><br/>
-          <p>
-            ${arg.event.extendedProps.extraParams.startHour || ''} - ${arg.event.extendedProps.extraParams.endHour || ''}
-          </p>
-        </div>
-      `
+    const event = arg.event;
+    const params = event.extendedProps.extraParams;
+    const eventType = params.type;
+    if (eventType === 'appointment') {
+      const appointment = params.appointment as Appointment;
+      const isErrorColor = appointment.status === 'cancelled-unexcused' || appointment.status === 'cancelled-excused';
+      return {
+        html: `
+          <div class="flex space-x-2 h-full">
+            <div class="h-full bg-${isErrorColor ? 'error' : 'primary'}-500 w-2 rounded-sm"></div>
+            <div class="flex-1 flex-col justify-between text-black h-full p-0.5 overflow-hidden">
+              <div class="flex flex-col">
+                <div class="text-xs text-gray-600">
+                  ${appointment.startHour} - ${appointment.endHour}
+                </div>
+                <div class="text-sm font-medium capitalize mt-0.5">
+                  ${appointment.patient?.name}
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      }
+    } else if (eventType === 'full-day-absence') {
+      const absence = params.absence as Absence;
+      return {
+        html: `
+          <div class="flex space-x-2 h-full">
+            <div class="h-full bg-error-500 w-2 rounded-sm"></div>
+            <div class="flex-1 flex-col justify-between text-black h-full p-0.5 overflow-hidden">
+              <div class="flex flex-col">
+                <div class="text-xs text-gray-600">
+                  ${absence.startHour} - ${absence.endHour}
+                </div>
+                <div class="text-sm font-medium capitalize mt-0.5">
+                  Absence
+                </div>
+                <div class="text-sm font-medium capitalize mt-0.5">
+                  ${absence.reason ?? ''}
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      }
+    } else if (eventType === 'partial-day-absence') {
+      const absence = params.absence as Absence;
+      return {
+        html: `
+          <div class="flex space-x-2 h-full">
+            <div class="h-full bg-danger-500 w-2 rounded-sm"></div>
+            <div class="flex-1 flex-col justify-between text-black h-full p-0.5 overflow-hidden">
+              <div class="flex flex-col">
+                <div class="text-xs text-gray-600">
+                  ${absence.startHour} - ${absence.endHour}
+                </div>
+                <div class="text-sm font-medium capitalize mt-0.5">
+                  ${absence.reason || 'Absence'}
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      }
     }
   }
 })
@@ -377,6 +437,22 @@ onMounted(async () => {
 
 <style>
 @reference "../../styles/styles.css";
+
+.fc-v-event {
+  @apply p-1 bg-info-100 rounded-lg border-1 border-gray-300
+}
+
+.full-day-absence, .partial-day-absence, .appointment-cancelled-excused, .appointment-cancelled-unexcused {
+  @apply bg-error-100
+}
+
+.appointment-upcoming, .appointment-confirmed {
+  @apply bg-info-100
+}
+
+.appointment-completed {
+  @apply bg-success-100
+}
 
 .fc-next-button, .fc-prev-button {
   height: 38px;

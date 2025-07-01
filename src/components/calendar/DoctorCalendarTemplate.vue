@@ -93,15 +93,52 @@ const calendarOptions = ref<CalendarOptions>({
     showEventDetail.value = true
   },
   eventContent: (arg: EventContentArg) => {
-    return {
-      html: `
-        <div class="text-black">
-          <b>${arg.event.extendedProps.extraParams.title}</b><br/>
-          <p>
-            ${arg.event.extendedProps.extraParams.startHour || ''} - ${arg.event.extendedProps.extraParams.endHour || ''}
-          </p>
-        </div>
-      `
+    const event = arg.event;
+    const params = event.extendedProps.extraParams;
+    const eventType = params.type;
+    if (eventType === 'monthly-recurrence' || eventType === 'weekly-recurrence') {
+      const slot = params.slot as Slot;
+      return {
+        html: `
+          <div class="flex space-x-2 h-full">
+            <div class="h-full bg-success-500 w-2 rounded-sm"></div>
+            <div class="flex flex-col justify-between text-black h-full p-0.5 overflow-hidden">
+              <div class="flex flex-col">
+                <div class="flex justify-between items-center">
+                  <div class="text-xs text-gray-600">
+                    ${slot.startHour} - ${slot.endHour}
+                  </div>
+                  <div class="w-4 h-4 text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="14px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v240h-80v-80H200v400h280v80H200ZM760 0q-73 0-127.5-45.5T564-160h62q13 44 49.5 72T760-60q58 0 99-41t41-99q0-58-41-99t-99-41q-29 0-54 10.5T662-300h58v60H560v-160h60v57q27-26 63-41.5t77-15.5q83 0 141.5 58.5T960-200q0 83-58.5 141.5T760 0ZM200-640h560v-80H200v80Zm0 0v-80 80Z"/></svg>
+                  </div>
+                </div>
+                <div class="text-sm font-medium capitalize mt-0.5">
+                  ${slot.recurrence === 'weekly' ? 'Hebdomadaire' : 'Mensuel'}
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      }
+    } else if (eventType === 'single-slot') {
+      const slot = params.slot as Slot;
+      return {
+        html: `
+          <div class="flex space-x-2 h-full">
+            <div class="h-full bg-success-500 w-2 rounded-sm"></div>
+            <div class="flex flex-col justify-between text-black h-full p-0.5 overflow-hidden">
+              <div class="flex flex-col">
+                <div class="text-xs text-gray-600">
+                  ${slot.startHour} - ${slot.endHour}
+                </div>
+                <div class="text-sm font-medium capitalize mt-0.5">
+                  Ouverture
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      }
     }
   }
 })
@@ -233,9 +270,14 @@ onMounted(() => {
 </template>
 
 <style>
+@reference "../../styles/styles.css";
 
-.fc-event-main {
-  background: var(--color-primary) !important;
+.monthly-recurrence, .weekly-recurrence {
+  @apply bg-cyan-100
+}
+
+.single-slot {
+  @apply bg-info-100
 }
 
 .fc-next-button, .fc-prev-button {

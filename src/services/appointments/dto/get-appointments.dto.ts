@@ -48,6 +48,7 @@ export const getAppointmentsSchema = z.array(
             .optional(),
         start: z.string(),
         startHour: z.string(),
+        endHour: z.string(),
         status: z.enum([
             'upcoming',
             'confirmed',

@@ -4,7 +4,8 @@ import {
     createSpecialityBodySchema,
     type CreateSpecialityDto,
     type CreateSpecialityResponse,
-    createSpecialityResponseSchema
+    createSpecialityResponseSchema,
+    type UpdateSpecialityDto
 } from "~/services/specialities/dto/create-speciality.dto";
 import {
     type GetSpecialitiesQuery,
@@ -42,8 +43,21 @@ export const specialityApi = () => {
             })
     }
 
+    async function updateSpeciality(request: UpdateSpecialityDto) {
+        return new RequestBuilder(BASE_API_URL)
+            .put(`/doctors/specialities/${request.specialityId}`)
+            .withBody<CreateSpecialityBody>(createSpecialityBodySchema)
+            .withResponse<CreateSpecialityResponse>(createSpecialityResponseSchema)
+            .execute({
+                body: {
+                    name: request.name
+                }
+            })
+    }
+
     return {
         getSpecialities,
-        createSpeciality
+        createSpeciality,
+        updateSpeciality,
     }
 }

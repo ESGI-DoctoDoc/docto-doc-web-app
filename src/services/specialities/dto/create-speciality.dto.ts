@@ -4,6 +4,10 @@ export interface CreateSpecialityDto {
     name: string;
 }
 
+export interface UpdateSpecialityDto extends CreateSpecialityDto {
+    specialityId: string;
+}
+
 export const createSpecialityBodySchema = z.object({
     name: z.string(),
 });

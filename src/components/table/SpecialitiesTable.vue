@@ -12,10 +12,12 @@ defineProps<{
   loading: boolean
 }>()
 
-const emits = defineEmits(['onCreateSpeciality', 'onLoadMore'])
+const emits = defineEmits(['onCreateSpeciality', 'on-update-speciality', 'onLoadMore'])
 
 const isOpen = ref(false)
+const updateSpeciality = ref(false)
 const isLoadingMore = ref(false)
+const currentSpeciality = ref<Speciality>();
 const tableBodyRef = ref<HTMLElement | null>(null)
 
 const search = ref('')
@@ -69,7 +71,8 @@ function getRowActions(speciality: Speciality) {
       label: 'Modifier',
       icon: 'i-lucide-edit',
       onClick: () => {
-        console.log('Modifier', speciality)
+        updateSpeciality.value = true
+        currentSpeciality.value = speciality
       },
     },
     {
@@ -85,6 +88,18 @@ function getRowActions(speciality: Speciality) {
 function onCreateSpeciality(form: CreateSpecialityForm) {
   emits('onCreateSpeciality', form, () => {
     isOpen.value = false
+  })
+}
+
+function onUpdateSpeciality(form: CreateSpecialityForm) {
+  if (!currentSpeciality.value) return
+
+  emits('on-update-speciality', {
+    id: currentSpeciality.value.id,
+    name: form.name,
+  }, () => {
+    updateSpeciality.value = false
+    currentSpeciality.value = undefined
   })
 }
 
@@ -133,6 +148,12 @@ function onCreateSpeciality(form: CreateSpecialityForm) {
     </div>
 
     <CreateSpecialityModal v-model:open="isOpen" @onsubmit="onCreateSpeciality($event)"/>
+    <CreateSpecialityModal
+        v-if="currentSpeciality && updateSpeciality"
+        v-model:open="updateSpeciality"
+        :speciality="currentSpeciality"
+        @onsubmit="onUpdateSpeciality($event)"
+    />
   </div>
 </template>
 

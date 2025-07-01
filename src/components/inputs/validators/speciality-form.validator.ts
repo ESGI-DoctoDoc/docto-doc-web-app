@@ -11,6 +11,7 @@ export const createSpecialitySchema = z.object({
 export type CreateSpecialityForm = z.infer<typeof createSpecialitySchema>;
 
 export const updateSpecialitySchema = z.object({
+    id: z.string(),
     name: nameSchema,
 });
 export type UpdateSpecialityForm = z.infer<typeof updateSpecialitySchema>;

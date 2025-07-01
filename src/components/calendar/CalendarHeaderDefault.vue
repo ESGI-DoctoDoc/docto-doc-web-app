@@ -32,11 +32,6 @@ const planItems = ref<DropdownMenuItem[]>([
     icon: 'i-lucide-ban',
     onSelect: () => emits('on-actions', ActionsType.ABSENCE)
   },
-  {
-    label: 'Une ouverture exceptionnelle',
-    icon: 'i-lucide-sun',
-    onSelect: () => emits('on-actions', ActionsType.EXCEPTIONAL_OPENING)
-  },
 ]);
 
 

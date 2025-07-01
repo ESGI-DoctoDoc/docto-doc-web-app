@@ -106,6 +106,7 @@ export const useAuthApi = () => {
             .execute({
                 body : {
                     email: requestResetPasswordDto.email,
+                    verificationUrl: `${origin}/auth/resetPassword`
                 }
             })
             .finally(() => (isLoading.value = false))

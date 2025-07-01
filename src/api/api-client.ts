@@ -59,7 +59,7 @@ export class ApiClient {
                 console.error('Corps de la réponse :', error.response?._data);
                 console.groupEnd();
 
-                if (error.response?.status === 401) {
+                if (error.response?.status === 401 && error.response?._data?.code === 'token.expired') {
                     const {logoutUser} = useSession();
                     console.info("Session expirée, déconnexion de l'utilisateur");
                     logoutUser();

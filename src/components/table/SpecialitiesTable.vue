@@ -12,9 +12,11 @@ defineProps<{
   loading: boolean
 }>()
 
-const emits = defineEmits(['onCreateSpeciality'])
+const emits = defineEmits(['onCreateSpeciality', 'onLoadMore'])
 
 const isOpen = ref(false)
+const isLoadingMore = ref(false)
+const tableBodyRef = ref<HTMLElement | null>(null)
 
 const search = ref('')
 const table = ref('table')
@@ -45,6 +47,21 @@ const columns: TableColumn<Speciality>[] = [
     header: 'Actions',
   }
 ]
+
+function onTableScroll() {
+  const el = tableBodyRef.value
+  if (!el) return
+
+  const scrollBottom = el.scrollTop + el.clientHeight
+  const isAtBottom = scrollBottom >= el.scrollHeight - 10
+
+  if (isAtBottom && !isLoadingMore.value) {
+    isLoadingMore.value = true
+    emits('onLoadMore', () => {
+      isLoadingMore.value = false
+    })
+  }
+}
 
 function getRowActions(speciality: Speciality) {
   return [
@@ -83,14 +100,18 @@ function onCreateSpeciality(form: CreateSpecialityForm) {
         @button-click="isOpen = true"
     />
 
-    <UTable
+    <div
+        ref="tableBodyRef"
+        style="overflow-y: auto; height: calc(100vh - 8vh - 60px - 55px);"
+        @scroll="onTableScroll"
+    >
+      <UTable
         ref="table"
         empty="Liste vide"
         :loading="loading"
         :columns="columns"
         :data="data"
         sticky
-        style="height: calc(100vh - 8vh - 15vh);"
     >
       <template #expanded="{ row }">
         <pre>{{ row.original }}</pre>
@@ -106,7 +127,7 @@ function onCreateSpeciality(form: CreateSpecialityForm) {
         </UDropdownMenu>
       </template>
     </UTable>
-
+    </div>
     <div class="flex justify-end px-4 py-3.5 text-sm text-muted">
       Nombre d'éléments : {{ data.length }}
     </div>

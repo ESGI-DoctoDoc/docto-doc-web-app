@@ -40,6 +40,8 @@ const bannerVisible = ref(showLicensePayment.value)
 const confirmingPayment = ref(false)
 const confirmingPaymentError = ref(false)
 
+const checkoutLoading = ref(false)
+
 const isMobile = ref(false)
 
 onMounted(() => {
@@ -63,13 +65,18 @@ async function redirectToCheckout() {
     return
   }
 
+  checkoutLoading.value = true
+
   try {
     const response = await checkoutLicense();
     if (response.redirectUrl) {
       window.location.href = response.redirectUrl;
+    } else {
+      checkoutLoading.value = false
     }
   } catch (error) {
     handleError("Une erreur est survenue lors de la redirection vers le paiement.", error)
+    checkoutLoading.value = false
   }
 }
 
@@ -137,12 +144,15 @@ onMounted(() => {
       >
         <p class="text-sm font-medium">
           Vous n'avez pas de licence active.
-          <a
+          <UButton
+              :disabled="checkoutLoading"
+              :loading="checkoutLoading"
+              variant="ghost"
               class="underline text-yellow-900 hover:text-yellow-700 ml-1"
               @click="redirectToCheckout"
           >
             Cliquez ici pour l'obtenir.
-          </a>
+          </UButton>
         </p>
         <UButton class="text-yellow-700" icon="i-heroicons-x-mark" variant="ghost" @click="setDismissBanner()"/>
       </div>

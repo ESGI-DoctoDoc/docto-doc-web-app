@@ -16,7 +16,7 @@ const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url)
 
 const form = reactive<Partial<LoginForm>>({
   email: 'doctor4@example.com',
-  password: 'Abcdc76@',
+  password: 'Abdc76@',
 })
 
 async function onSubmit(event: FormSubmitEvent<LoginForm>) {

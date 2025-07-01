@@ -18,7 +18,6 @@ const endDate = z.string().trim()
 const medicalConcernIds = z
     .array(z.string().uuid())
     .min(1, "form.slot.medical-concern.required")
-    .max(15, "form.slot.medical-concern.max");
 
 export const createSlotSchema = z.object({
     day: day.optional(),

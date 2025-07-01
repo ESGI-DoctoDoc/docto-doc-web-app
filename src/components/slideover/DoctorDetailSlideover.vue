@@ -2,6 +2,7 @@
 import {useClipboard} from "@vueuse/core";
 import {doctorsApi} from "~/services/doctors/doctors.api";
 import type {Doctor, DoctorDetail} from "~/types/doctor";
+import dayjs from "dayjs";
 
 const isOpen = defineModel('isOpen', {
   type: Boolean,
@@ -134,7 +135,7 @@ function formatPhoneNumber(phone: string): string {
         </div>
         <div class="flex justify-between space-y-1">
           <div>Date de naissance</div>
-          <div>{{ doctorDetail.birthdate }}</div>
+          <div>{{ dayjs(doctorDetail.birthdate).format('DD/MM/YYYY') }}</div>
         </div>
         <div class="flex justify-between space-y-1">
           <div>Spécialité</div>
@@ -150,8 +151,16 @@ function formatPhoneNumber(phone: string): string {
         </div>
         <div class="flex justify-between space-y-1">
           <div>Créé le</div>
-          <div>{{ doctorDetail.createdAt }}</div>
+          <div>{{ dayjs(doctorDetail.createdAt).format('DD/MM/YYYY') }}</div>
         </div>
+
+        <!--        <h3 class="mt-4 text-lg font-semibold">Adresse</h3>-->
+        <!--        <div class="flex justify-between space-y-1">-->
+        <!--          <div>Adresse</div>-->
+        <!--          <div>{{ doctorDetail.address?.formatted ?? 'Non renseignée' }}</div>-->
+        <!--        </div>-->
+
+        <h3 class="mt-4 text-lg font-semibold">Statistiques d’activité</h3>
         <div class="flex justify-between space-y-1">
           <div>Nombre de rendez-vous</div>
           <div>{{ doctorDetail.counter.appointments }}</div>

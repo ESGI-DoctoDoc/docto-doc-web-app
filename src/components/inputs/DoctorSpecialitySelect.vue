@@ -17,13 +17,16 @@ const isLoading = ref(false);
 async function fetchSpecialities() {
   isLoading.value = true;
   try {
-    const specialities = await getSpecialities();
+    const specialities = await getSpecialities({
+      page: 0,
+      size: 1000,
+    });
     specialitiesItems.value = specialities.map(speciality => ({
       label: speciality.name,
       value: speciality.id,
     }));
     if (specialitiesItems.value.length > 0 && speciality.value) {
-      const selectedSpeciality = specialitiesItems.value.find(s => s.label === speciality.label);
+      const selectedSpeciality = specialitiesItems.value.find(s => s.label === speciality.value);
       if (selectedSpeciality) {
         specialityLocal.value = selectedSpeciality;
       }

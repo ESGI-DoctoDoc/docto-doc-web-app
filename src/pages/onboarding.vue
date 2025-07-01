@@ -43,6 +43,8 @@ const form = reactive<OnboardingForm1>({
   doctorDocuments: []
 })
 
+const fileCache = reactive(new Map<string, string>())
+
 const currentStep = ref(0)
 const isOnWaiting = ref(false)
 const isAccepted = ref(false)
@@ -168,7 +170,7 @@ function onError(event: FormErrorEvent) {
           </div>
           <UForm id="form" :schema="onboardingSchema1" :state="form" @error="onError" @submit.prevent="onSubmit">
             <!-- Step 1           -->
-            <div v-if="currentStep === 0" class="w-full text-center" style="">
+            <div v-show="currentStep === 0" class="w-full text-center" style="">
               <div class="flex flex-col justify-start space-y-4">
                 <AvatarFileInput v-model:avatar="form.profilePictureUrl" name="profilePictureUrl"/>
                 <div class="flex flex-row gap-4">
@@ -185,7 +187,7 @@ function onError(event: FormErrorEvent) {
             </div>
 
             <!-- Step 2           -->
-            <div v-if="currentStep === 1" class="w-full text-center" style="">
+            <div v-show="currentStep === 1" class="w-full text-center" style="">
               <div class="space-y-4">
                 <div class="flex space-x-2 items-center">
                   <div class="w-3/5 flex flex-col">
@@ -202,7 +204,7 @@ function onError(event: FormErrorEvent) {
             </div>
 
             <!-- Step 3           -->
-            <div v-if="currentStep === 2" class="w-full text-center" style="">
+            <div v-show="currentStep === 2" class="w-full text-center" style="">
               <div class="space-y-4">
                 <RPPSInput v-model="form.rpps"/>
                 <IdentityCardInput v-model:files="form.doctorDocuments"/>

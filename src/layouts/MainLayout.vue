@@ -191,7 +191,7 @@ onMounted(() => {
             />
             <UDropdownMenu
                 :items="[
-                { label: 'Paramètres', icon: 'i-heroicons-cog-6-tooth', to: '/settings' },
+                { label: 'Paramètres', icon: 'i-heroicons-cog-6-tooth', to: '/settings', disabled: isAdmin },
                 { label: 'Se déconnecter', icon: 'i-heroicons-arrow-right-on-rectangle', onSelect: () => logoutUser(), }
               ]"
             >

@@ -12,7 +12,7 @@ const allLinks = {
     {label: 'Mes patients', to: '/my-patients', icon: 'i-heroicons-user-group'},
     {label: 'Motifs', to: '/my-medical-concerns', icon: 'i-heroicons-clipboard-document-list'},
     {label: 'Suivis de dossier', to: '/care-tracking', icon: 'i-heroicons-document-magnifying-glass'},
-    {label: 'Licence', to: '/my-license', icon: 'i-heroicons-identification'},
+    {label: 'Licence', to: '/my-license', icon: 'i-heroicons-credit-card'},
     // { label: 'Paramètres', to: '/settings', icon: 'i-heroicons-cog-6-tooth' }
   ],
   admin: [

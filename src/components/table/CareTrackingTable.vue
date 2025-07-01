@@ -3,6 +3,7 @@ import {ref} from 'vue'
 import TableHeaderDefault from '~/components/table/TableHeaderDefault.vue'
 import type {TableColumn, TableRow} from "@nuxt/ui";
 import type {CareTracking} from "~/types/care-tracking";
+import {useSession} from "~/composables/auth/useSession";
 
 const props = defineProps<{
   data: CareTracking[]
@@ -10,8 +11,15 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits(['onUpdate', 'onRemove', 'onCreate', 'onDetail', 'onLoadMore'])
+const {getUser} = useSession()
+
 const tableBodyRef = ref<HTMLElement | null>(null)
 const isLoadingMore = ref(false)
+
+const canCreate = computed(() => {
+  const user = getUser()
+  return user?.doctor?.isLicenseActivated === true;
+})
 
 const search = ref('')
 const table = ref('table')
@@ -84,7 +92,7 @@ function onTableScroll() {
   <div class="flex-1 divide-y divide-accented fit">
     <TableHeaderDefault
         v-model:search="search"
-        button-label="Ajouter un suivi de dossier"
+        :button-label="canCreate ? 'Ajouter un suivi de dossier' : ''"
         searchable
         @update:search="table?.tableApi?.getColumn('name')?.setFilterValue($event)"
         @button-click="onAddClick"

@@ -2,6 +2,7 @@
 
 import type {DropdownMenuItem} from "#ui/components/DropdownMenu.vue";
 import type {TabsItem} from "#ui/components/Tabs.vue";
+import {useSession} from "~/composables/auth/useSession";
 
 enum ActionsType {
   ABSENCE = 'absence',
@@ -15,6 +16,13 @@ const emits = defineEmits<{
   (e: 'on-calendar-type' | 'next' | 'prev'): void
 }>()
 
+const {getUser} = useSession()
+
+const canCreate = computed(() => {
+  const user = getUser()
+  return user?.doctor?.isLicenseActivated === true;
+})
+
 const items = ref<TabsItem[]>([
   {label: 'Journée', value: 'timeGridDay'},
   {label: 'Semaine', value: 'timeGridWeek'},
@@ -25,6 +33,7 @@ const planItems = ref<DropdownMenuItem[]>([
   {
     label: 'Un rendez-vous',
     icon: 'i-lucide-calendar-plus',
+    disabled: !canCreate.value,
     onSelect: () => emits('on-actions', ActionsType.APPOINTMENT)
   },
   {

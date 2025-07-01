@@ -11,12 +11,12 @@ import {useSession} from "~/composables/auth/useSession";
 const {showSuccess, showError} = useNotify()
 const {translate} = useTranslate()
 const {login, isLoading} = useAuthApi()
-const {setToken} = useSession()
+const {setToken, setDoubleAuth} = useSession()
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
 
 const form = reactive<Partial<LoginForm>>({
-  email: 'slimane.abdallah75@gmail.com',
-  password: 'Abd1234$',
+  email: 'doctor4@example.com',
+  password: 'Abcdc76@',
 })
 
 async function onSubmit(event: FormSubmitEvent<LoginForm>) {
@@ -27,6 +27,7 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
     })
 
     setToken(data.token);
+    setDoubleAuth(false)
     navigateTo('/')
 
     showSuccess(
@@ -38,14 +39,16 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
     showError('Erreur', 'Connexion échouée.')
   }
 }
+
 </script>
 
 <template>
   <AuthLayout>
-    <div class="flex flex-col gap-2 w-1/2">
-      <div class="flex flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden" style="min-width: 600px">
+    <div class="flex flex-col gap-2 w-full px-4 md:w-3/4 xl:w-1/2 mx-auto">
+      <div
+          class="flex flex-col md:flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden max-w-4xl mx-auto">
         <!-- Form     -->
-        <div class="w-1/2 p-8 flex justify-center items-center bg-white">
+        <div class="w-full md:w-1/2 p-6 md:p-8 flex justify-center items-center bg-white">
           <div class="w-full text-center" style="">
             <h1 class="text-2xl font-bold">{{ translate('auth.login.title') }}</h1>
             <p class="pt-1 pb-6">{{ translate('auth.login.description') }}</p>
@@ -58,7 +61,7 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
               </UButton>
             </UForm>
 
-            <AppDivider :title="translate('common.or')"/>
+            <AppDivider :title="translate('common.or')" class="mt-2"/>
 
             <div class="text-xs">
               <span class="pr-1">{{ translate('auth.login.no_account') }}</span>
@@ -68,11 +71,11 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
         </div>
 
         <!-- Image     -->
-        <div class="h-full w-1/2">
+        <div class="hidden md:block h-full w-1/2">
           <img :src="image" alt="patient" class="w-auto">
         </div>
       </div>
-      <p class="text-center text-xs">
+      <p class="text-center text-xs mt-2 font-medium">
         {{ translate('auth.login.terms_prefix') }}
         <NuxtLink class="text-primary" to="/terms">{{ translate('common.terms') }}</NuxtLink>
         <span class="px-1">{{ translate('common.and') }}</span>

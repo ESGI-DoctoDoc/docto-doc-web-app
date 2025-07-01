@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import {useSession} from "~/composables/auth/useSession";
 
-const {logoutUser} = useSession()
+const {getUser, logoutUser} = useSession()
+
+onMounted(() => {
+  const userAuth = getUser();
+  if (userAuth?.user?.role === 'admin') {
+    navigateTo('/admin/dashboard')
+  } else if (userAuth?.user?.role === 'doctor') {
+    navigateTo('/my-calendar')
+  } else {
+    logoutUser();
+  }
+})
 
 </script>
 
 <template>
   <div>
-    <UButton color="primary" size="md" variant="solid" @click="logoutUser">
-      Se déconnecter
-    </UButton>
   </div>
 </template>
 

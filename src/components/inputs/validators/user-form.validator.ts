@@ -1,4 +1,5 @@
 import {z} from "zod";
+import dayjs from "dayjs";
 
 export const emailSchema = z
     .string()
@@ -13,7 +14,7 @@ export const passwordSchema = z
     .min(6, "form.password.min")
     .regex(/[A-Z]/, "form.password.uppercase")
     .regex(/[0-9]/, "form.password.number")
-    .regex(/[@\-_#$]/, "form.password.special");
+    .regex(/[@\-_#!*$]/, "form.password.special"); //todo add i18n et afficher le mot de passe
 
 export const otpCodeSchema = z
     .array(z.string())
@@ -30,19 +31,18 @@ export const nameSchema = z
     .trim()
     .min(3, "form.firstname.required")
     .max(50, "form.firstname.invalid")
+    .toLowerCase()
     .regex(/^[a-zA-ZÀ-ÿ '-]+$/, "form.firstname.invalid");
 
 
-export const bioSchema = z
-    .string()
-    .trim()
-    .min(1, "form.bio.required")
-    .max(200, "form.bio.invalid")
+const genderEnumSchema = z.enum(["MALE", "FEMALE"]);
+
+export const bioSchema = z.string().min(1, "form.bio.required").max(255, "form.bio.invalid");
 
 export const avatarSchema = z
     .string()
     .trim()
-    .url();
+    .min(1, 'form.avatar.invalid');
 
 export const rppsSchema = z
     .string()
@@ -50,17 +50,37 @@ export const rppsSchema = z
     .min(1, "form.rpps.required")
     .regex(/^[0-9]{11}$/, "form.rpps.invalid");
 
-export const specialitySchema = z
-    .string()
-    .trim()
-    .min(1, "form.speciality.required")
-    .regex(/^[a-zA-ZÀ-ÿ '-]+$/, "form.speciality.invalid");
+export const specialitySchema = z.string().min(1, "form.speciality.required")
 
 export const medicalConcernsSchema = z
     .string()
     .trim()
     .min(1, "form.medical-concerns.required")
     .regex(/^[a-zA-ZÀ-ÿ '-]+$/, "form.medical-concerns.invalid");
+
+export const experienceYearsSchema = z
+    .number({ required_error: "form.experience-years.required" })
+
+export const acceptPublicCoverageSchema = z
+    .boolean({ required_error: "form.accept-public-coverage.required" });
+
+export const birthDateSchema = z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "form.birth-date.invalid") // yyyy-MM-dd
+    .refine(date => {
+        const d = dayjs(date);
+        const now = dayjs();
+        const age = now.add(2, 'day').diff(d, 'year');
+        return age >= 18 && age <= 100;
+    }, "form.birth-date.future");
+
+export const languagesSchema = z
+    .array(z.string())
+    .min(1, "form.languages.required")
+
+export const doctorDocumentsSchema = z
+    .array(z.string())
+    .min(1, "form.doctor-documents.required")
 
 /* forms */
 export const loginSchema = z.object({
@@ -99,3 +119,23 @@ export const profileSchema = z.object({
     avatar: avatarSchema,
 })
 export type ProfileForm = z.infer<typeof profileSchema>;
+
+export const onboardingSchema1 = z.object({
+    profilePictureUrl: avatarSchema,
+    firstName: nameSchema,
+    lastName: nameSchema,
+    birthDate: birthDateSchema,
+    gender: genderEnumSchema,
+    speciality: specialitySchema,
+    experienceYears: experienceYearsSchema,
+    bio: bioSchema,
+    languages: languagesSchema,
+    rpps: rppsSchema,
+    acceptPublicCoverage: acceptPublicCoverageSchema,
+    doctorDocuments: doctorDocumentsSchema,
+    address: z.string().min(1, "form.address.required").toLowerCase(),
+})
+export const onboardingSchema2 = z.object({})
+
+export type OnboardingForm1 = z.infer<typeof onboardingSchema1>;
+export type OnboardingForm2 = z.infer<typeof onboardingSchema2>;

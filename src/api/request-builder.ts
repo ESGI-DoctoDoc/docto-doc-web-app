@@ -85,6 +85,13 @@ export class RequestBuilder<
         if (!response.success) {
             throw new Error(response.errorCode);
         }
+
+        console.group("🔍 RequestBuilder: réponse brute avant Zod");
+        console.log("URL       :", this.url);
+        console.log("Méthode   :", this.method);
+        console.log("Data brute:", response.data);
+        console.groupEnd();
+
         return this.executeParse(this.responseSchema, response.data);
     }
 
@@ -92,7 +99,11 @@ export class RequestBuilder<
         try {
             return schema ? schema.parse(data) : data as D;
         } catch (e) {
-            console.debug(e);
+            console.error("❌ RequestBuilder: erreur lors du parse Zod", {
+                schema,
+                data,
+                error: e,
+            });
             throw new Error('Error in parsing data');
         }
     }

@@ -37,9 +37,18 @@ export const useNotify = () => {
         })
     }
 
+    const handleError = (message: string, error: unknown) => {
+        if (error instanceof Error) {
+            showError(message, error.message);
+        } else {
+            showError(message);
+        }
+    }
+
     return {
         show,
         showSuccess,
-        showError
+        showError,
+        handleError
     }
 }

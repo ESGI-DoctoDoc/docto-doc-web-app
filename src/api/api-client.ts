@@ -1,4 +1,5 @@
 import {useSession} from "~/composables/auth/useSession";
+import {FetchError} from "ofetch";
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 export type ApiRequestBody = Record<string, unknown> | BodyInit | null | undefined;
@@ -21,9 +22,14 @@ export class ApiClient {
         const {getToken} = useSession();
         const token = getToken();
 
-        return token
-            ? { Authorization: `Bearer ${token}` }
-            : {};
+        const headers: Record<string, string> = {
+            'x-api-key': import.meta.env.VITE_API_KEY,
+        }
+
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        return headers;
     }
 
     async request<TResponse, TBody extends ApiRequestBody = undefined>(
@@ -46,10 +52,22 @@ export class ApiClient {
             console.groupEnd();
             return response;
         } catch (error) {
-            console.group()
-            console.error('Erreur lors de la requête :', method, url);
-            console.error(error);
-            console.groupEnd()
+            if (error instanceof FetchError) {
+                console.group();
+                console.error('Erreur lors de la requête :', method, url);
+                console.error('Statut HTTP :', error.response?.status);
+                console.error('Corps de la réponse :', error.response?._data);
+                console.groupEnd();
+
+                if (error.response?.status === 401) {
+                    const {logoutUser} = useSession();
+                    console.info("Session expirée, déconnexion de l'utilisateur");
+                    logoutUser();
+                }
+
+                throw new Error(error.response?._data?.message ?? 'Erreur inconnue');
+            }
+            console.error('Erreur inconnue :', error);
             throw error;
         }
     }

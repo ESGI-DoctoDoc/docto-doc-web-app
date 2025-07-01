@@ -48,36 +48,37 @@ async function onSubmit(event: FormSubmitEvent<RegisterForm>) {
 
 <template>
   <AuthLayout>
-    <div class="flex flex-col gap-2 w-1/2">
-      <div class="flex flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden" style="min-width: 600px">
+    <div class="flex flex-col gap-2 w-full px-4 md:w-3/4 xl:w-1/2 mx-auto">
+      <div
+          class="flex flex-col md:flex-row rounded-2xl border-2 border-gray-200 w-full overflow-hidden max-w-4xl mx-auto">
         <!-- Form     -->
-        <div class="w-1/2 p-8 flex justify-center items-center bg-white">
+        <div class="w-full md:w-1/2 p-6 md:p-8 flex justify-center items-center bg-white">
           <div class="w-full text-center" style="">
             <h1 class="text-2xl font-bold">{{ translate('auth.register.title') }}</h1>
             <p class="pt-1 pb-6">{{ translate('auth.register.description') }}</p>
 
             <UForm :schema="registerSchema" :state="form" class="space-y-4" @submit.prevent="onSubmit">
-              <EmailInput v-model="form.email"/>
-              <PasswordInput v-model="form.password"/>
-              <PhoneInput v-model="form.phone" />
+              <EmailInput v-model="form.email" class="text-left"/>
+              <PasswordInput v-model="form.password" class="text-left"/>
+              <PhoneInput v-model="form.phone" class="text-left"/>
               <UButton :loading="isLoading" block color="primary" type="submit">{{ translate('auth.register.button') }}</UButton>
             </UForm>
 
             <AppDivider :title="translate('common.or')"/>
 
             <div class="text-xs">
-              <span class="pr-1">{{ translate('auth.register.button') }}</span>
+              <span class="pr-1">Vous avez déjà un compte ?</span>
               <NuxtLink class="text-primary" to="/auth/login">Se connecter</NuxtLink>
             </div>
           </div>
         </div>
 
         <!-- Image     -->
-        <div class="h-full w-1/2">
+        <div class="hidden md:block h-full w-1/2">
           <img :src="image" alt="patient" class="w-auto">
         </div>
       </div>
-      <p class="text-center text-xs">{{ translate('auth.register.account_exist') }}
+      <p class="text-center text-xs mt-2 font-medium">{{ translate('auth.register.terms_prefix') }}
         <NuxtLink class="text-primary" to="/terms">{{ translate('common.terms') }}</NuxtLink>
         <span class="px-1">et notre</span>
         <NuxtLink class="text-primary" to="/privacy">{{ translate('common.privacy') }}</NuxtLink>

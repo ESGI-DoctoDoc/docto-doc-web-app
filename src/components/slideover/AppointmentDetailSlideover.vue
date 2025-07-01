@@ -33,6 +33,10 @@ const permissions = ref({
 
 const isCancelled = computed(() => appointmentDetail.value?.status === 'cancelled-excused' || appointmentDetail.value?.status === 'cancelled-unexcused');
 const isEnded = computed(() => appointmentDetail.value?.status === 'completed');
+const isAdmin = computed(() => {
+  const user = getUser();
+  return user?.user.role === 'admin';
+});
 const formatStart = computed(() => {
   const start = appointmentDetail.value?.start;
   return dayjs(start).format('DD/MM/YYYY') + ' ' + appointmentDetail.value?.startHour;
@@ -176,15 +180,23 @@ function formatPhoneNumber(phone: string): string {
     </template>
     <template #footer>
       <div class="fit flex flex-col space-y-2">
-        <UButton v-if="!isEnded && !isCancelled" block color="primary" @click="$emit('on-update', appointmentDetail!)">
+        <UButton
+            v-if="!isEnded && !isCancelled && !isAdmin"
+            block
+            color="primary"
+            @click="$emit('on-update', appointmentDetail!)"
+        >
           Modifier
         </UButton>
-        <UButton v-if="!isEnded && !isCancelled" block color="error" icon="i-lucide-x-circle" variant="subtle"
-                 @click="$emit('on-cancel', appointmentDetail!)">
+        <UButton
+            v-if="!isEnded && !isCancelled"
+            block
+            color="error"
+            icon="i-lucide-x-circle"
+            variant="subtle"
+            @click="$emit('on-cancel', appointmentDetail!)"
+        >
           Annuler le rendez-vous
-        </UButton>
-        <UButton v-if="permissions.canDelete" block color="error" @click="$emit('on-delete', appointmentDetail!)">
-          Supprimer
         </UButton>
       </div>
     </template>

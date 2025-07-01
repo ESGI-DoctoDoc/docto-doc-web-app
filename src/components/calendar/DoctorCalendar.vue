@@ -65,6 +65,8 @@ const calendarOptions = ref<CalendarOptions>({
   headerToolbar: false,
   selectable: true,
   editable: true,
+  eventResizableFromStart: false,
+  eventDurationEditable: false,
   dayMaxEventRows: true,
   allDaySlot: false,
   slotDuration: '00:15:00',

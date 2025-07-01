@@ -51,6 +51,8 @@ const calendarOptions = ref<CalendarOptions>({
   editable: true,
   dayMaxEventRows: true,
   allDaySlot: false,
+  eventResizableFromStart: false,
+  eventDurationEditable: false,
   slotDuration: slotDurations[currentSlotIndex],
   slotMinTime: '07:00:00',
   slotMaxTime: '23:00:00',

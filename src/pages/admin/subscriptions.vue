@@ -45,7 +45,7 @@ async function getSubscriptionsList() {
       size: 10,
     })
   } catch (error) {
-    handleError('Erreur lors du chargement des licences', error)
+    handleError('Erreur lors du chargement des abonnements', error)
   } finally {
     isLoading.value = false
   }

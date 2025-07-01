@@ -19,9 +19,7 @@ export const getSubscriptionsResponseSchema = z.array(z.object({
     amount: z.number().nonnegative(),
     status: z.enum(['active', 'inactive', 'cancelled']),
     createdAt: z.string(),
-})).nonempty({
-    message: 'No subscriptions found',
-})
+}))
 export type GetSubscriptionsResponse = z.infer<typeof getSubscriptionsResponseSchema>;
 
 export const getSubscriptionInvoiceSchema = z.object({

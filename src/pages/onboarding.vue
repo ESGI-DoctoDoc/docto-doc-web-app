@@ -172,10 +172,10 @@ function onError(event: FormErrorEvent) {
               <div class="flex flex-col justify-start space-y-4">
                 <AvatarFileInput v-model:avatar="form.profilePictureUrl" name="profilePictureUrl"/>
                 <div class="flex flex-row gap-4">
-                  <FirstNameInput v-model="form.firstName" class="w-1/2"/>
-                  <LastNameInput v-model="form.lastName" class="w-1/2"/>
+                  <FirstNameInput v-model="form.firstName" class="w-1/2 text-left"/>
+                  <LastNameInput v-model="form.lastName" class="w-1/2 text-left"/>
                 </div>
-                <BirthDateInput v-model="form.birthDate"/>
+                <BirthDateInput v-model="form.birthDate" class="text-left"/>
                 <URadioGroup
                     v-model="form.gender"
                     :items="[{label: 'Femme', value: 'FEMALE'}, {label: 'Homme', value: 'MALE'}]"
@@ -189,10 +189,10 @@ function onError(event: FormErrorEvent) {
               <div class="space-y-4">
                 <div class="flex space-x-2 items-center">
                   <div class="w-3/5 flex flex-col">
-                    <DoctorSpecialitySelect v-model:speciality="form.speciality"/>
+                    <DoctorSpecialitySelect v-model:speciality="form.speciality" class="text-left"/>
                   </div>
                   <div class="w-2/5 flex flex-col">
-                    <YearExperienceInput v-model="form.experienceYears"/>
+                    <YearExperienceInput v-model="form.experienceYears" class="text-left"/>
                   </div>
                 </div>
                 <AddressInput v-model="form.address" class="mb-4"/>

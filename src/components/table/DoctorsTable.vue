@@ -95,6 +95,7 @@ function onSelect(row: TableRow<Doctor>) {
     >
       <UTable
           ref="table"
+          empty="Liste vide"
           :columns="columns"
           :data="data"
           sticky

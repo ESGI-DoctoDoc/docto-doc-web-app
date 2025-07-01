@@ -51,6 +51,11 @@ async function onCreate(form: CreateMedicalConcernForm) {
 async function onSaveQuestions(form: CreateMedicalConcernQuestionForm) {
   isLoading.value = true;
   try {
+    console.log("la", currentMedicalConcern.value)
+    if (!currentMedicalConcern.value) {
+      showError('Aucun motif de consultation sélectionné');
+      return;
+    }
     await saveMedicalConcernQuestions({
       medicalConcern: currentMedicalConcern.value!.id,
       questions: form.questions,

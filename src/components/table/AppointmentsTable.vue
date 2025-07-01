@@ -150,6 +150,7 @@ function getAppointmentOptions(row: Appointment): DropdownMenuItem[] {
     >
       <UTable
           ref="table"
+          empty="Liste vide"
           :columns="columns"
           :data="data"
           sticky

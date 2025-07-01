@@ -97,6 +97,7 @@ function onTableScroll() {
     >
       <UTable
           ref="table"
+          empty="Liste vide"
           :columns="columns"
           :data="data"
           sticky

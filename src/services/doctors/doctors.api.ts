@@ -46,15 +46,15 @@ export const doctorsApi = () => {
     }
 
     async function uploadDoctorProfilePicture(file: File): Promise<{ url: string, id: string }> {
-        const {preUploadFile, getSignedUrl, uploadFile, getFile} = useMediaApi()
+        const {preUploadFile, getSignedUrl, uploadFile, getFile} = useMediaApi();
         const document = await preUploadFile({
-            endPoint: '/doctors/care-tracking/7dcec6ea-08a9-42a0-b0d6-0d7361dfd1f0/documents',
-            filename: 'profile-picture-' + Date.now(),
-            type: 'Certificat médical', //todo to remove
-        })
-        const signedUrl = await getSignedUrl(`/doctors/care-tracking/upload-url/${document.id}`);
+            endPoint: '/doctors/onboarding/documents',
+            filename: 'profile-picture' + Date.now(),
+            type: 'Photo de profil',
+        });
+        const signedUrl = await getSignedUrl(`/doctors/onboarding/documents/upload-url/${document.id}`);
         await uploadFile(file, signedUrl.url);
-        return getFile(`/doctors/care-tracking/7dcec6ea-08a9-42a0-b0d6-0d7361dfd1f0/documents/${document.id}`);
+        return getFile(`/doctors/onboarding/documents/${document.id}`);
     }
 
     async function uploadDoctorDocuments(files: File[]): Promise<{ url: string, id: string }[]> {
@@ -63,7 +63,7 @@ export const doctorsApi = () => {
             const document = await preUploadFile({
                 endPoint: '/doctors/onboarding/documents',
                 filename: file.name + '-' + Date.now(),
-                type: 'Certificat médical', //todo to remove
+                type: "Justificatif d'identité",
             });
             const signedUrl = await getSignedUrl(`/doctors/onboarding/documents/upload-url/${document.id}`);
             await uploadFile(file, signedUrl.url);

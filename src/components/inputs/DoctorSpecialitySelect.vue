@@ -23,7 +23,7 @@ async function fetchSpecialities() {
       value: speciality.id,
     }));
     if (specialitiesItems.value.length > 0 && speciality.value) {
-      const selectedSpeciality = specialitiesItems.value.find(s => s.value === speciality.value);
+      const selectedSpeciality = specialitiesItems.value.find(s => s.label === speciality.label);
       if (selectedSpeciality) {
         specialityLocal.value = selectedSpeciality;
       }
@@ -51,7 +51,7 @@ onMounted(() => {
         placeholder="Sélectionnez une spécialité"
         color="primary"
         variant="outline"
-        @update:model-value="speciality = $event.value || ''"
+        @update:model-value="speciality = $event.label || ''"
     />
   </UFormField>
 </template>

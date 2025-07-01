@@ -13,7 +13,7 @@ export const passwordSchema = z
     .min(6, "form.password.min")
     .regex(/[A-Z]/, "form.password.uppercase")
     .regex(/[0-9]/, "form.password.number")
-    .regex(/[@\-_#$]/, "form.password.special");
+    .regex(/[@\-_#!*$]/, "form.password.special"); //todo add i18n et afficher le mot de passe
 
 export const otpCodeSchema = z
     .array(z.string())
@@ -30,6 +30,7 @@ export const nameSchema = z
     .trim()
     .min(3, "form.firstname.required")
     .max(50, "form.firstname.invalid")
+    .toLowerCase()
     .regex(/^[a-zA-ZÀ-ÿ '-]+$/, "form.firstname.invalid");
 
 
@@ -40,7 +41,7 @@ export const bioSchema = z.string().min(1, "form.bio.required").max(255, "form.b
 export const avatarSchema = z
     .string()
     .trim()
-    .url('form.avatar.invalid');
+    .min(1, 'form.avatar.invalid');
 
 export const rppsSchema = z
     .string()

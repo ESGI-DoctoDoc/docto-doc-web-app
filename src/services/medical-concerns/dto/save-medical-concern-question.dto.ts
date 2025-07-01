@@ -1,7 +1,7 @@
 import {z} from "zod";
 
 export interface SaveMedicalConcernDto {
-    medicalConcernId: string;
+    medicalConcern: string;
     questions: {
         question: string;
         type: "text" | "list" | "yes_no";

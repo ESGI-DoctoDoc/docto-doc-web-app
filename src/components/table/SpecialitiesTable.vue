@@ -85,6 +85,7 @@ function onCreateSpeciality(form: CreateSpecialityForm) {
 
     <UTable
         ref="table"
+        empty="Liste vide"
         :loading="loading"
         :columns="columns"
         :data="data"

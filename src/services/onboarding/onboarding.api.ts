@@ -28,7 +28,7 @@ export const useOnboardingApi = () => {
                     gender: onboardingDto.gender,
                     birthDate: onboardingDto.birthDate,
                     bio: onboardingDto.bio,
-                    profilePictureUrl: onboardingDto.profilePictureUrl,
+                    pictureDocumentId: onboardingDto.profilePictureUrl,
                     languages: onboardingDto.languages,
                     doctorDocuments: onboardingDto.doctorDocuments
                 }

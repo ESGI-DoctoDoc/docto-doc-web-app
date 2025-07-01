@@ -48,7 +48,7 @@ export const careTrackingApi = () => {
                 body: {
                     name: requestDto.name,
                     description: requestDto.description,
-                    patient: requestDto.patientId,
+                    patientId: requestDto.patientId,
                 }
             });
     }

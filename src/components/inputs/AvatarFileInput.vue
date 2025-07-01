@@ -16,6 +16,7 @@ const {deleteFile} = useMediaApi()
 
 const files = ref<{ url: string, id: string }[]>([]);
 const isLoading = ref(false);
+const avatar2 = ref('');
 
 async function onUploadFiles(filesToUpload: File[]) {
   isLoading.value = true;
@@ -31,6 +32,7 @@ async function onUploadFiles(filesToUpload: File[]) {
       id: profilePicture.id
     }];
     avatar.value = profilePicture.id; // Update the avatar with the new profile picture URL
+    avatar2.value = profilePicture.url; // Update the avatar with the new profile picture URL
   } catch (error) {
     handleError("Erreur lors de l'envoi de la photo de profil", error);
   } finally {
@@ -45,6 +47,7 @@ async function onDeleteFile(id: string) {
     // await deleteFile(`/doctors/profile/${id}`);
     files.value = files.value.filter(file => file.id !== id);
     avatar.value = '';
+    avatar2.value = '';
   } catch (error) {
     handleError("Erreur lors de la suppression de la photo de profil", error);
   } finally {
@@ -59,7 +62,7 @@ async function onDeleteFile(id: string) {
     <UInput class="hidden"/>
     <div class="flex flex-row space-x-4 mt-3">
       <div class="w-auto flex justify-center items-center">
-        <PictureInput v-model="avatar" class="w-20 h-20 border-gray-300 border-1"/>
+        <PictureInput v-model="avatar2" class="w-20 h-20 border-gray-300 border-1"/>
       </div>
       <div class="w-5/6">
         <InputFileBase

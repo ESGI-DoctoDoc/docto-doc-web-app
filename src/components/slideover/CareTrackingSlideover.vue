@@ -100,7 +100,7 @@ onMounted(() => {
           Modifier
         </UButton>
         <UButton block color="primary" variant="outline" @click="$emit('on-end', props.careTracking)">
-          Ferme le suivi de dossier
+          Fermer le suivi de dossier
         </UButton>
         <!--  todo handle admin       -->
         <UButton v-if="false" block color="error" @click="$emit('on-delete', props.careTracking)">

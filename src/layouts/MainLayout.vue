@@ -12,12 +12,22 @@ const {checkoutLicense, checkoutLicenseConfirmation} = subscriptionApi();
 
 const image = new URL('@/assets/images/logo.png', import.meta.url).href
 const userRole = getUser()?.user?.role || 'doctor'
+const isAdmin = computed(() => getUser()?.user?.role === 'admin')
+
+const fullName = computed(() => {
+  const user = getUser()
+  return isAdmin.value ? 'Administrateur' : `${user?.doctor?.firstName || ''} ${user?.doctor?.lastName || ''}`
+})
 
 const pageTitle = computed(() => {
   return route.meta.title || route.name?.toString().replace('-', ' ') || 'Page'
 })
 
 const showLicensePayment = computed(() => {
+  if (isAdmin.value) {
+    return false; // Only show the banner for non-admin users
+  }
+
   const localStorageKey = 'dismissLicenseBanner'
   const dismissBannerUntil = localStorage.getItem(localStorageKey) as string | null
   if (!dismissBannerUntil) {
@@ -184,7 +194,7 @@ onMounted(() => {
                     size="md"
                     src="https://i.pravatar.cc/150?img=3"
                 />
-                <span class="text-gray-700">John Doe</span>
+                <span class="text-gray-700">{{ fullName }}</span>
                 <UButton icon="i-heroicons-chevron-down" variant="ghost"/>
               </div>
             </UDropdownMenu>

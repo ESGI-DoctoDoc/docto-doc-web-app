@@ -151,6 +151,7 @@ function getPatientOptions(row: Patient): DropdownMenuItem[] {
     >
       <UTable
           ref="table"
+          empty="Liste vide"
           :columns="columns"
           :data="data"
           sticky

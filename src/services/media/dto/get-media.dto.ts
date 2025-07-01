@@ -9,6 +9,6 @@ export const getFileResponseSchema = z.object({
     id: z.string(),
     name: z.string(),
     url: z.string(),
-    type: z.enum(['Rapport médical', 'Ordonnance', 'Certificat médical', "Résultats d'analyses", 'Autre']).optional(),
+    type: z.enum(['Rapport médical', 'Ordonnance', 'Certificat médical', "Résultats d'analyses", 'Autre', 'Photo de profil', 'Justificatif d\'identité']).optional(),
 })
 export type GetFileResponse = z.infer<typeof getFileResponseSchema>;

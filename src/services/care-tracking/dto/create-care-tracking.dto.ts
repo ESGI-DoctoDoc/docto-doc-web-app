@@ -15,7 +15,7 @@ export interface UpdateCareTrackingDto {
 export const createCareTrackingBodySchema = z.object({
     name: z.string().min(1, 'form.careTracking.name.required'),
     description: z.string().min(1, 'form.careTracking.description.required'),
-    patient: z.string().min(1, 'form.careTracking.patient.required'),
+    patientId: z.string().min(1, 'form.careTracking.patient.required'),
 });
 export type CreateCareTrackingBody = z.infer<typeof createCareTrackingBodySchema>;
 

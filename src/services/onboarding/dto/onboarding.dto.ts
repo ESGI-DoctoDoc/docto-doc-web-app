@@ -25,9 +25,9 @@ export const onboardingBodySchema = z.object({
     birthDate: z.string(),
     gender: z.enum(["MALE", "FEMALE"]),
     bio: z.string(),
-    profilePictureUrl: z.string(),
+    pictureDocumentId: z.string(),
     languages: z.array(z.string()),
-    doctorDocuments: z.array(z.string().url()),
+    doctorDocuments: z.array(z.string()),
 })
 
 export type OnboardingBody = z.infer<typeof onboardingBodySchema>

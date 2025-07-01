@@ -82,6 +82,7 @@ function getRowActions(subscription: Subscription) {
 
     <UTable
         ref="table"
+        empty="Liste vide"
         :columns="columns"
         :data="data"
         :loading="loading"

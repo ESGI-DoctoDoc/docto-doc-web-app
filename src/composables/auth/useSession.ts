@@ -66,6 +66,7 @@ export const useSession = () => {
         localStorageService.removeItem(localStorageService.keys.UserKey);
         localStorageService.removeItem(localStorageService.keys.TokenKey);
         localStorageService.removeItem(localStorageService.keys.DoubleAuthKey);
+        localStorageService.removeItem('dismissLicenseBanner');
         navigateTo('/auth/login');
     }
 

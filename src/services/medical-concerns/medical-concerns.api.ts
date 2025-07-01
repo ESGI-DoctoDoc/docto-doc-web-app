@@ -58,7 +58,7 @@ export const medicalConcernsApi = () => {
     /* Questions */
     async function saveMedicalConcernQuestions(requestDto: SaveMedicalConcernDto) {
         return new RequestBuilder(BASE_API_URL)
-            .post(`/doctors/medical-concerns/${requestDto.medicalConcernId}/questions`)
+            .post(`/doctors/medical-concerns/${requestDto.medicalConcern}/questions`)
             .withBody<SaveMedicalConcernQuestionBody>(saveMedicalConcernQuestionBody)
             .execute({
                 body: {

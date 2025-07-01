@@ -58,9 +58,9 @@ async function onSubmit(event: FormSubmitEvent<RegisterForm>) {
             <p class="pt-1 pb-6">{{ translate('auth.register.description') }}</p>
 
             <UForm :schema="registerSchema" :state="form" class="space-y-4" @submit.prevent="onSubmit">
-              <EmailInput v-model="form.email"/>
-              <PasswordInput v-model="form.password"/>
-              <PhoneInput v-model="form.phone" />
+              <EmailInput v-model="form.email" class="text-left"/>
+              <PasswordInput v-model="form.password" class="text-left"/>
+              <PhoneInput v-model="form.phone" class="text-left"/>
               <UButton :loading="isLoading" block color="primary" type="submit">{{ translate('auth.register.button') }}</UButton>
             </UForm>
 

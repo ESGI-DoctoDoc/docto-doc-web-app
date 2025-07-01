@@ -31,3 +31,27 @@ export interface DoctorDetail extends Doctor {
         patients: number;
     }
 }
+
+export interface DoctorProfile {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    address?: {
+        formatted: string;
+        latitude: number;
+        longitude: number;
+    } | null;
+    speciality?: {
+        id: string;
+        name: string;
+    } | null;
+    subscription?: {
+        id: string;
+        start: string;
+        end: string;
+    } | null;
+    bio?: string | null;
+    profilePictureUrl?: string | null;
+}

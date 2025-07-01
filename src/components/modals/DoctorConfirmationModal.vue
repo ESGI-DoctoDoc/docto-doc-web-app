@@ -45,7 +45,7 @@ function onCompareToDirectory() {
         body: 'min-h-auto max-h-[65vh] overflow-y-auto'
       }"
       aria-description="Vérification du médecin"
-      closexz
+      close
       title="Vérification du médecin"
   >
     <template #body>

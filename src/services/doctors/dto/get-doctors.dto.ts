@@ -43,3 +43,28 @@ export const getDoctorByIdResponseSchema = doctorSchema.extend({
     }),
 })
 export type GetDoctorByIdResponse = z.infer<typeof getDoctorByIdResponseSchema>;
+
+export const getDoctorProfileResponseSchema = z.object({
+    id: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    address: z.object({
+        formatted: z.string(),
+        latitude: z.number(),
+        longitude: z.number(),
+    }).nullable().optional(),
+    speciality: z.object({
+        id: z.string(),
+        name: z.string(),
+    }).nullable().optional(),
+    subscription: z.object({
+        id: z.string(),
+        start: z.string(),
+        end: z.string(),
+    }).nullable().optional(),
+    bio: z.string().nullable().optional(),
+    profilePictureUrl: z.string().nullable().optional(),
+})
+export type GetDoctorProfileResponse = z.infer<typeof getDoctorProfileResponseSchema>;

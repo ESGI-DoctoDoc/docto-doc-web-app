@@ -3,6 +3,7 @@ import {useRoute} from 'vue-router'
 import {useSession} from "~/composables/auth/useSession";
 import SidebarMenu from '~/components/SidebarMenu.vue'
 import {subscriptionApi} from "~/services/subscriptions/subscription.api";
+import SettingsModal from "~/components/modals/SettingsModal.vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -39,6 +40,7 @@ const showLicensePayment = computed(() => {
 const bannerVisible = ref(showLicensePayment.value)
 const confirmingPayment = ref(false)
 const confirmingPaymentError = ref(false)
+const showSettingsModal = ref(false)
 
 const checkoutLoading = ref(false)
 
@@ -191,7 +193,7 @@ onMounted(() => {
             />
             <UDropdownMenu
                 :items="[
-                { label: 'Paramètres', icon: 'i-heroicons-cog-6-tooth', to: '/settings', disabled: isAdmin },
+                { label: 'Paramètres', icon: 'i-heroicons-cog-6-tooth', disabled: isAdmin, onSelect: () => showSettingsModal = true },
                 { label: 'Se déconnecter', icon: 'i-heroicons-arrow-right-on-rectangle', onSelect: () => logoutUser(), }
               ]"
             >
@@ -223,6 +225,12 @@ onMounted(() => {
           <slot/>
         </main>
       </div>
+
+      <SettingsModal
+          v-if="showSettingsModal"
+          v-model:open="showSettingsModal"
+          @close="showSettingsModal = false"
+      />
     </template>
   </div>
 </template>

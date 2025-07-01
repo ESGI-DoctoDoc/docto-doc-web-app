@@ -3,6 +3,8 @@ import type {AppPagination} from "~/api/app-pagination.type";
 import {
     type GetDoctorByIdResponse,
     getDoctorByIdResponseSchema,
+    type GetDoctorProfileResponse,
+    getDoctorProfileResponseSchema,
     type GetDoctorsQuery,
     getDoctorsQuerySchema,
     type GetDoctorsResponse,
@@ -12,6 +14,13 @@ import {useMediaApi} from "~/services/media/media.api";
 
 export const doctorsApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
+
+    function fetchDoctorProfile() {
+        return new RequestBuilder(BASE_API_URL)
+            .get('/doctors/profile')
+            .withResponse<GetDoctorProfileResponse>(getDoctorProfileResponseSchema)
+            .execute();
+    }
 
     function fetchDoctors(requestDto: AppPagination<unknown>) {
         return new RequestBuilder(BASE_API_URL)
@@ -82,5 +91,6 @@ export const doctorsApi = () => {
         acceptDoctorVerification,
         uploadDoctorProfilePicture,
         uploadDoctorDocuments,
+        fetchDoctorProfile,
     }
 }

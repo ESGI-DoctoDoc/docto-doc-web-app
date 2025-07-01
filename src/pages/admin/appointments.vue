@@ -12,8 +12,9 @@ definePageMeta({
   role: 'admin',
 })
 
-const {handleError} = useNotify()
-const {fetchAppointments} = appointmentApi()
+const {handleError, showError, showSuccess} = useNotify()
+const {showCancelAppointmentReasonModal} = useModals()
+const {fetchAppointments, cancelAppointment} = appointmentApi()
 const {nextPage, resetPagination} = usePagination()
 
 const isLoading = ref(true)
@@ -32,6 +33,31 @@ async function getAppointments() {
     handleError('"Erreur lors du chargement des rendez-vous', error)
   } finally {
     isLoading.value = false
+  }
+}
+
+async function onCancelAppointment(appointment: Appointment) {
+  if (!appointment?.id) {
+    showError("Aucun rendez-vous sélectionné pour l'annulation");
+    return;
+  }
+
+  isLoading.value = true;
+  try {
+    const instance = showCancelAppointmentReasonModal();
+    const result = await instance.result as { reason: string };
+    const reason = result.reason.trim();
+    if (!reason) {
+      showError('Annulation échouée', "Veuillez fournir une raison pour l'annulation.");
+      return;
+    }
+
+    await cancelAppointment(appointment.id, reason);
+    showSuccess('Rendez-vous annulé avec succès');
+  } catch (error) {
+    handleError("Erreur lors de l'annulation du rendez-vous", error)
+  } finally {
+    isLoading.value = false;
   }
 }
 
@@ -71,6 +97,7 @@ onMounted(() => {
         v-model:loading="isLoading"
         :data="myAppointments"
         @on-detail="onShowDetail"
+        @on-cancel="onCancelAppointment"
         @on-load-more="onLoadMore"
     />
 
@@ -78,6 +105,7 @@ onMounted(() => {
         v-if="currentAppointment"
         v-model:open="openAppointmentDetail"
         :appointment="currentAppointment"
+        @on-cancel="onCancelAppointment"
         @on-close="onClose()"
     />
   </div>

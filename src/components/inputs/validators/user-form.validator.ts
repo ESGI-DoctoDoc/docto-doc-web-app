@@ -1,4 +1,5 @@
 import {z} from "zod";
+import dayjs from "dayjs";
 
 export const emailSchema = z
     .string()
@@ -66,6 +67,12 @@ export const acceptPublicCoverageSchema = z
 export const birthDateSchema = z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "form.birth-date.invalid") // yyyy-MM-dd
+    .refine(date => {
+        const d = dayjs(date);
+        const now = dayjs();
+        const age = now.add(2, 'day').diff(d, 'year');
+        return age >= 18 && age <= 100;
+    }, "form.birth-date.future");
 
 export const languagesSchema = z
     .array(z.string())

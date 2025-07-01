@@ -8,7 +8,7 @@ import AuthLayout from "~/layouts/AuthLayout.vue";
 import AppDivider from "~/components/AppDivider.vue";
 import {useSession} from "~/composables/auth/useSession";
 
-const {showSuccess, showError} = useNotify()
+const {showSuccess, handleError} = useNotify()
 const {translate} = useTranslate()
 const {login, isLoading} = useAuthApi()
 const {setToken, setDoubleAuth} = useSession()
@@ -34,9 +34,8 @@ async function onSubmit(event: FormSubmitEvent<LoginForm>) {
         translate('auth.login.success.title'),
         translate('auth.login.success.message')
     )
-  } catch (e) {
-    console.error(e)
-    showError('Erreur', 'Connexion échouée.')
+  } catch (error) {
+    handleError('Erreur de connexion', error);
   }
 }
 

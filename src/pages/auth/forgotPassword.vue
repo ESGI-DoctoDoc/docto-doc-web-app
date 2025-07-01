@@ -6,7 +6,7 @@ import type {FormSubmitEvent} from "@nuxt/ui";
 import {type ForgotPasswordForm, forgotPasswordSchema} from "~/components/inputs/validators/user-form.validator";
 import {useAuthApi} from "~/services/auth/auth.api";
 
-const {showSuccess, showError} = useNotify()
+const {showSuccess, handleError} = useNotify()
 const {translate} = useTranslate()
 const {requestResetPassword, isLoading} = useAuthApi()
 const image = new URL('@/assets/images/patient-pc.png', import.meta.url).href
@@ -26,9 +26,8 @@ async function onSubmit(event: FormSubmitEvent<ForgotPasswordForm>) {
         translate('auth.reset_password.request.success.title'),
         translate('auth.reset_password.request.success.message')
     )
-  } catch (e) {
-    console.log(e)
-    showError("Erreur", "Modification du mot de passe échouée.")
+  } catch (error) {
+    handleError('Erreur lors de la demande de réinitialisation du mot de passe', error);
   }
 }
 

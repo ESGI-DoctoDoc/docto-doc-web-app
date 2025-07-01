@@ -1,18 +1,15 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import {reactive} from 'vue'
 import AuthLayout from '~/layouts/AuthLayout.vue'
 import PasswordInput from '~/components/inputs/PasswordInput.vue'
 import type {FormSubmitEvent} from "@nuxt/ui";
-import {
-  type ResetPasswordForm,
-  resetPasswordSchema
-} from '~/components/inputs/validators/user-form.validator'
-import { useAuthApi } from '~/services/auth/auth.api'
-import { useNotify } from '~/composables/useNotify'
-import { useTranslate } from '~/composables/useTranslate'
+import {type ResetPasswordForm, resetPasswordSchema} from '~/components/inputs/validators/user-form.validator'
+import {useAuthApi} from '~/services/auth/auth.api'
+import {useNotify} from '~/composables/useNotify'
+import {useTranslate} from '~/composables/useTranslate'
 
 const { updatePassword, isLoading } = useAuthApi()
-const { showSuccess, showError } = useNotify()
+const {showSuccess, handleError} = useNotify()
 const { translate } = useTranslate()
 const route = useRoute()
 
@@ -33,9 +30,8 @@ async function onSubmit(event: FormSubmitEvent<ResetPasswordForm>) {
         translate('auth.reset_password.update.success.message')
     )
     navigateTo('/auth/login')
-  } catch (e) {
-    console.log(e)
-    showError("Erreur", "Modification du mot de passe échouée.")
+  } catch (error) {
+    handleError('Erreur lors de la mise à jour du mot de passe', error)
   }
 }
 </script>

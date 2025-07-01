@@ -8,7 +8,7 @@ import {type RegisterForm, registerSchema} from "~/components/inputs/validators/
 import type {FormSubmitEvent} from "@nuxt/ui";
 import {useAuthApi} from "~/services/auth/auth.api";
 
-const {showSuccess, showError} = useNotify()
+const {showSuccess, handleError} = useNotify()
 const {translate} = useTranslate()
 const {register, isLoading} = useAuthApi()
 
@@ -36,11 +36,8 @@ async function onSubmit(event: FormSubmitEvent<RegisterForm>) {
         translate('auth.register.success.title'),
         translate('auth.register.success.message')
     )
-  } catch (e) {
-    console.log(e)
-    showError(
-        translate('auth.register.error.server_error'),
-    )
+  } catch (error) {
+    handleError("Erreur lors de l'inscription", error);
   }
 }
 

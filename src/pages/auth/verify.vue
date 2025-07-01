@@ -22,7 +22,7 @@ async function retrieveUserId() {
     const userId = (route.query?.userId || '') as string;
     if (!userId) {
       showError("Aucun identifiant utilisateur trouvé dans l'URL.");
-      // navigateTo('/auth/login');
+      navigateTo('/auth/login');
       return;
     }
 

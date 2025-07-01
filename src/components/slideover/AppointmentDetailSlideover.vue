@@ -37,6 +37,27 @@ const formatStart = computed(() => {
   const start = appointmentDetail.value?.start;
   return dayjs(start).format('DD/MM/YYYY') + ' ' + appointmentDetail.value?.startHour;
 });
+const formattedStatus = computed(() => {
+  const status = appointmentDetail.value?.status;
+  switch (status) {
+    case 'upcoming':
+      return 'À venir';
+    case 'confirmed':
+      return 'Confirmé';
+    case 'locked':
+      return 'Verrouillé';
+    case 'cancelled-excused':
+      return 'Annulé (excusé)';
+    case 'cancelled-unexcused':
+      return 'Annulé (non excusé)';
+    case 'completed':
+      return 'Terminé';
+    case 'waiting-room':
+      return 'En salle d\'attente';
+    default:
+      return '';
+  }
+});
 
 async function fetchAppointmentDetails() {
   loading.value = true
@@ -145,7 +166,7 @@ function formatPhoneNumber(phone: string): string {
         </div>
         <div class="flex justify-between space-y-1">
           <div>Statut</div>
-          <div>{{ appointmentDetail.status }}</div>
+          <div>{{ formattedStatus }}</div>
         </div>
         <div v-if="appointmentDetail.doctorNotes" class="flex justify-between space-y-1">
           <div>Notes</div>

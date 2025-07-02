@@ -81,9 +81,9 @@ onMounted(() => {
 
 <style scoped>
 .map-container {
-  height: 600px;
+  height: 100%;
   width: 100%;
-  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .map {

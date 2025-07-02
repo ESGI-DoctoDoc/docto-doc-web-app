@@ -45,6 +45,8 @@ const {deleteByPath} = useGlobalRequestApi()
 const calendarRef = useTemplateRef('calendarRef');
 
 const currentStartDate = ref(dayjs().startOf('week').format('YYYY-MM-DD'));
+const currentView = ref<'week' | 'month' | 'day'>('week');
+
 const loading = ref(false);
 const showCreateAbsence = ref(false);
 const showUpdateAbsence = ref(false);
@@ -208,6 +210,31 @@ const calendarOptions = ref<CalendarOptions>({
 
 function onChangeView(view: string | number) {
   calendarRef.value?.getApi().changeView(view as 'dayGridMonth' | 'timeGridWeek' | 'timeGridDay');
+  switch (view) {
+    case 'dayGridMonth':
+      calendarOptions.value.slotDuration = '01:00:00';
+      calendarOptions.value.slotMinTime = '00:00:00';
+      calendarOptions.value.slotMaxTime = '23:59:59';
+      calendarOptions.value.allDaySlot = true;
+      currentView.value = 'month';
+      break;
+    case 'timeGridWeek':
+      calendarOptions.value.slotDuration = '00:15:00';
+      calendarOptions.value.slotMinTime = '07:00:00';
+      calendarOptions.value.slotMaxTime = '23:00:00';
+      calendarOptions.value.allDaySlot = false;
+      currentView.value = 'week';
+      break;
+    case 'timeGridDay':
+      calendarOptions.value.slotDuration = '00:15:00';
+      calendarOptions.value.slotMinTime = '07:00:00';
+      calendarOptions.value.slotMaxTime = '23:00:00';
+      calendarOptions.value.allDaySlot = false;
+      currentView.value = 'day';
+      break;
+    default:
+      console.warn('Vue non supportée :', view);
+  }
 }
 
 function onActions(action: 'absence' | 'exceptional_opening' | 'appointment') {
@@ -355,8 +382,8 @@ async function fetchAbsences(start?: string) {
 async function onNext() {
   calendarRef.value?.getApi().next();
   currentStartDate.value = dayjs(currentStartDate.value)
-      .add(1, 'week')
-      .startOf('week')
+      .add(1, currentView.value)
+      .startOf(currentView.value)
       .format('YYYY-MM-DD');
   await getAppointments(currentStartDate.value)
   await fetchAbsences(currentStartDate.value);
@@ -365,8 +392,8 @@ async function onNext() {
 async function onPrev() {
   calendarRef.value?.getApi().prev();
   currentStartDate.value = dayjs(currentStartDate.value)
-      .subtract(1, 'week')
-      .startOf('week')
+      .subtract(1, currentView.value)
+      .startOf(currentView.value)
       .format('YYYY-MM-DD');
   await getAppointments(currentStartDate.value)
   await fetchAbsences(currentStartDate.value);
@@ -376,6 +403,13 @@ function onCancelContextMenu(open: boolean) {
   if (!open) {
     selectedHours.value = undefined;
   }
+}
+
+function onToday() {
+  calendarRef.value?.getApi().today();
+  currentStartDate.value = dayjs().startOf('week').format('YYYY-MM-DD');
+  getAppointments(currentStartDate.value);
+  fetchAbsences(currentStartDate.value);
 }
 
 onMounted(async () => {
@@ -391,11 +425,14 @@ onMounted(async () => {
   <div class="fit">
     <UProgress v-if="loading" animation="carousel" class="absolute top-0 left-0 w-full z-50" size="sm"/>
     <CalendarHeaderDefault
+        :end="dayjs(currentStartDate).subtract(1, 'day').add(1, currentView).format('YYYY-MM-DD')"
+        :start="currentStartDate"
         @next="onNext()"
         @prev="onPrev()"
         @change-view="onChangeView"
         @on-actions="onActions"
         @on-calendar-type="$emit('on-calendar-type')"
+        @today="onToday()"
     />
     <div class="overflow-y-auto" style="height: calc(100% - 6vh);">
       <UContextMenu :disabled="selectedHours?.[0] === undefined" :items="items" @update:open="onCancelContextMenu">

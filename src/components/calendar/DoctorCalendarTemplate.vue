@@ -212,6 +212,12 @@ function onPrev() {
   fetchSlots(currentStartDate.value);
 }
 
+function onToday() {
+  calendarRef.value?.getApi().today();
+  currentStartDate.value = dayjs().startOf('week').format('YYYY-MM-DD');
+  fetchSlots(currentStartDate.value);
+}
+
 onMounted(() => {
   fetchSlots();
 })
@@ -222,22 +228,21 @@ onMounted(() => {
   <div class="fit">
     <UProgress v-if="loading" animation="carousel" class="absolute top-0 left-0 w-full z-50" size="sm"/>
     <CalendarHeaderDefault>
-      <USwitch class="text-sm" label="Créneaux configurés" model-value @change="$emit('on-calendar-type')"/>
-      <div class="w-2/12">
-        <div class="flex space-x-2 w-full">
-          <UButton icon="i-lucide-chevron-left" variant="soft" @click="onPrev"/>
-          <UTabs
-              :content="false"
-              :items="[{label: 'Semaine', value: 'timeGridWeek'}]"
-              class="w-full"
-              default-value="timeGridWeek"
-              size="xs"
-              variant="pill"
-          />
-          <UButton icon="i-lucide-chevron-right" variant="soft" @click="onNext"/>
-        </div>
+      <div class="flex items-center space-x-2">
+        <UButton color="secondary" label="Ajourd'hui" size="sm" variant="subtle" @click="onToday"/>
+        <UButton icon="i-lucide-chevron-left" variant="subtle" @click="onPrev"/>
+        <UButton icon="i-lucide-chevron-right" variant="subtle" @click="onNext"/>
+        <p class="text-lg px-3">
+          {{ dayjs(currentStartDate).format('DD') }} -
+          {{ dayjs(currentStartDate).subtract(1, 'day').add(1, 'week').format('DD MMMM YYYY') }}
+        </p>
       </div>
-      <UButton :disabled="loading" label="Nouveau créneau" variant="subtle" @click="showCreateSlot = true"/>
+
+      <div class="flex items-center space-x-2">
+        <UButton :disabled="loading" label="Nouveau créneau" variant="subtle" @click="showCreateSlot = true"/>
+        <UButton color="secondary" icon="i-lucide-arrow-left" label="Retour" variant="subtle"
+                 @click="$emit('on-calendar-type')"/>
+      </div>
     </CalendarHeaderDefault>
     <div class="overflow-y-auto" style="height: calc(100% - 6vh);">
       <FullCalendar

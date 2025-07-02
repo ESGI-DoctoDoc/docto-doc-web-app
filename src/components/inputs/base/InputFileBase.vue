@@ -113,7 +113,7 @@ async function removeFile(id: string) {
       @dragover.prevent="isHovering = true"
       @dragleave.prevent="isHovering = false"
   >
-    <UProgress v-if="isLoading" class="absolute top-0 left-0 w-full h-2 z-10"/>
+    <UProgress v-if="isLoading" class="absolute top-0 left-0 w-full h-2 z-10" size="sm"/>
     <template v-if="uploadedFiles.length === 0">
       <div>
         <UIcon class="size-5" name="i-lucide-lightbulb"/>

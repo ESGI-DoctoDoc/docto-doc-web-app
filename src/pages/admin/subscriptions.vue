@@ -25,6 +25,7 @@ async function onViewInvoice(subscription: Subscription) {
     return
   }
 
+  isLoading.value = true
   try {
     const invoice = await getSubscriptionInvoice(subscription.id);
     if (invoice) {
@@ -34,6 +35,8 @@ async function onViewInvoice(subscription: Subscription) {
     }
   } catch (error) {
     handleError("Erreur lors de la récupération de la facture.", error)
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -73,6 +76,7 @@ onMounted(() => {
 
 <template>
   <div class="fit">
+    <UProgress v-if="isLoading" class="absolute top-0 left-0 right-0 z-50" size="sm"/>
     <LicensesTable
         :data="mySubscriptions"
         :loading="isLoading"

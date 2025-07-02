@@ -95,6 +95,7 @@ function getRowActions(subscription: Subscription) {
       <template #actions-cell="{ row }">
         <UDropdownMenu :items="getRowActions(row.original)">
           <UButton
+              :disabled="loading"
               aria-label="Actions"
               color="neutral"
               icon="i-lucide-ellipsis-vertical"

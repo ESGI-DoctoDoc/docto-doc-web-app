@@ -1,7 +1,7 @@
 import type {AppPagination} from "~/api/app-pagination.type";
 
 const currentPage = ref(0)
-const defaultSize = 10
+const defaultSize = 15
 
 function nextPage<T>(request: (params: AppPagination<unknown>) => Promise<T[]>): Promise<T[]> {
     currentPage.value += 1

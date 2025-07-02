@@ -62,7 +62,7 @@ async function fetchSpecialities() {
   try {
     specialities.value = await getSpecialities({
       page: 0,
-      size: 10,
+      size: 15
     })
   } catch (error) {
     handleError('Erreur lors du chargement des spécialités', error);

@@ -53,7 +53,7 @@ async function getSubscriptionsList() {
   try {
     mySubscriptions.value = await getSubscriptions({
       page: 0,
-      size: 10,
+      size: 15
     })
   } catch (error) {
     handleError('Erreur lors du chargement des licences', error)

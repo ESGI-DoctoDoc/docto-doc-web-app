@@ -26,7 +26,7 @@ async function getPatients() {
   try {
     myPatients.value = await fetchPatients({
       page: 0,
-      size: 10,
+      size: 15
     })
   } catch (error) {
     if (error instanceof Error) {

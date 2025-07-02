@@ -39,7 +39,7 @@ async function getCareTrackings() {
   try {
     myCareTrackings.value = await fetchCareTracking({
       page: 0,
-      size: 10,
+      size: 15
     });
   } catch (error) {
     handleError('Erreur lors du chargement des suivis de dossier', error);

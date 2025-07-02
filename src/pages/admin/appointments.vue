@@ -27,7 +27,7 @@ async function getAppointments() {
   try {
     myAppointments.value = await fetchAppointments({
       page: 0,
-      size: 10,
+      size: 15
     })
   } catch (error) {
     handleError('"Erreur lors du chargement des rendez-vous', error)

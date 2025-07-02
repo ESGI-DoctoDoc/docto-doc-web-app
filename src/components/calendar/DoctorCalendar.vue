@@ -144,7 +144,7 @@ const calendarOptions = ref<CalendarOptions>({
       return {
         html: `
           <div class="flex space-x-2 h-full">
-            <div class="h-full bg-${isErrorColor ? 'error' : 'primary'}-500 w-2 rounded-sm"></div>
+            <div class="h-full bg-${isErrorColor ? 'error' : 'success'}-500 w-2 rounded-sm"></div>
             <div class="flex-1 flex-col justify-between text-black h-full p-0.5 overflow-hidden">
               <div class="flex flex-col">
                 <div class="text-xs text-gray-600">
@@ -172,8 +172,8 @@ const calendarOptions = ref<CalendarOptions>({
                 <div class="text-sm font-medium capitalize mt-0.5">
                   Absence
                 </div>
-                <div class="text-sm font-medium capitalize mt-0.5">
-                  ${absence.reason ?? ''}
+                <div class="text-sm font-medium capitalize mt-1.5 italic text-ellipsis overflow-hidden">
+                  ${absence.description ?? ''}
                 </div>
               </div>
             </div>

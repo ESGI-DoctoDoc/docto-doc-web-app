@@ -1,8 +1,19 @@
 <script setup>
 import {onMounted} from 'vue'
 import L from 'leaflet'
+import iconUrl from 'leaflet/dist/images/marker-icon.png'
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png'
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
 import 'leaflet/dist/leaflet.css';
 import {doctorsApi} from "~/services/doctors/doctors.api.js";
+
+delete L.Icon.Default.prototype._getIconUrl
+
+L.Icon.Default.mergeOptions({
+  iconUrl,
+  iconRetinaUrl,
+  shadowUrl,
+})
 
 const {fetchDoctors} = doctorsApi()
 const {handleError} = useNotify()
@@ -74,7 +85,7 @@ onMounted(() => {
 
 <template>
   <div class="map-container">
-    <div id="map" class="map"></div>
+    <div id="map" class="map"/>
   </div>
 </template>
 

@@ -6,7 +6,7 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview",
+    "preview": "npm run generate && npm run build && nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {

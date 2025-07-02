@@ -75,13 +75,6 @@ function getRowActions(speciality: Speciality) {
         currentSpeciality.value = speciality
       },
     },
-    {
-      label: 'Supprimer',
-      icon: 'i-lucide-trash',
-      onClick: () => {
-        console.log('Supprimer', speciality)
-      },
-    },
   ]
 }
 

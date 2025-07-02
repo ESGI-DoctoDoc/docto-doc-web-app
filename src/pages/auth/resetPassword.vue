@@ -9,8 +9,9 @@ import {useNotify} from '~/composables/useNotify'
 import {useTranslate} from '~/composables/useTranslate'
 
 const { updatePassword, isLoading } = useAuthApi()
-const {showSuccess, handleError} = useNotify()
+const {showSuccess, handleError, showError} = useNotify()
 const { translate } = useTranslate()
+
 const route = useRoute()
 
 const form = reactive<Partial<ResetPasswordForm>>({
@@ -34,6 +35,14 @@ async function onSubmit(event: FormSubmitEvent<ResetPasswordForm>) {
     handleError('Erreur lors de la mise à jour du mot de passe', error)
   }
 }
+
+onMounted(() => {
+  const token = route.query.token
+  if (!token) {
+    showError('Token de réinitialisation manquant', 'Veuillez fournir un token valide pour réinitialiser votre mot de passe.')
+    navigateTo('/auth/login')
+  }
+})
 </script>
 
 <template>

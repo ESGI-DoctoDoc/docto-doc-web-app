@@ -109,6 +109,14 @@ export type ForgotPasswordForm = z.infer<typeof forgotPasswordSchema>;
 export const resetPasswordSchema = z.object({
     password: passwordSchema,
     passwordConfirm: passwordSchema,
+}).superRefine((data, ctx) => {
+    if (data.password !== data.passwordConfirm) {
+        ctx.addIssue({
+            path: ["passwordConfirm"],
+            code: z.ZodIssueCode.custom,
+            message: "form.reset-password.passwords-not-match",
+        })
+    }
 })
 export type ResetPasswordForm = z.infer<typeof resetPasswordSchema>;
 

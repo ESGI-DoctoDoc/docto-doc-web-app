@@ -21,6 +21,7 @@ import type {Absence} from "~/types/absence";
 import type {Appointment} from '~/types/appointment';
 import type {ContextMenuItem} from "#ui/components/ContextMenu.vue";
 import dayjs from "dayjs";
+import {useGlobalRequestApi} from "~/services/global-request.api";
 
 const props = defineProps({
   events: {
@@ -39,6 +40,8 @@ const {handleError, showSuccess, showError} = useNotify()
 const {createAbsence, getAbsences} = doctorAbsenceApi();
 const {createAppointment, cancelAppointment, updateAppointment, fetchAppointments} = appointmentApi();
 const {mapDoctorAbsenceToCalendarEvent, mapAppointmentToCalendarEvent, mapCalendarEventToDoctorAbsence} = useCalendar()
+const {deleteByPath} = useGlobalRequestApi()
+
 const calendarRef = useTemplateRef('calendarRef');
 
 const currentStartDate = ref(dayjs().startOf('week').format('YYYY-MM-DD'));
@@ -318,6 +321,7 @@ function onShowUpdate(appointment: Appointment) {
 async function onDeleteAbsence(id: string) {
   loading.value = true;
   try {
+    await deleteByPath(`/doctors/absences/${id}`);
     await fetchAbsences();
     showSuccess('Absence supprimée avec succès');
   } catch (error) {

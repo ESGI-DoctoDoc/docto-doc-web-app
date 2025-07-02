@@ -44,8 +44,17 @@ const search = ref('')
 const table = ref('table')
 const columns: TableColumn<Appointment>[] = [
   {
+    id: 'doctor',
+    header: 'Médecin',
+    accessorFn: (row) => row.doctor?.email,
+    cell: ({row}) => {
+      return row.original?.doctor?.email || 'Aucun médecin assigné';
+    },
+  },
+  {
     accessorKey: 'patient',
     header: 'Nom du patient',
+    accessorFn: (row) => row.patient?.name,
     cell: ({row}) => `${row.original.patient.name}`,
   },
   {

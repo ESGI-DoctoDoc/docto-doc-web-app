@@ -2,6 +2,7 @@ import {RequestBuilder} from '~/api/request-builder';
 import {
     type GetCareTrackingByIdResponse,
     getCareTrackingByIdResponseSchema,
+    type GetCareTrackingDto,
     type GetCareTrackingsQuery,
     getCareTrackingsQuerySchema,
     type GetCareTrackingsResponse,
@@ -20,7 +21,7 @@ import type {AppPagination} from "~/api/app-pagination.type";
 export const careTrackingApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
 
-    function fetchCareTracking(requestDto: AppPagination<unknown>) {
+    function fetchCareTracking(requestDto: AppPagination<GetCareTrackingDto>) {
         return new RequestBuilder(BASE_API_URL)
             .get('/doctors/care-tracking')
             .withQuery<GetCareTrackingsQuery>(getCareTrackingsQuerySchema)

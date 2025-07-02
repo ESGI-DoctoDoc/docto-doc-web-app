@@ -7,6 +7,11 @@ const careTracking = defineModel('careTracking', {
   required: false,
 })
 
+const patientId = defineModel('patientId', {
+  type: String as PropType<string>,
+  required: true,
+})
+
 withDefaults(defineProps<{ required?: boolean }>(), {
   required: false,
 })
@@ -21,9 +26,15 @@ const careTrackingItems = ref<{ label: string, value: string }[]>([]);
 async function careTrackingToList() {
   loading.value = true;
   try {
+    if (!patientId.value) {
+      careTrackingItems.value = [];
+      return;
+    }
+
     const careTracking = await fetchCareTracking({
       page: 0,
       size: 1000,
+      patientId: patientId.value,
     });
     careTrackingItems.value = careTracking.map(item => ({
       label: item.name,
@@ -40,10 +51,11 @@ async function careTrackingToList() {
   }
 }
 
-onMounted(() => {
-  careTrackingToList();
-})
-
+watch(
+    () => !!patientId.value,
+    careTrackingToList,
+    {immediate: true}
+)
 </script>
 
 <template>

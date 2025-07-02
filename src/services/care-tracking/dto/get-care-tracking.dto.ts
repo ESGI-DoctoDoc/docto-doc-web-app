@@ -1,5 +1,11 @@
 import {z} from 'zod';
 
+export interface GetCareTrackingDto {
+    page?: number;
+    size?: number;
+    patientId?: string;
+}
+
 export const getCareTrackingsQuerySchema = z.object({
     page: z.number().optional(),
     size: z.number().optional(),

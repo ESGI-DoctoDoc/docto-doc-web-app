@@ -29,12 +29,16 @@ const showLicensePayment = computed(() => {
     return false; // Only show the banner for non-admin users
   }
 
+  if (hasLicenseActive.value) {
+    return false;
+  }
+
   const localStorageKey = 'dismissLicenseBanner'
   const dismissBannerUntil = localStorage.getItem(localStorageKey) as string | null
   if (!dismissBannerUntil) {
     return true;
   }
-  return !hasLicenseActive.value && new Date(dismissBannerUntil) < new Date();
+  return new Date(dismissBannerUntil) < new Date();
 })
 
 const bannerVisible = ref(showLicensePayment.value)

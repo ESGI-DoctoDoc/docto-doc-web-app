@@ -13,7 +13,10 @@ export default defineNuxtConfig({
   vite: {
     plugins: [
       tailwindcss()
-    ]
+    ],
+    esbuild: {
+      drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : []
+    }
   },
   runtimeConfig: {
     public: {

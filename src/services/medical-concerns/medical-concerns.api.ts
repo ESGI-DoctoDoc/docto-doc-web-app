@@ -51,7 +51,7 @@ export const medicalConcernsApi = () => {
 
     async function removeMedicalConcern(medicalConcernId: string) {
         return new RequestBuilder(BASE_API_URL)
-            .delete(`/medical-concerns/${medicalConcernId}`)
+            .delete(`/doctors/medical-concerns/${medicalConcernId}`)
             .execute()
     }
 

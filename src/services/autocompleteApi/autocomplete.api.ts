@@ -11,7 +11,7 @@ export const autocompleteApi = () => {
 
     function fetchAddressAutocomplete(requestDto: { address: string }) {
         return new RequestBuilder(BASE_API_URL)
-            .get('/autocomplete/address')
+            .get('/doctors/autocomplete/address')
             .withQuery<FetchAddressAutocompleteQuery>(fetchAddressAutocompleteQuerySchema)
             .withResponse<FetchAddressAutocompleteResponse>(fetchAddressAutocompleteResponseSchema)
             .execute({

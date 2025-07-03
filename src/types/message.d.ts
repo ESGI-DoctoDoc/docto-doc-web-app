@@ -5,8 +5,8 @@ interface MessageSender {
 }
 
 interface MessageContent {
-    text: string;
-    files: string[];
+    text: string | null;
+    files: string[] | null;
 }
 
 export interface Message {

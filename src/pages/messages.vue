@@ -9,6 +9,8 @@ import {useSession} from "~/composables/auth/useSession";
 import type {CareTrackingDetail} from "~/types/care-tracking";
 import {careTrackingApi} from "~/services/care-tracking/care-tracking.api";
 import {useDebounceFn} from '@vueuse/core';
+import {ref} from "vue";
+import PreviewDocumentModal from "~/components/modals/PreviewDocumentModal.vue";
 
 definePageMeta({
   title: 'Messages',
@@ -45,6 +47,8 @@ const dropdownItems = ref([
 const showDropZone = ref(false)
 const isLoading = ref(true);
 const isLoadingMore = ref(false);
+const previewError = ref<boolean[]>([]);
+const currentUrl = ref('');
 
 const messages = ref<Message[]>([]);
 const careTrackingDetail = ref<CareTrackingDetail>();
@@ -84,7 +88,7 @@ async function fetchMessages() {
     {
       id: '5',
       sender: {id: '1', name: 'Docteur1', avatarUrl: 'https://via.placeholder.com/40'},
-      content: {text: 'Parfait. Continuez comme ça.', files: []},
+      content: {text: 'Parfait. Continuez comme ça.', files: ['https://picsum.photos/536/354']},
       sendAt: '2025-07-03T09:05:00Z',
     },
     {
@@ -110,7 +114,10 @@ async function loadMoreMessages() {
     {
       id: '8',
       sender: {id: '1', name: 'Docteur1', avatarUrl: 'https://via.placeholder.com/40'},
-      content: {text: 'Nouveau message de suivi.', files: []},
+      content: {
+        text: null,
+        files: ['https://picsum.photos/536/354', 'https://picsum.photos.fr/no-content', 'https://picsum.photos/536/354', 'https://picsum.photos/536/354']
+      },
       sendAt: '2025-07-03T09:08:00Z',
     },
     {
@@ -152,8 +159,18 @@ function listenToMessages() {
 }
 
 // TODO: Envoyer un message via socket
-function sendMessage(form: FormSubmitEvent<unknown>) {
+function sendMessage(form: FormSubmitEvent<SendMessageForm>) {
   console.log("form is accepted", form.data);
+  messages.value = [
+    ...messages.value,
+    {
+      id: String(messages.value.length + 1),
+      sender: {id: '00000000-0000-0000-0000-000000000004', name: 'Moi', avatarUrl: 'https://via.placeholder.com/40'},
+      content: {text: form.data.message, files: null},
+      sendAt: new Date().toISOString(),
+    }
+  ];
+  form.data.message = '';
 }
 
 function onError(event: FormErrorEvent) {
@@ -253,9 +270,36 @@ onBeforeUnmount(() => {
                 <div class="font-medium">{{ message.sender.name }}</div>
               </div>
               <div
+                  v-if="message.content.text != null"
                   :class="{ 'bg-info-100': isMessageFromMe(message), 'bg-gray-50': !isMessageFromMe(message) }"
                   class="border border-gray-300 rounded-md p-3 text-black"
-              >{{ message.content.text }}
+              >
+                {{ message.content.text }}
+              </div>
+              <div v-if="message.content.files && message.content.files.length > 0" class="mt-2 grid grid-cols-2 gap-2">
+                <div
+                    v-for="(file, fileIndex) in message.content.files"
+                    :key="fileIndex"
+                    class="border border-gray-300 rounded p-2 bg-white shadow-sm w-full"
+                >
+                  <template v-if="!previewError[index]">
+                    <img
+                        :alt="'Preview ' + index"
+                        :src="file"
+                        class="w-full h-32 min-w-36 object-cover rounded-md"
+                        @error="previewError[index] = true"
+                    />
+                  </template>
+                  <template v-else>
+                    <div
+                        class="h-32 min-w-36 w-full flex items-center justify-center bg-gray-200 rounded-md border border-gray-300">
+                      <UIcon
+                          class="w-16 h-16 text-gray-500"
+                          name="i-lucide-file-text"
+                      />
+                    </div>
+                  </template>
+                </div>
               </div>
               <div class="text-sm text-gray-500">Le 12/10/2023 à 14:30</div>
             </div>
@@ -289,6 +333,8 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
+
+    <PreviewDocumentModal v-if="currentUrl" :file-url="currentUrl" @close="currentUrl = ''"/>
   </div>
 </template>
 

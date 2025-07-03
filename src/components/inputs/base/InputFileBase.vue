@@ -110,8 +110,8 @@ async function removeFile(id: string) {
       class="relative w-full h-24 flex flex-col justify-center items-center border-2 border-dashed border-gray-300 rounded-lg p-4 cursor-pointer hover:bg-gray-100"
       @click="handleClick"
       @drop="handleDrop"
-      @dragover.prevent="isHovering = true"
-      @dragleave.prevent="isHovering = false"
+      @dragleave="isHovering = false"
+      @dragover="isHovering = true"
   >
     <UProgress v-if="isLoading" class="absolute top-0 left-0 w-full h-2 z-10" size="sm"/>
     <template v-if="uploadedFiles.length === 0">

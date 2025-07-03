@@ -10,7 +10,7 @@ const props = defineProps<{
   loading: boolean
 }>()
 
-const emits = defineEmits(['onUpdate', 'onRemove', 'onCreate', 'onDetail', 'onLoadMore'])
+const emits = defineEmits(['onUpdate', 'onRemove', 'onCreate', 'onDetail', 'onLoadMore', 'onMessage'])
 const {getUser} = useSession()
 
 const tableBodyRef = ref<HTMLElement | null>(null)
@@ -47,9 +47,9 @@ const columns: TableColumn<CareTracking>[] = [
 function getCareTrackingOptions(row: CareTracking) {
   return [
     {
-      label: 'Détail',
-      icon: 'i-lucide-eye',
-      onClick: () => emits('onDetail', row)
+      label: 'Vour les messages',
+      icon: 'i-lucide-message-square',
+      onClick: () => emits('onMessage', row)
     },
     {
       label: 'Modifier le suivi',

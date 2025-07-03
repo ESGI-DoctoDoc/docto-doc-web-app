@@ -229,7 +229,7 @@ onMounted(() => {
     <UProgress v-if="loading" animation="carousel" class="absolute top-0 left-0 w-full z-50" size="sm"/>
     <CalendarHeaderDefault>
       <div class="flex items-center space-x-2">
-        <UButton color="secondary" label="Ajourd'hui" size="sm" variant="subtle" @click="onToday"/>
+        <UButton color="neutral" label="Ajourd'hui" size="sm" variant="subtle" @click="onToday"/>
         <UButton icon="i-lucide-chevron-left" variant="subtle" @click="onPrev"/>
         <UButton icon="i-lucide-chevron-right" variant="subtle" @click="onNext"/>
         <p class="text-lg px-3">

@@ -22,6 +22,7 @@ const {showSuccess, handleError} = useNotify();
 const isLoading = ref(true);
 const openCreateModal = ref(false);
 const openDetail = ref(false);
+const showMessage = ref(false);
 const openUpdateModal = ref(false);
 const myCareTrackings = ref<CareTracking[]>([]);
 const currentCareTracking = ref<CareTracking | null>(null);
@@ -127,6 +128,10 @@ async function onUpdateCareTracking(form: UpdateCareTrackingForm) {
   }
 }
 
+function onShowMessage(careTracking: CareTracking) {
+  navigateTo(`/care-tracking/${careTracking.id}/messages`)
+}
+
 function onEnd() {
 
 }
@@ -147,6 +152,7 @@ onMounted(() => {
         @on-remove="onRemove"
         @on-create="onShowCreate"
         @on-load-more="onLoadMore"
+        @on-message="onShowMessage"
     />
 
     <!-- Create   -->

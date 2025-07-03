@@ -46,11 +46,6 @@ const planItems = ref<DropdownMenuItem[]>([
     icon: 'i-lucide-ban',
     onSelect: () => emits('on-actions', ActionsType.ABSENCE)
   },
-  {
-    label: 'Un nouveau créneau',
-    icon: 'i-lucide-calendar-check',
-    onSelect: () => emits('on-calendar-type')
-  }
 ]);
 
 
@@ -60,7 +55,7 @@ const planItems = ref<DropdownMenuItem[]>([
   <div class="flex items-center justify-between space-x-2 p-3.5" style="min-height: 6vh; max-height: 6vh;">
     <slot name="default">
       <div class="flex items-center space-x-2">
-        <UButton color="secondary" label="Ajourd'hui" size="sm" variant="subtle" @click="$emit('today')"/>
+        <UButton color="neutral" label="Ajourd'hui" size="sm" variant="subtle" @click="$emit('today')"/>
         <UButton icon="i-lucide-chevron-left" variant="subtle" @click="$emit('prev')"/>
         <UButton icon="i-lucide-chevron-right" variant="subtle" @click="$emit('next')"/>
         <p class="text-lg px-3">{{ dayjs(start).format('DD') }} - {{ dayjs(end).format('DD MMMM YYYY') }}</p>
@@ -71,9 +66,12 @@ const planItems = ref<DropdownMenuItem[]>([
         </div>
       </div>
 
-      <UDropdownMenu :items="planItems">
-        <UButton color="primary" label="Planifier" trailing-icon="i-lucide-chevron-down" variant="subtle"/>
-      </UDropdownMenu>
+      <div class="flex space-x-2">
+        <UButton color="secondary" label="Mes crénaux" variant="subtle" @click="$emit('on-calendar-type')"/>
+        <UDropdownMenu :items="planItems">
+          <UButton color="primary" label="Planifier" trailing-icon="i-lucide-chevron-down" variant="subtle"/>
+        </UDropdownMenu>
+      </div>
     </slot>
   </div>
 </template>

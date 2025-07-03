@@ -141,7 +141,7 @@ export const onboardingSchema1 = z.object({
     rpps: rppsSchema,
     acceptPublicCoverage: acceptPublicCoverageSchema,
     doctorDocuments: doctorDocumentsSchema,
-    // address: z.string().min(1, "form.address.required").toLowerCase(),
+    address: z.string().min(1, "form.address.required").toLowerCase(),
 })
 export const onboardingSchema2 = z.object({})
 

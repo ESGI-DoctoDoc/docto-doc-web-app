@@ -9,7 +9,7 @@ export interface Subscription {
     start: string;
     end: string;
     amount: number;
-    status: 'active' | 'inactive' | 'cancelled';
+    status: 'active' | 'inactive' | 'expired' | 'payment_error';
 }
 
 export interface SubscriptionInvoice {

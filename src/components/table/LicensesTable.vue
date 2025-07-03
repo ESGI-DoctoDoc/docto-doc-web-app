@@ -51,7 +51,21 @@ const columns: TableColumn<Subscription>[] = [
   },
   {
     header: 'Statut',
-    cell: ({row}) => row.original.status === 'active' ? 'Active' : 'Expirée',
+    cell: ({ row }) => {
+      const status = row.original.status
+      switch (status) {
+        case 'active':
+          return 'Active'
+        case 'expired':
+          return 'Expirée'
+        case 'inactive':
+          return 'Inactive'
+        case 'payment_error':
+          return 'Erreur de paiement'
+        default:
+          return 'Inconnu'
+      }
+    }
   },
   {
     id: 'actions',

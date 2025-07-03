@@ -120,6 +120,7 @@ async function onSubmit(event: FormSubmitEvent<OnboardingForm1>) {
       profilePictureUrl: event.data.profilePictureUrl,
       languages: event.data.languages,
       doctorDocuments: event.data.doctorDocuments,
+      address: event.data.address
     })
     showSuccess(
         translate('auth.login.success.title'),

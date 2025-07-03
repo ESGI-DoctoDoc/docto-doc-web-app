@@ -15,7 +15,7 @@ const {setToken, setDoubleAuth} = useSession()
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
 
 const form = reactive<Partial<LoginForm>>({
-  email: 'doctor4@example.com',
+  email: 'admin@example.com',
   password: 'Abdcd76@',
 })
 

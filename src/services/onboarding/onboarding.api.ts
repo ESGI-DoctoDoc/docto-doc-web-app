@@ -30,7 +30,8 @@ export const useOnboardingApi = () => {
                     bio: onboardingDto.bio,
                     pictureDocumentId: onboardingDto.profilePictureUrl,
                     languages: onboardingDto.languages,
-                    doctorDocuments: onboardingDto.doctorDocuments
+                    doctorDocuments: onboardingDto.doctorDocuments,
+                    address: onboardingDto.address
                 }
             })
             .finally(() => (isLoading.value = false));

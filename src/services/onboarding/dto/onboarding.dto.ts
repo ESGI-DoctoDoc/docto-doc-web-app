@@ -12,7 +12,8 @@ export interface OnboardingDto {
     bio: string,
     profilePictureUrl: string,
     languages: string[],
-    doctorDocuments: string[]
+    doctorDocuments: string[],
+    address: string,
 }
 
 export const onboardingBodySchema = z.object({
@@ -28,6 +29,7 @@ export const onboardingBodySchema = z.object({
     pictureDocumentId: z.string(),
     languages: z.array(z.string()),
     doctorDocuments: z.array(z.string()),
+    address: z.string(),
 })
 
 export type OnboardingBody = z.infer<typeof onboardingBodySchema>

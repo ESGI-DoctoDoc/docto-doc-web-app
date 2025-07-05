@@ -4,20 +4,25 @@ import {ref} from 'vue'
 import type {TableColumn} from "@nuxt/ui";
 import type {Subscription} from "~/types/subscription";
 import dayjs from "dayjs";
-import TableHeaderDefault from "~/components/table/TableHeaderDefault.vue";
+import {subscriptionApi} from "~/services/subscriptions/subscription.api";
+import {useSession} from "~/composables/auth/useSession";
 
-const props = defineProps<{
+defineProps<{
   data: Subscription[]
   loading: boolean
 }>()
 
 const emits = defineEmits(['onCheckout', 'onViewInvoice'])
-const search = ref('')
 
-// const addButton = computed(() => {
-//   const hasActive = props.data.some(sub => sub.status === 'active')
-//   return hasActive ? '' : 'Ajouter une licence'
-// })
+const {handleError} = useNotify()
+const {checkoutLicense} = subscriptionApi()
+const {hasLicenseActive, getUser} = useSession()
+
+const isAdmin = computed(() => getUser()?.user?.role === 'admin')
+const showLicensePayment = computed(() => !(isAdmin.value || hasLicenseActive.value))
+
+const bannerVisible = ref(showLicensePayment.value)
+const checkoutLoading = ref(false)
 
 const table = ref('table')
 const columns: TableColumn<Subscription>[] = [
@@ -84,15 +89,47 @@ function getRowActions(subscription: Subscription) {
     },
   ]
 }
+
+async function redirectToCheckout() {
+  if (hasLicenseActive.value) {
+    return
+  }
+
+  checkoutLoading.value = true
+
+  try {
+    const response = await checkoutLicense();
+    if (response.redirectUrl) {
+      window.location.href = response.redirectUrl;
+    } else {
+      checkoutLoading.value = false
+    }
+  } catch (error) {
+    handleError("Une erreur est survenue lors de la redirection vers le paiement.", error)
+    checkoutLoading.value = false
+  }
+}
 </script>
 
 <template>
   <div class="flex-1 divide-y divide-accented w-full">
-    <TableHeaderDefault
-        v-model:search="search"
-        searchable
-        @update:search="table?.tableApi?.getColumn('doctor')?.setFilterValue(search)"
-    />
+    <div
+        v-if="bannerVisible"
+        class="top-banner w-screen bg-yellow-200 text-yellow-800 flex items-center justify-between px-6 py-2 z-10 border-b border-b-gray-400 fixed top-0 left-0"
+    >
+      <p class="text-sm font-medium">
+        Vous n'avez pas de licence active.
+        <UButton
+            :disabled="checkoutLoading"
+            :loading="checkoutLoading"
+            class="underline text-yellow-900 hover:text-yellow-700 ml-1"
+            variant="ghost"
+            @click="redirectToCheckout"
+        >
+          Cliquez ici pour l'obtenir.
+        </UButton>
+      </p>
+    </div>
 
     <UTable
         ref="table"
@@ -101,7 +138,7 @@ function getRowActions(subscription: Subscription) {
         :data="data"
         :loading="loading"
         sticky
-        style="height: calc(100vh - 8vh - 15vh);"
+        style="height: calc(100vh - 15vh);"
     >
       <template #expanded="{ row }">
         <pre>{{ row.original }}</pre>

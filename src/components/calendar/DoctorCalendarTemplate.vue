@@ -239,7 +239,8 @@ onMounted(() => {
       </div>
 
       <div class="flex items-center space-x-2">
-        <UButton :disabled="loading" label="Nouveau créneau" variant="subtle" @click="showCreateSlot = true"/>
+        <UButton :disabled="loading" label="Nouveau créneau" leading-icon="i-lucide-calendar-plus" variant="subtle"
+                 @click="showCreateSlot = true"/>
         <UButton color="secondary" icon="i-lucide-arrow-left" label="Retour" variant="subtle"
                  @click="$emit('on-calendar-type')"/>
       </div>

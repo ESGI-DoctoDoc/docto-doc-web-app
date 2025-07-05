@@ -67,7 +67,8 @@ const planItems = ref<DropdownMenuItem[]>([
       </div>
 
       <div class="flex space-x-2">
-        <UButton color="secondary" label="Mes crénaux" variant="subtle" @click="$emit('on-calendar-type')"/>
+        <UButton color="secondary" icon="i-lucide-calendar" label="Plannifier mes crénaux" variant="subtle"
+                 @click="$emit('on-calendar-type')"/>
         <UDropdownMenu :items="planItems">
           <UButton color="primary" label="Planifier" trailing-icon="i-lucide-chevron-down" variant="subtle"/>
         </UDropdownMenu>

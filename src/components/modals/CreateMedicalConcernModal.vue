@@ -6,20 +6,25 @@ import {
   createMedicalConcernSchema
 } from "~/components/inputs/validators/medical-concern-form.validator";
 import {MedicalConcernDuration} from "~/types/medical-concern-duration";
+import type {MedicalConcern} from "~/types/medical-concern";
 
 const open = defineModel('open', {
   type: Boolean,
   default: true,
 })
 
+const props = defineProps<{
+  medicalConcern?: MedicalConcern
+}>()
+
 const emit = defineEmits<{
   (e: 'onSubmit', value: CreateMedicalConcernForm): void;
 }>()
 
 const form = ref<CreateMedicalConcernForm>({
-  name: '',
-  duration: 60,
-  price: 0,
+  name: props?.medicalConcern?.name || '',
+  duration: props?.medicalConcern?.duration || MedicalConcernDuration.MIN_60,
+  price: props?.medicalConcern?.price ?? 30,
   questions: [],
 })
 
@@ -47,7 +52,8 @@ const durations = [
   >
     <template #body>
       <div class="pt-4 flex justify-between w-full">
-        <h2 class="text-2xl font-medium">Motif de consultation</h2>
+        <h2 v-if="medicalConcern" class="text-2xl font-medium">Modifier le motif de consultation</h2>
+        <h2 v-else class="text-2xl font-medium">Motif de consultation</h2>
       </div>
       <AppDivider class="w-full pb-4 pt-2"/>
 
@@ -79,7 +85,8 @@ const durations = [
             />
           </UFormField>
 
-          <UButton block label="Ajouter un motif de consultation" type="submit"/>
+          <UButton v-if="medicalConcern" block label="Modifier le motif de consultation" type="submit"/>
+          <UButton v-else block label="Ajouter un motif de consultation" type="submit"/>
         </UForm>
       </div>
     </template>

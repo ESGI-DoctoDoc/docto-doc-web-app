@@ -7,6 +7,10 @@ export interface CreateMedicalConcernDto {
     price: number;
 }
 
+export interface UpdateMedicalConcernDto extends CreateMedicalConcernDto {
+    id: string;
+}
+
 export const createMedicalConcernBody = z.object({
     name: z.string(),
     duration: z.nativeEnum(MedicalConcernDuration),
@@ -14,22 +18,9 @@ export const createMedicalConcernBody = z.object({
 })
 export type CreateMedicalConcernBody = z.infer<typeof createMedicalConcernBody>;
 
-export const createMedicalConcernResponseSchema = z.object({
-    id: z.string(),
+export const updateMedicalConcernBody = z.object({
     name: z.string(),
-    duration: z.number().nonnegative(),
-    price: z.number(),
-    questions: z.array(
-        z.object({
-            id: z.string(),
-            question: z.string(),
-            type: z.enum(['text', 'list', 'yes_no']),
-            options: z.array(z.object({label: z.string(), value: z.string()})).optional(),
-            isMandatory: z.boolean(),
-            createdAt: z.string(),
-        })
-    ),
-    createdAt: z.string(),
-    archivedAt: z.string().optional(),
+    durationInMinutes: z.nativeEnum(MedicalConcernDuration),
+    price: z.number().nonnegative(),
 })
-export type CreateMedicalConcernResponse = z.infer<typeof createMedicalConcernResponseSchema>;
+export type UpdateMedicalConcernBody = z.infer<typeof updateMedicalConcernBody>;

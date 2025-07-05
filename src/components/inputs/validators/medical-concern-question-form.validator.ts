@@ -1,6 +1,6 @@
 import {z} from "zod";
 
-const questionTypeSchema = z.enum(['text', 'list', 'yes_no', 'date']);
+const questionTypeSchema = z.enum(['text', 'list', 'yes_no']);
 const questionOptionSchema = z.object({
     label: z.string().min(1).max(128),
     value: z.string().min(1).max(128),

@@ -4,11 +4,12 @@ import {
     getMedicalConcernsResponseSchema
 } from "~/services/medical-concerns/dto/get-medical-concers.dto";
 import {
-    createMedicalConcernBody,
     type CreateMedicalConcernBody,
+    createMedicalConcernBody,
     type CreateMedicalConcernDto,
-    type CreateMedicalConcernResponse,
-    createMedicalConcernResponseSchema
+    type UpdateMedicalConcernBody,
+    updateMedicalConcernBody,
+    type UpdateMedicalConcernDto
 } from "~/services/medical-concerns/dto/create-medical-concern.dto";
 import {
     type SaveMedicalConcernDto,
@@ -35,7 +36,6 @@ export const medicalConcernsApi = () => {
         return new RequestBuilder(BASE_API_URL)
             .post('/doctors/medical-concerns')
             .withBody<CreateMedicalConcernBody>(createMedicalConcernBody)
-            .withResponse<CreateMedicalConcernResponse>(createMedicalConcernResponseSchema)
             .execute({
                 body: {
                     name: requestDto.name,
@@ -45,8 +45,17 @@ export const medicalConcernsApi = () => {
             })
     }
 
-    async function editDoctorMedicalConcerns() {
-        throw new Error('Not implemented yet');
+    async function updateMedicalConcern(requestDto: UpdateMedicalConcernDto) {
+        return new RequestBuilder(BASE_API_URL)
+            .put(`/doctors/medical-concerns/${requestDto.id}`)
+            .withBody<UpdateMedicalConcernBody>(updateMedicalConcernBody)
+            .execute({
+                body: {
+                    name: requestDto.name,
+                    durationInMinutes: requestDto.duration,
+                    price: requestDto.price,
+                }
+            })
     }
 
     async function removeMedicalConcern(medicalConcernId: string) {
@@ -77,7 +86,7 @@ export const medicalConcernsApi = () => {
     return {
         fetchMedicalConcerns,
         createMedicalConcern,
-        editDoctorMedicalConcerns,
+        updateMedicalConcern,
         removeMedicalConcern,
         saveMedicalConcernQuestions,
         getQuestionsByMedicalConcernId

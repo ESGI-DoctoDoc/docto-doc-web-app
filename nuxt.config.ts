@@ -14,6 +14,9 @@ export default defineNuxtConfig({
     plugins: [
       tailwindcss()
     ],
+    define: {
+      global: 'window',
+    },
     esbuild: {
       drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : []
     }

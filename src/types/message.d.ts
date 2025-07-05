@@ -10,7 +10,6 @@ interface MessageContent {
 }
 
 export interface Message {
-    id: string;
     sender: MessageSender;
     content: MessageContent;
     sendAt: string;

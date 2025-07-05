@@ -11,6 +11,10 @@ import {
     getDoctorsResponseSchema
 } from "~/services/doctors/dto/get-doctors.dto";
 import {useMediaApi} from "~/services/media/media.api";
+import {
+    type FetchNotificationsResponse,
+    fetchNotificationsResponseSchema
+} from "~/services/doctors/dto/get-notifications.dto";
 
 export const doctorsApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
@@ -84,6 +88,20 @@ export const doctorsApi = () => {
             .filter(result => result.status === 'fulfilled')
             .map(result => (result as PromiseFulfilledResult<{ url: string, id: string }>).value);
     }
+
+    async function fetchNotifications() {
+        return new RequestBuilder(BASE_API_URL)
+            .get('/doctors/notifications')
+            .withResponse<FetchNotificationsResponse>(fetchNotificationsResponseSchema)
+            .execute();
+    }
+
+    async function markAsReadNotification(notificationId: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .patch(`/doctors/notifications/${notificationId}/read`)
+            .execute();
+    }
+
     return {
         fetchDoctors,
         fetchDoctorById,
@@ -92,5 +110,7 @@ export const doctorsApi = () => {
         uploadDoctorProfilePicture,
         uploadDoctorDocuments,
         fetchDoctorProfile,
+        fetchNotifications,
+        markAsReadNotification,
     }
 }

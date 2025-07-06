@@ -7,11 +7,17 @@ export interface CreateDoctorAbsenceDto {
     start?: string;
     end?: string;
     description?: string;
+    notifyPatients?: boolean;
+}
+
+export interface UpdateDoctorAbsenceDto extends CreateDoctorAbsenceDto {
+    id: string;
 }
 
 export const createDoctorAbsenceDateBodySchema = z.object({
     date: z.string().trim(),
     description: z.string().trim().transform((value) => value?.replaceAll('  ', ' ')).optional(),
+    notifyPatients: z.boolean().optional(),
 });
 export type CreateDoctorAbsenceDateBody = z.infer<typeof createDoctorAbsenceDateBodySchema>;
 
@@ -21,5 +27,6 @@ export const createDoctorAbsenceRangeBodySchema = z.object({
     start: z.string().trim(),
     end: z.string().trim(),
     description: z.string().trim().transform((value) => value?.replaceAll('  ', ' ')).optional(),
+    notifyPatients: z.boolean().optional(),
 });
 export type CreateDoctorAbsenceRangeBody = z.infer<typeof createDoctorAbsenceRangeBodySchema>;

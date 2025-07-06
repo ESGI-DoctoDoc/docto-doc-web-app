@@ -5,6 +5,7 @@ import {
     type CreateDoctorAbsenceDto,
     type CreateDoctorAbsenceRangeBody,
     createDoctorAbsenceRangeBodySchema,
+    type UpdateDoctorAbsenceDto,
 } from "~/services/absences/dto/save-absence.dto";
 import {
     type GetDoctorAbsenceDto,
@@ -26,13 +27,42 @@ export const doctorAbsenceApi = () => {
                 .execute({
                     body: {
                         date: requestDto.date,
-                        description: requestDto.description?.trim() || undefined
+                        description: requestDto.description?.trim() || undefined,
+                        notifyPatients: requestDto.notifyPatients ?? false
                     }
                 });
         }
 
         return new RequestBuilder(BASE_API_URL)
             .post('/doctors/absences/range')
+            .withBody<CreateDoctorAbsenceRangeBody>(createDoctorAbsenceRangeBodySchema)
+            .execute({
+                body: {
+                    startHour: requestDto.startHour ?? '',
+                    endHour: requestDto.endHour ?? '',
+                    start: requestDto.start ?? '',
+                    end: requestDto.end ?? '',
+                    description: requestDto.description?.trim() || undefined,
+                    notifyPatients: requestDto.notifyPatients ?? false
+                }
+            });
+    }
+
+    function updateAbsence(requestDto: UpdateDoctorAbsenceDto) {
+        if (requestDto.date) {
+            return new RequestBuilder(BASE_API_URL)
+                .put(`/doctors/absences/${requestDto.id}/single-day`)
+                .withBody<CreateDoctorAbsenceDateBody>(createDoctorAbsenceDateBodySchema)
+                .execute({
+                    body: {
+                        date: requestDto.date,
+                        description: requestDto.description?.trim() || undefined
+                    }
+                });
+        }
+
+        return new RequestBuilder(BASE_API_URL)
+            .put(`/doctors/absences/${requestDto.id}/range`)
             .withBody<CreateDoctorAbsenceRangeBody>(createDoctorAbsenceRangeBodySchema)
             .execute({
                 body: {
@@ -59,6 +89,7 @@ export const doctorAbsenceApi = () => {
 
     return {
         createAbsence,
+        updateAbsence,
         getAbsences
     };
 }

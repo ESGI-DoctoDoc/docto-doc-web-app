@@ -37,7 +37,7 @@ defineEmits<{
 
 const {showCancelAppointmentReasonModal} = useModals()
 const {handleError, showSuccess, showError} = useNotify()
-const {createAbsence, getAbsences} = doctorAbsenceApi();
+const {createAbsence, getAbsences, updateAbsence} = doctorAbsenceApi();
 const {createAppointment, cancelAppointment, updateAppointment, fetchAppointments} = appointmentApi();
 const {mapDoctorAbsenceToCalendarEvent, mapAppointmentToCalendarEvent, mapCalendarEventToDoctorAbsence} = useCalendar()
 const {deleteByPath} = useGlobalRequestApi()
@@ -266,6 +266,33 @@ async function onSaveAbsence(form: CreateDoctorAbsenceForm) {
   }
 }
 
+async function onUpdateAbsence(form: CreateDoctorAbsenceForm) {
+  loading.value = true;
+  try {
+    if (!currentAbsence.value) {
+      showError('Aucune absence sélectionnée pour la mise à jour');
+      return;
+    }
+
+    await updateAbsence({
+      id: currentAbsence.value.id,
+      date: form.date,
+      start: form.start,
+      end: form.end,
+      startHour: form.startHour,
+      endHour: form.endHour,
+      description: form.description,
+    });
+    await fetchAbsences();
+    showSuccess('Absence créée avec succès');
+    showCreateAbsence.value = false;
+  } catch (error) {
+    handleError("Erreur lors de la création de l'absence", error)
+  } finally {
+    loading.value = false;
+  }
+}
+
 async function onCreateAppointment(form: CreateAppointmentForm) {
   loading.value = true;
   try {
@@ -450,7 +477,7 @@ onMounted(async () => {
         v-if="showUpdateAbsence"
         v-model:open="showUpdateAbsence"
         :absence="currentAbsence"
-        @on-submit="onSaveAbsence"
+        @on-submit="onUpdateAbsence"
         @on-delete="onDeleteAbsence"
     />
     <SaveAppointmentModal

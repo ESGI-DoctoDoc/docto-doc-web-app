@@ -27,10 +27,6 @@ const checkoutLoading = ref(false)
 const table = ref('table')
 const columns: TableColumn<Subscription>[] = [
   {
-    header: 'ID',
-    accessorKey: 'id',
-  },
-  {
     id: 'doctor',
     header: 'Docteur',
     accessorFn: (row) => row.doctor?.email,

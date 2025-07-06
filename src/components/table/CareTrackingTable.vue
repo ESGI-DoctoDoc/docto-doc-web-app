@@ -36,7 +36,8 @@ const columns: TableColumn<CareTracking>[] = [
   {
     accessorKey: 'endedAt',
     header: 'État du suivi',
-    cell: () => 'En cours'
+    // cell: ({row}) => dayjs(row.original.endedAt).isBefore(dayjs()) ? 'Terminé' : 'En cours'
+    cell: ({row}) => 'En cours'
   },
   {
     id: 'actions',

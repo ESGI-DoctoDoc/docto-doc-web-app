@@ -8,6 +8,10 @@ const patient = defineModel('patient', {
   required: true,
 })
 
+defineProps<{
+  disabled?: boolean
+}>()
+
 const {fetchPatients} = patientsApi();
 const {showError} = useNotify();
 
@@ -55,7 +59,7 @@ onMounted(() => {
   <UFormField label="Sélectionnez un patient" name="patient" required>
     <USelectMenu
         v-model="patientLocal"
-        :disabled="loading"
+        :disabled="loading || disabled"
         :items="patientsItems"
         :loading="loading"
         class="w-full"

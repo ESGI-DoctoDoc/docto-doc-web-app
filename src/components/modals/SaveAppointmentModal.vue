@@ -22,6 +22,8 @@ const open = defineModel('open', {
 const props = defineProps<{
   appointment?: Appointment;
   hours?: [string, string, string]; // [date, startHour, endHour]
+  careTrackingId?: string;
+  patientId?: string;
 }>()
 
 const emit = defineEmits<{
@@ -31,11 +33,11 @@ const emit = defineEmits<{
 const {showError} = useNotify()
 
 const form = ref<CreateAppointmentForm & { hasToAnswerQuestions: boolean }>({
-  patient: props?.appointment?.patient?.id ?? '',
+  patient: props?.appointment?.patient?.id ?? props?.patientId ?? '',
   medicalConcern: props?.appointment?.medicalConcern?.id ?? '',
   start: props?.hours?.[0] ?? dayjs(props?.appointment?.start).format('YYYY-MM-DD') ?? '',
   startHour: props?.appointment?.startHour ?? '',
-  careTracking: props?.appointment?.careTracking?.id ?? '',
+  careTracking: props?.appointment?.careTracking?.id ?? props?.careTrackingId ?? '',
   answers: props?.appointment?.answers?.map(answer => ({
     questionId: answer.id,
     answer: answer.answer,
@@ -85,6 +87,7 @@ function onError(event: FormErrorEvent) {
         <h3 class="text-lg font-semibold">Patient et motif</h3>
         <PatientsSelect
             v-model:patient="form.patient"
+            :disabled="!!patientId"
             class="w-full"
             name="patient"
         />
@@ -145,6 +148,7 @@ function onError(event: FormErrorEvent) {
         <CareTrackingSelect
             v-model="form.careTracking"
             v-model:patient-id="form.patient"
+            :disabled="!!careTrackingId"
             class="w-full"
         />
 

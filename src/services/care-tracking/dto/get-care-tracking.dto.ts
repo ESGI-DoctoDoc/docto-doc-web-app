@@ -27,7 +27,10 @@ export const careTrackingSchema = z.object({
     createdAt: z.string(),
 });
 
-export const getCareTrackingByIdResponseSchema = careTrackingSchema.extend({
+export const getCareTrackingByIdResponseSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    patient: careTrackingPatientSchema,
     appointments: z.array(z.object({
         id: z.string(),
         medicalConcern: z.object({
@@ -36,10 +39,20 @@ export const getCareTrackingByIdResponseSchema = careTrackingSchema.extend({
         }),
         start: z.string(),
         startHour: z.string(),
-        status: z.enum(['upcoming', 'confirmed', 'locked', 'cancelled-excused', 'cancelled-unexcused', 'completed', 'waiting-room']),
+        status: z.enum([
+            'upcoming',
+            'confirmed',
+            'locked',
+            'cancelled-excused',
+            'cancelled-unexcused',
+            'completed',
+            'waiting-room',
+        ]),
         doctorNotes: z.string().nullable().optional(),
     })),
-})
+    files: z.array(z.string()),
+    createdAt: z.string(),
+});
 
 export const getCareTrackingsResponseSchema = z.array(careTrackingSchema);
 export type GetCareTrackingsResponse = z.infer<typeof getCareTrackingsResponseSchema>;

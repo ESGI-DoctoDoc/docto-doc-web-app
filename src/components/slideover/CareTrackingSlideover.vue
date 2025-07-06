@@ -1,10 +1,12 @@
 <script lang="ts" setup>
-import type {CareTracking, CareTrackingDetail} from '~/types/care-tracking';
+import type {CareTracking, CareTrackingAppointment, CareTrackingDetail} from '~/types/care-tracking';
 import {careTrackingApi} from "~/services/care-tracking/care-tracking.api";
+import CareTrackingDocumentInputFile from "~/components/inputs/CareTrackingDocumentInputFile.vue";
+import AppointmentListItem, {type AppointmentListItemType} from "~/components/appointments/AppointmentListItem.vue";
 
 const isOpen = defineModel('open', {type: Boolean, required: true});
 const props = defineProps<{ careTracking: CareTracking }>();
-defineEmits(['on-close', 'on-update', 'on-end', 'on-delete']);
+defineEmits(['on-close', 'on-update', 'on-end', 'on-delete', 'on-add-appointment']);
 
 const {showError, handleError} = useNotify();
 const {fetchCareTrackingById} = careTrackingApi();
@@ -33,6 +35,21 @@ async function getCareTrackingDetails() {
 onMounted(() => {
   getCareTrackingDetails();
 })
+
+function toAppointment(appointment: CareTrackingAppointment): AppointmentListItemType {
+  return {
+    id: appointment.id,
+    date: appointment.date,
+    status: appointment.status,
+    startHour: appointment.startHour,
+    endHour: appointment.endHour,
+    patient: {
+      id: careTrackingDetail.value!.patient?.id,
+      firstname: careTrackingDetail.value!.patient.firstName,
+      lastname: careTrackingDetail.value!.patient.lastName,
+    },
+  }
+}
 
 </script>
 
@@ -67,7 +84,7 @@ onMounted(() => {
           <USkeleton class="h-4 w-20"/>
         </div>
       </div>
-      <div v-else-if="careTracking" class="flex flex-col space-y-2">
+      <div v-else-if="careTrackingDetail" class="flex flex-col space-y-2">
         <div class="flex justify-between space-y-1">
           <div>Nom du suivi</div>
           <div class="cursor-pointer">
@@ -92,6 +109,54 @@ onMounted(() => {
             {{ props.careTracking.patient.phone }}
           </div>
         </div>
+
+        <!-- Rendez-vous       -->
+        <div class="flex justify-between items-baseline pt-6">
+          <h3 class="text-lg font-semibold">Tous les rendez-vous</h3>
+          <div>
+            <UButton
+                color="primary"
+                label="Ajouter un rendez-vous"
+                size="sm"
+                variant="outline"
+                @click="$emit('on-add-appointment', careTrackingDetail)"
+            />
+          </div>
+        </div>
+        <AppDivider class="w-full pb-4 pt-2"/>
+        <div class="space-y-2">
+          <div v-if="careTrackingDetail.appointments.length == 0">
+            <div class="text-center text-gray-500">Pas de rendez-vous associés à ce suivi de dossier.</div>
+          </div>
+          <AppointmentListItem
+              v-for="(appointment, index) in careTrackingDetail.appointments"
+              v-else
+              :key="index"
+              :appointment="toAppointment(appointment)"
+          />
+        </div>
+
+
+        <!-- Documents       -->
+        <div class="flex justify-between items-baseline pt-6">
+          <h3 class="text-lg font-semibold">Documents</h3>
+          <UModal close title="Ajouter des fichiers">
+            <UButton color="primary" size="sm" variant="outline">
+              Ajouter un fichier
+            </UButton>
+            <template #body>
+              <CareTrackingDocumentInputFile
+                  @uploaded="(files) => {
+                  if(careTrackingDetail) {
+                    careTrackingDetail.files.push(...files.map(file => file.url))
+                  }
+                }"
+              />
+            </template>
+          </UModal>
+        </div>
+        <AppDivider class="w-full pb-4 pt-2"/>
+        <DocumentsPreview v-if="careTrackingDetail.files" :files="careTrackingDetail.files" last-view-all/>
       </div>
     </template>
     <template #footer>

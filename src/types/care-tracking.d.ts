@@ -12,7 +12,9 @@ export interface CareTrackingAppointment {
     id: string;
     medicalConcern: AppointmentMedicalConcern;
     start: string;
+    date: string;
     startHour: string;
+    endHour: string;
     status: AppointmentStatus;
     doctorNotes?: string | null;
 }
@@ -22,6 +24,7 @@ export interface CareTrackingDetail {
     name: string;
     patient: CareTrackingPatient;
     appointments: CareTrackingAppointment[]
+    files: string[];
     createdAt: string;
 }
 

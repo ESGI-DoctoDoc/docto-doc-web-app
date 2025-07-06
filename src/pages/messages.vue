@@ -11,6 +11,7 @@ import {careTrackingApi} from "~/services/care-tracking/care-tracking.api";
 import {useDebounceFn} from '@vueuse/core';
 import {ref} from "vue";
 import PreviewDocumentModal from "~/components/modals/PreviewDocumentModal.vue";
+import DocumentsPreview from "~/components/DocumentsPreview.vue";
 
 definePageMeta({
   title: 'Messages',
@@ -276,31 +277,10 @@ onBeforeUnmount(() => {
               >
                 {{ message.content.text }}
               </div>
-              <div v-if="message.content.files && message.content.files.length > 0" class="mt-2 grid grid-cols-2 gap-2">
-                <div
-                    v-for="(file, fileIndex) in message.content.files"
-                    :key="fileIndex"
-                    class="border border-gray-300 rounded p-2 bg-white shadow-sm w-full"
-                >
-                  <template v-if="!previewError[index]">
-                    <img
-                        :alt="'Preview ' + index"
-                        :src="file"
-                        class="w-full h-32 min-w-36 object-cover rounded-md"
-                        @error="previewError[index] = true"
-                    />
-                  </template>
-                  <template v-else>
-                    <div
-                        class="h-32 min-w-36 w-full flex items-center justify-center bg-gray-200 rounded-md border border-gray-300">
-                      <UIcon
-                          class="w-16 h-16 text-gray-500"
-                          name="i-lucide-file-text"
-                      />
-                    </div>
-                  </template>
-                </div>
-              </div>
+              <DocumentsPreview
+                  v-if="message.content.files && message.content.files.length > 0"
+                  :files="message.content.files"
+              />
               <div class="text-sm text-gray-500">Le 12/10/2023 à 14:30</div>
             </div>
           </div>

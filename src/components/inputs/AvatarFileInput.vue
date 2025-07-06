@@ -55,6 +55,12 @@ async function onDeleteFile(id: string) {
   }
 }
 
+onMounted(() => {
+  if (avatar.value) {
+    avatar2.value = avatar.value;
+  }
+})
+
 </script>
 
 <template>

@@ -15,6 +15,11 @@ import {
     type FetchNotificationsResponse,
     fetchNotificationsResponseSchema
 } from "~/services/doctors/dto/get-notifications.dto";
+import {
+    type UpdateDoctorBody,
+    updateDoctorBodySchema,
+    type UpdateDoctorProfile
+} from "~/services/doctors/dto/update-doctors.dto";
 
 export const doctorsApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
@@ -102,6 +107,20 @@ export const doctorsApi = () => {
             .execute();
     }
 
+    async function updateDoctorProfile(requestDto: UpdateDoctorProfile) {
+        return new RequestBuilder(BASE_API_URL)
+            .patch('/doctors/profile')
+            .withBody<UpdateDoctorBody>(updateDoctorBodySchema)
+            .execute({
+                body: {
+                    firstname: requestDto.firstname,
+                    lastname: requestDto.lastname,
+                    address: requestDto.address,
+                    bio: requestDto.bio,
+                }
+            });
+    }
+
     return {
         fetchDoctors,
         fetchDoctorById,
@@ -112,5 +131,6 @@ export const doctorsApi = () => {
         fetchDoctorProfile,
         fetchNotifications,
         markAsReadNotification,
+        updateDoctorProfile,
     }
 }

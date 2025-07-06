@@ -124,7 +124,7 @@ export const profileSchema = z.object({
     firstname: nameSchema,
     lastname: nameSchema,
     bio: bioSchema,
-    avatar: avatarSchema,
+    address: z.string().min(1, "form.address.required").toLowerCase(),
 })
 export type ProfileForm = z.infer<typeof profileSchema>;
 

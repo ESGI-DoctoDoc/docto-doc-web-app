@@ -92,23 +92,17 @@ async function getAppointmentsByFilter(filters: Record<string, string>) {
   }
 }
 
-async function onShowCancel() {
-  if (!currentAppointment.value) {
-    showError("Aucun rendez-vous sélectionné pour l'annulation");
-    return;
-  }
-
+async function onShowCancel(appointment: Appointment) {
   isLoading.value = true;
   try {
     const instance = showCancelAppointmentReasonModal();
     const result = await instance.result as { reason: string };
-    const reason = result.reason.trim();
+    const reason = result?.reason;
     if (!reason) {
-      showError('Annulation échouée', "Veuillez fournir une raison pour l'annulation.");
       return;
     }
 
-    await cancelAppointment(currentAppointment.value.id, reason);
+    await cancelAppointment(appointment.id, reason);
     showSuccess('Rendez-vous annulé avec succès');
     openAppointmentDetail.value = false;
     await getAppointments();
@@ -184,6 +178,7 @@ onMounted(() => {
         v-if="currentAppointment && openUpdateAppointment"
         v-model:open="openUpdateAppointment"
         :appointment="currentAppointment"
+        :patient-id="currentAppointment.patient.id"
         @on-submit="onUpdate"
     />
 

@@ -18,7 +18,7 @@ function confirm() {
 }
 
 function cancel() {
-  emit('close')
+  emit('close', {reason: null})
 }
 </script>
 

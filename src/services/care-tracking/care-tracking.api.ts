@@ -17,6 +17,7 @@ import {
     type UpdateCareTrackingDto
 } from './dto/create-care-tracking.dto';
 import type {AppPagination} from "~/api/app-pagination.type";
+import {useMediaApi} from "~/services/media/media.api";
 
 export const careTrackingApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
@@ -72,12 +73,32 @@ export const careTrackingApi = () => {
             .execute();
     }
 
+    async function uploadMessageFiles(files: File[], careTrackingId: string): Promise<{ url: string; id: string }[]> {
+        const promises = files.map(async (file) => {
+            const {preUploadFile, getSignedUrl, uploadFile, getFile} = useMediaApi();
+            const document = await preUploadFile({
+                endPoint: `/doctors/care-tracking/${careTrackingId}/documents`,
+                filename: file.name + '-' + Date.now(),
+                type: "Autre",
+            });
+            const signedUrl = await getSignedUrl(`/doctors/care-tracking/upload-url/${document.id}`);
+            await uploadFile(file, signedUrl.url);
+            return getFile(`/doctors/care-tracking/${careTrackingId}/documents/${document.id}`);
+        })
+
+        const results = await Promise.allSettled(promises);
+        return results
+            .filter(result => result.status === 'fulfilled')
+            .map(result => (result as PromiseFulfilledResult<{ url: string, id: string }>).value);
+    }
+
     return {
         fetchCareTracking,
         fetchCareTrackingById,
         createCareTracking,
         updateCareTracking,
         removeCareTracking,
+        uploadMessageFiles,
     };
 };
 

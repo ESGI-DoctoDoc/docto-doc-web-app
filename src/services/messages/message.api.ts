@@ -1,13 +1,6 @@
-import { RequestBuilder } from '~/api/request-builder';
-import {
-    sendMessageRequestSchema,
-    type SendMessageRequest,
-    type SendMessageDto,
-} from './dto/send-message.dto';
-import {
-    getMessagesResponseSchema,
-    type GetMessagesResponse
-} from './dto/get-message.dto';
+import {RequestBuilder} from '~/api/request-builder';
+import {type SendMessageDto, type SendMessageRequest, sendMessageRequestSchema,} from './dto/send-message.dto';
+import {type GetMessagesResponse, getMessagesResponseSchema} from './dto/get-message.dto';
 
 export const messageApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
@@ -19,6 +12,7 @@ export const messageApi = () => {
             .execute({
                 body: {
                     content: message.content,
+                    files: message.files,
                 },
             });
     }

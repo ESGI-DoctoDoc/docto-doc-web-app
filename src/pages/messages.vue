@@ -168,6 +168,7 @@ async function sendMessage(form: FormSubmitEvent<SendMessageForm>) {
   try {
     await postMessage(careTrackingId, {
       content: messageToSend.content.text ?? '',
+      files: form.data.files ?? [],
     });
     form.data.message = '';
   } catch (error) {
@@ -333,7 +334,11 @@ onBeforeUnmount(() => {
               @error="onError"
               @submit="sendMessage"
           >
-            <MessageInputFile v-if="showDropZone" v-model:files="form.files"/>
+            <MessageInputFile
+                v-if="showDropZone && careTrackingDetail?.id"
+                v-model:files="form.files"
+                :care-tracking-id="careTrackingDetail?.id"
+            />
             <UFormField class="text-left" name="message">
               <InputAreaBase
                   v-model="form.message"

@@ -198,6 +198,7 @@ async function getCareTrackingById() {
     patientName.value = `${patient.firstName} ${patient.lastName}`;
   } catch (error) {
     handleError('Erreur lors de la récupération du suivi de dossier', error);
+    navigateTo('/care-tracking');
   }
 }
 

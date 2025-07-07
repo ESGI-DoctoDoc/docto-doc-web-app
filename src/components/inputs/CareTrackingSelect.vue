@@ -12,8 +12,9 @@ const patientId = defineModel('patientId', {
   required: true,
 })
 
-withDefaults(defineProps<{ required?: boolean }>(), {
+withDefaults(defineProps<{ required?: boolean, disabled?: boolean }>(), {
   required: false,
+  disabled: false,
 })
 
 const {showError} = useNotify();
@@ -62,7 +63,7 @@ watch(
   <UFormField :required label="Sélectionnez un suivi de dossier" name="careTracking">
     <USelect
         v-model="careTracking"
-        :disabled="loading || careTrackingItems.length === 0"
+        :disabled="disabled || loading || careTrackingItems.length === 0"
         :items="careTrackingItems"
         :loading="loading"
         :placeholder="careTrackingItems.length === 0 ? 'Aucun suivi de dossier disponible' : 'Sélectionnez un suivi de dossier'"

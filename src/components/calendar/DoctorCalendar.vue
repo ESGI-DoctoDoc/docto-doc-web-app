@@ -37,9 +37,9 @@ defineEmits<{
 
 const {showCancelAppointmentReasonModal} = useModals()
 const {handleError, showSuccess, showError} = useNotify()
-const {createAbsence, getAbsences} = doctorAbsenceApi();
-const {createAppointment, cancelAppointment, updateAppointment, fetchAppointments} = appointmentApi();
-const {mapDoctorAbsenceToCalendarEvent, mapAppointmentToCalendarEvent, mapCalendarEventToDoctorAbsence} = useCalendar()
+const {createAbsence, getAbsences, updateAbsence} = doctorAbsenceApi();
+const {createAppointment, cancelAppointment, updateAppointment, fetchAppointments, endAppointment} = appointmentApi();
+const {mapDoctorAbsenceToCalendarEvent, mapAppointmentToCalendarEvent} = useCalendar()
 const {deleteByPath} = useGlobalRequestApi()
 
 const calendarRef = useTemplateRef('calendarRef');
@@ -197,7 +197,7 @@ const calendarOptions = ref<CalendarOptions>({
                   ${absence.startHour} - ${absence.endHour}
                 </div>
                 <div class="text-sm font-medium capitalize mt-0.5">
-                  ${absence.reason || 'Absence'}
+                  ${absence.description || 'Absence'}
                 </div>
               </div>
             </div>
@@ -247,15 +247,55 @@ function onActions(action: 'absence' | 'exceptional_opening' | 'appointment') {
   }
 }
 
-function onShowAppointmentDetail(appointment: Appointment) {
-  currentAppointment.value = appointment;
-  showAppointmentDetail.value = true;
+async function onEndAppointment() {
+  if (!currentAppointment.value) {
+    showError('Aucun rendez-vous sélectionné pour la fin');
+    return;
+  }
+
+  loading.value = true;
+  try {
+    await endAppointment(currentAppointment.value.id);
+    await getAppointments();
+    showAppointmentDetail.value = false;
+  } catch (error) {
+    handleError("Erreur lors de la fin du rendez-vous", error)
+  } finally {
+    loading.value = false;
+  }
 }
 
 async function onSaveAbsence(form: CreateDoctorAbsenceForm) {
   loading.value = true;
   try {
     await createAbsence(form);
+    await fetchAbsences();
+    showSuccess('Absence créée avec succès');
+    showCreateAbsence.value = false;
+  } catch (error) {
+    handleError("Erreur lors de la création de l'absence", error)
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function onUpdateAbsence(form: CreateDoctorAbsenceForm) {
+  loading.value = true;
+  try {
+    if (!currentAbsence.value) {
+      showError('Aucune absence sélectionnée pour la mise à jour');
+      return;
+    }
+
+    await updateAbsence({
+      id: currentAbsence.value.id,
+      date: form.date,
+      start: form.start,
+      end: form.end,
+      startHour: form.startHour,
+      endHour: form.endHour,
+      description: form.description,
+    });
     await fetchAbsences();
     showSuccess('Absence créée avec succès');
     showCreateAbsence.value = false;
@@ -450,7 +490,7 @@ onMounted(async () => {
         v-if="showUpdateAbsence"
         v-model:open="showUpdateAbsence"
         :absence="currentAbsence"
-        @on-submit="onSaveAbsence"
+        @on-submit="onUpdateAbsence"
         @on-delete="onDeleteAbsence"
     />
     <SaveAppointmentModal
@@ -472,6 +512,7 @@ onMounted(async () => {
         @on-close="showAppointmentDetail = false; currentAppointment = null"
         @on-update="onShowUpdate($event)"
         @on-cancel="onShowCancel()"
+        @on-end="onEndAppointment()"
     />
   </div>
 </template>

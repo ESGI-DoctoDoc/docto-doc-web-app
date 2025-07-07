@@ -24,10 +24,11 @@ const emit = defineEmits<{
   (e: 'on-delete', id: string): void;
 }>()
 
+// const {} = doctorAbsenceApi(); //todo add 2 methods to check if absence overlaps with slots or appointments
 const {showPopupContinueModal} = useModals()
 const {showError} = useNotify()
 
-const allDay = ref(props?.absence?.date !== '' && props?.hours?.[0] === undefined);
+const allDay = ref(props?.absence?.startHour === '00:00');
 const form = ref<CreateDoctorAbsenceForm>({
   date: props?.absence?.date || '',
   start: props?.absence?.start || props?.hours?.[0] || dayjs().format('YYYY-MM-DD'),
@@ -35,7 +36,26 @@ const form = ref<CreateDoctorAbsenceForm>({
   startHour: props?.absence?.startHour || props?.hours?.[1] || '',
   endHour: props?.absence?.endHour || props?.hours?.[2] || '',
   description: props?.absence?.description || '',
+  notifyPatients: false,
 });
+
+const showAppointmentWarning = ref(false);
+const warningAppointments = ref<{ start: string, startHour: string, patient: { name: string } }[]>();
+
+async function checkIfAbsenceOverlapsAppointment() {
+  if (allDay.value && form.value.date) {
+    // const data = {};
+    showAppointmentWarning.value = true;
+    warningAppointments.value = [];
+  } else if (form.value.start && form.value.startHour && form.value.end && form.value.endHour) {
+    // const data = {};
+    showAppointmentWarning.value = true;
+    warningAppointments.value = [];
+  } else {
+    showAppointmentWarning.value = false;
+    warningAppointments.value = []
+  }
+}
 
 function onSubmit(form: FormSubmitEvent<CreateDoctorAbsenceForm>) {
   emit('on-submit', form.data);
@@ -46,7 +66,7 @@ function onError(event: FormErrorEvent) {
   showError('Erreur de validation', 'Veuillez corriger les erreurs dans le formulaire.');
 }
 
-function onSetFullDay() {
+async function onSetFullDay() {
   if (allDay.value) {
     form.value.date = form.value.start || dayjs(form.value.start).format('YYYY-MM-DD');
     form.value.start = '';
@@ -60,7 +80,16 @@ function onSetFullDay() {
     form.value.endHour = '';
     form.value.date = '';
   }
+  await checkIfAbsenceOverlapsAppointment();
 }
+
+watch(
+    () => [form.value.start, form.value.startHour, form.value.end, form.value.endHour, allDay.value],
+    async () => {
+      await checkIfAbsenceOverlapsAppointment();
+    },
+    {immediate: true}
+);
 
 async function confirmDelete() {
   if (props.absence) {
@@ -96,6 +125,18 @@ async function confirmDelete() {
           @error="onError"
           @submit.prevent="onSubmit"
       >
+        <div v-if="showAppointmentWarning && warningAppointments && warningAppointments.length > 0"
+             class="flex flex-col space-y-2 bg-yellow-100 text-yellow-800 p-4 rounded border border-yellow-300 mb-4">
+          <div
+              v-for="appointment in warningAppointments"
+              :key="appointment.start + appointment.startHour"
+              class="text-sm"
+          >
+            - {{ appointment.patient.name }} à {{ dayjs(appointment.start).format('DD/MM/YYYY') }}
+            {{ appointment.startHour }}
+          </div>
+        </div>
+
         <h3 class="text-lg font-semibold">Jour et heures de l'absence</h3>
         <div v-if="!allDay" class="w-full flex space-x-4">
           <UFormField class="w-2/3" label="Début" name="start" required>
@@ -145,6 +186,15 @@ async function confirmDelete() {
               placeholder="Entrez une description de l'absence"
           />
         </UFormField>
+
+        <h3 class="text-lg font-semibold mt-4">Prévenir les patients</h3>
+        <UCheckbox
+            v-model="form.notifyPatients"
+            :disabled="showAppointmentWarning"
+            description="Si cette case est cochée, les patients ayant un rendez-vous pendant cette absence seront prévenus par email."
+            label="Prévenir les patients de cette absence"
+            name="notifyPatients"
+        />
       </UForm>
     </template>
     <template #footer>

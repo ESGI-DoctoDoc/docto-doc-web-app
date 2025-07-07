@@ -120,11 +120,18 @@ export const appointmentApi = () => {
             })
     }
 
+    function endAppointment(id: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .post(`/doctors/appointments/${id}/end`)
+            .execute()
+    }
+
     return {
         fetchAppointments,
         fetchAppointmentById,
         createAppointment,
         updateAppointment,
         cancelAppointment,
+        endAppointment,
     }
 }

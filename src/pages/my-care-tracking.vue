@@ -3,13 +3,14 @@ import CareTrackingTable from '~/components/table/CareTrackingTable.vue';
 import SaveCareTrackingModal from '~/components/modals/SaveCareTrackingModal.vue';
 import CareTrackingSlideover from '~/components/slideover/CareTrackingSlideover.vue';
 import {useNotify} from '~/composables/useNotify';
-import type {CareTracking} from '~/types/care-tracking';
+import type {CareTracking, CareTrackingDetail} from '~/types/care-tracking';
 import {careTrackingApi} from '~/services/care-tracking/care-tracking.api';
 import type {
   CreateCareTrackingForm,
   UpdateCareTrackingForm
 } from "~/components/inputs/validators/care-tracking-form.validator";
 import {usePagination} from "~/composables/usePagination";
+import SaveAppointmentModal from "~/components/modals/SaveAppointmentModal.vue";
 
 definePageMeta({
   title: 'Suivi de dossier',
@@ -22,10 +23,11 @@ const {showSuccess, handleError} = useNotify();
 const isLoading = ref(true);
 const openCreateModal = ref(false);
 const openDetail = ref(false);
-const showMessage = ref(false);
+const openSaveAppointmentModal = ref(false);
 const openUpdateModal = ref(false);
 const myCareTrackings = ref<CareTracking[]>([]);
 const currentCareTracking = ref<CareTracking | null>(null);
+const currentCareTrackingDetail = ref<CareTrackingDetail>();
 
 const {
   fetchCareTracking,
@@ -132,6 +134,11 @@ function onShowMessage(careTracking: CareTracking) {
   navigateTo(`/care-tracking/${careTracking.id}/messages`)
 }
 
+function onShowSaveAppointmentModal(careTrackingDetail: CareTrackingDetail) {
+  currentCareTrackingDetail.value = careTrackingDetail;
+  openSaveAppointmentModal.value = true;
+}
+
 function onEnd() {
 
 }
@@ -179,6 +186,14 @@ onMounted(() => {
         @on-update="onShowUpdate"
         @on-delete="onRemove"
         @on-end="onEnd"
+        @on-add-appointment="onShowSaveAppointmentModal"
+    />
+
+    <SaveAppointmentModal
+        v-if="openSaveAppointmentModal && currentCareTrackingDetail"
+        v-model:open="openSaveAppointmentModal"
+        :care-tracking-id="currentCareTrackingDetail.id"
+        :patient-id="currentCareTrackingDetail.patient.id"
     />
   </div>
 </template>

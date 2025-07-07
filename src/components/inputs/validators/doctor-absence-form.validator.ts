@@ -16,6 +16,7 @@ export const createDoctorAbsenceSchema = z.object({
     start: startDate.optional(),
     end: endDate.optional(),
     description: z.string().trim().max(255, "form.doctorAbsence.description.max").optional(),
+    notifyPatients: z.boolean().optional(),
 }).superRefine((data, ctx) => {
     const {date} = data;
 

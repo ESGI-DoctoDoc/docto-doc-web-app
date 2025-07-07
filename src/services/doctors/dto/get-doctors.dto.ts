@@ -58,7 +58,7 @@ export const getDoctorProfileResponseSchema = z.object({
     speciality: z.object({
         id: z.string(),
         name: z.string(),
-    }).nullable().optional(),
+    }),
     subscription: z.object({
         id: z.string(),
         start: z.string(),

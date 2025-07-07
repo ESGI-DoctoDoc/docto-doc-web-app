@@ -14,6 +14,7 @@ import PreviewDocumentModal from "~/components/modals/PreviewDocumentModal.vue";
 import {useMessageSocket} from "~/composables/useMessageSocket";
 import {messageApi} from "~/services/messages/message.api";
 import dayjs from "dayjs";
+import DocumentsPreview from "~/components/DocumentsPreview.vue";
 
 definePageMeta({
   title: 'Messages',
@@ -371,6 +372,11 @@ onBeforeUnmount(() => {
               <div class="text-sm text-gray-500">
                 {{ dayjs(message.sentAt).format("DD/MM/YYYY HH:mm") }}
               </div>
+              <DocumentsPreview
+                  v-if="message.content.files && message.content.files.length > 0"
+                  :files="message.content.files"
+              />
+              <div class="text-sm text-gray-500">Le 12/10/2023 à 14:30</div>
             </div>
           </div>
         </div>

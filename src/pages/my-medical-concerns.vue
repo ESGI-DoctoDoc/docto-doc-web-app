@@ -16,10 +16,11 @@ definePageMeta({
   role: 'doctor',
 })
 
-const {showError} = useNotify()
+const {showError, handleError} = useNotify()
 const {
   fetchMedicalConcerns,
   createMedicalConcern,
+  updateMedicalConcern,
   removeMedicalConcern,
   saveMedicalConcernQuestions,
 } = medicalConcernsApi();
@@ -27,6 +28,7 @@ const {
 
 const isLoading = ref(true);
 const openCreateModal = ref(false);
+const openUpdateModal = ref(false);
 const openEditQuestions = ref(false);
 const myMedicalConcerns = ref<MedicalConcern[]>([]);
 const currentMedicalConcern = ref<MedicalConcern>();
@@ -34,15 +36,33 @@ const currentMedicalConcern = ref<MedicalConcern>();
 async function onCreate(form: CreateMedicalConcernForm) {
   isLoading.value = true;
   try {
-    const medicalConcern = await createMedicalConcern(form);
-    myMedicalConcerns.value.push(medicalConcern);
+    await createMedicalConcern(form);
+    await getMedicalConcerns();
     openCreateModal.value = false;
   } catch (error) {
-    if (error instanceof Error) {
-      showError('Erreur lors de la création du motif de consultation', error.message);
-    } else {
-      showError('Erreur inconnue lors de la création du motif de consultation');
+    handleError('Erreur lors de la création du motif de consultation', error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+async function onUpdate(form: CreateMedicalConcernForm) {
+  isLoading.value = true;
+  try {
+    if (!currentMedicalConcern.value) {
+      showError('Aucun motif de consultation sélectionné');
+      return;
     }
+    await updateMedicalConcern({
+      id: currentMedicalConcern.value.id,
+      name: form.name,
+      duration: form.duration,
+      price: form.price,
+    });
+    openUpdateModal.value = false;
+    await getMedicalConcerns();
+  } catch (error) {
+    handleError('Erreur lors de la mise à jour du motif de consultation', error);
   } finally {
     isLoading.value = false;
   }
@@ -63,11 +83,7 @@ async function onSaveQuestions(form: CreateMedicalConcernQuestionForm) {
     await fetchMedicalConcerns();
     openEditQuestions.value = false;
   } catch (error) {
-    if (error instanceof Error) {
-      showError('Erreur lors de l\'enregistrement des questions', error.message);
-    } else {
-      showError('Erreur inconnue lors de l\'enregistrement des questions');
-    }
+    handleError('Erreur lors de l\'enregistrement des questions', error);
   } finally {
     isLoading.value = false;
   }
@@ -79,11 +95,7 @@ async function onRemoveConcern(medicalConcern: MedicalConcern) {
     await removeMedicalConcern(medicalConcern.id);
     myMedicalConcerns.value = myMedicalConcerns.value.filter(mc => mc.id !== medicalConcern.id);
   } catch (error) {
-    if (error instanceof Error) {
-      showError('Erreur lors de la suppression du motif de consultation', error.message);
-    } else {
-      showError('Erreur inconnue lors de la suppression du motif de consultation');
-    }
+    handleError('Erreur lors de la suppression du motif de consultation', error);
   } finally {
     isLoading.value = false;
   }
@@ -94,11 +106,7 @@ async function getMedicalConcerns() {
   try {
     myMedicalConcerns.value = await fetchMedicalConcerns();
   } catch (error) {
-    if (error instanceof Error) {
-      showError('Erreur lors du chargement des motifs de consultation', error.message);
-    } else {
-      showError('Erreur inconnue lors du chargement des motifs de consultation');
-    }
+    handleError('Erreur lors du chargement des motifs de consultation', error);
   } finally {
     isLoading.value = false;
   }
@@ -118,6 +126,7 @@ onMounted(() => {
         @on-remove="onRemoveConcern"
         @on-update="(medicalConcern) => {
           currentMedicalConcern = medicalConcern;
+          openUpdateModal = true;
         }"
         @on-create="openCreateModal = true"
         @on-edit-questions="(medicalConcern) => {
@@ -128,6 +137,12 @@ onMounted(() => {
     <CreateMedicalConcernModal
         v-if="openCreateModal"
         @on-submit="onCreate"
+    />
+    <CreateMedicalConcernModal
+        v-if="openUpdateModal && currentMedicalConcern"
+        :medical-concern="currentMedicalConcern"
+        @on-submit="onUpdate"
+        @update:open="openUpdateModal = false"
     />
     <SaveMedicalConcernQuestionsModal
         v-if="openEditQuestions"

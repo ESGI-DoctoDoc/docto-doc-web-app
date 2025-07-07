@@ -4,12 +4,15 @@ import {useSession} from "~/composables/auth/useSession";
 import SidebarMenu from '~/components/SidebarMenu.vue'
 import {subscriptionApi} from "~/services/subscriptions/subscription.api";
 import SettingsModal from "~/components/modals/SettingsModal.vue";
+import {doctorsApi} from "~/services/doctors/doctors.api";
+import type {DoctorNotification} from "~/types/doctor-notification";
 
 const route = useRoute()
 const router = useRouter()
 const {handleError, showSuccess} = useNotify()
 const {logoutUser, getUser, hasLicenseActive} = useSession()
 const {checkoutLicense, checkoutLicenseConfirmation} = subscriptionApi();
+const {fetchNotifications, markAsReadNotification} = doctorsApi()
 
 const image = new URL('@/assets/images/logo.png', import.meta.url).href
 const userRole = getUser()?.user?.role || 'doctor'
@@ -105,6 +108,89 @@ async function verifyPayment(paymentId: string) {
   }
 }
 
+const allNotifications = ref<DoctorNotification[]>([
+  {
+    id: '1',
+    title: 'Nouvelle notification',
+    content: 'Ceci est un exemple de notification.',
+    isRead: false,
+    createdAt: "2025-01-01",
+  },
+  {
+    id: '2',
+    title: 'Mise à jour importante',
+    content: 'Veuillez vérifier les dernières mises à jour.',
+    isRead: true,
+    createdAt: "2025-01-02",
+  },
+  {
+    id: '3',
+    title: 'Mise à jour importante',
+    content: 'Veuillez vérifier les dernières mises à jour.',
+    isRead: false,
+    createdAt: "2025-01-02",
+  },
+  {
+    id: '4',
+    title: 'Mise à jour importante',
+    content: 'Veuillez vérifier les dernières mises à jour.',
+    isRead: false,
+    createdAt: "2025-01-02",
+  },
+  {
+    id: '5',
+    title: 'Mise à jour importante',
+    content: 'Veuillez vérifier les dernières mises à jour.',
+    isRead: false,
+    createdAt: "2025-01-02",
+  },
+  {
+    id: '6',
+    title: 'Mise à jour importante',
+    content: 'Veuillez vérifier les dernières mises à jour.',
+    isRead: false,
+    createdAt: "2025-01-02",
+  },
+  {
+    id: '7',
+    title: 'Mise à jour importante',
+    content: 'Veuillez vérifier les dernières mises à jour.',
+    isRead: false,
+    createdAt: "2025-01-02",
+  }
+])
+const unreadNotifications = computed(() => {
+  return allNotifications.value.filter(notification => notification.isRead === false)
+})
+
+const notificationFilter = ref<'all' | 'unread'>('unread')
+const filteredNotifications = computed(() => {
+  return notificationFilter.value === 'all'
+      ? allNotifications.value
+      : allNotifications.value.filter(n => !n.isRead)
+})
+
+async function getNotifications() {
+  try {
+    allNotifications.value = await fetchNotifications()
+  } catch (error) {
+    handleError("Une erreur est survenue lors de la récupération des notifications.", error)
+  }
+}
+
+async function markNotificationAsRead(notificationId: string) {
+  try {
+    await markAsReadNotification(notificationId)
+    const notification = allNotifications.value.find(n => n.id === notificationId)
+    if (notification) {
+      notification.isRead = true
+    }
+  } catch (error) {
+    handleError("Une erreur est survenue lors de la mise à jour de la notification.", error)
+  }
+}
+
+const intervalId = ref();
 onMounted(() => {
   const paymentId = route.query['session_id']
   if (typeof paymentId === 'string') {
@@ -121,6 +207,17 @@ onMounted(() => {
     }
     confirmingPayment.value = true
     verifyPayment(paymentId)
+  }
+
+  // fetch notifications every 5 minutes
+  intervalId.value = setInterval(() => {
+    getNotifications()
+  }, 5 * 60 * 1000) // every 5 minutes
+})
+
+onUnmounted(() => {
+  if (intervalId.value) {
+    clearInterval(intervalId.value)
   }
 })
 </script>
@@ -190,11 +287,64 @@ onMounted(() => {
         <header class="navbar">
           <h1 class="text-2xl font-bold mt-2 ml-2">{{ pageTitle }}</h1>
           <div class="flex space-x-4 justify-center items-center">
-            <UButton
-                class="flex p-2.5 justify-center items-center rounded-xl text-black text-xl border-1 border-gray-200"
-                icon="i-heroicons-bell"
-                style="background: #F1F5F9"
-            />
+            <UPopover>
+              <div class="relative">
+                <UButton
+                    class="flex p-2.5 justify-center items-center rounded-xl text-black text-xl border-1 border-gray-200"
+                    icon="i-heroicons-bell"
+                    style="background: #F1F5F9"
+                    @click="getNotifications()"
+                />
+                <span
+                    v-if="unreadNotifications.length > 0"
+                    class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                >
+                  {{ unreadNotifications.length }}
+                </span>
+              </div>
+              <template #content>
+                <div class="min-w-96 p-4">
+                  <h3 class="text-lg font-semibold mb-2">Notifications</h3>
+                  <div class="flex space-x-2 mb-2">
+                    <UButton
+                        :variant="notificationFilter === 'unread' ? 'solid' : 'soft'"
+                        size="xs"
+                        @click="notificationFilter = 'unread'"
+                    >
+                      Non lues
+                    </UButton>
+                    <UButton
+                        :variant="notificationFilter === 'all' ? 'solid' : 'soft'"
+                        size="xs"
+                        @click="notificationFilter = 'all'"
+                    >
+                      Toutes
+                    </UButton>
+                  </div>
+                  <div v-if="filteredNotifications.length === 0" class="text-sm text-gray-500 pt-4 pb-2">
+                    Pas de nouvelles notifications.
+                  </div>
+                  <ul v-else class="space-y-2 max-h-96 overflow-y-auto py-2">
+                    <li
+                        v-for="notification in filteredNotifications"
+                        :key="notification.id"
+                        class="flex justify-between items-center px-4 py-2 rounded-lg bg-gray-100 "
+                    >
+                      <div>
+                        <p class="text-sm font-medium">{{ notification.title }}</p>
+                        <p v-if="notification.content" class="text-xs text-gray-600">{{ notification.content }}</p>
+                        <div v-else class="text-xs text-gray-600">Pas de contenu</div>
+                      </div>
+                      <UButton
+                          icon="i-heroicons-check"
+                          variant="subtle"
+                          @click="markNotificationAsRead(notification.id)"
+                      />
+                    </li>
+                  </ul>
+                </div>
+              </template>
+            </UPopover>
             <UDropdownMenu
                 :items="[
                 { label: 'Paramètres', icon: 'i-heroicons-cog-6-tooth', disabled: isAdmin, onSelect: () => showSettingsModal = true },

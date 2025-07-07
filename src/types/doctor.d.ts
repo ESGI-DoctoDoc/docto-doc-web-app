@@ -43,10 +43,10 @@ export interface DoctorProfile {
         latitude: number;
         longitude: number;
     } | null;
-    speciality?: {
+    speciality: {
         id: string;
         name: string;
-    } | null;
+    };
     subscription?: {
         id: string;
         start: string;

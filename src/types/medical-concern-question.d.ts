@@ -6,7 +6,7 @@ export interface QuestionOption {
 export interface MedicalConcernQuestion {
     id: string;
     question: string;
-    type: 'text' | 'list' | 'yes_no' | 'date';
+    type: 'text' | 'list' | 'yes_no';
     options?: QuestionOption[];
     isMandatory: boolean;
     createdAt: string;

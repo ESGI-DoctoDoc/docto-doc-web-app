@@ -12,6 +12,7 @@ import {useDebounceFn} from '@vueuse/core';
 import {ref} from "vue";
 import PreviewDocumentModal from "~/components/modals/PreviewDocumentModal.vue";
 import DocumentsPreview from "~/components/DocumentsPreview.vue";
+import CareTrackingSlideover from "~/components/slideover/CareTrackingSlideover.vue";
 
 definePageMeta({
   title: 'Messages',
@@ -30,19 +31,15 @@ const form = reactive<SendMessageForm>({
   files: [],
 })
 
+const openCareTrackingDetail = ref(false);
+
 const dropdownItems = ref([
   {
-    label: 'Action 1',
-    icon: 'i-lucide-pencil',
-    click: () => {
+    label: 'Voir le suivi de dossier',
+    onSelect: () => {
+      openCareTrackingDetail.value = true;
     }
   },
-  {
-    label: 'Action 2',
-    icon: 'i-lucide-trash',
-    click: () => {
-    }
-  }
 ])
 
 const showDropZone = ref(false)
@@ -205,7 +202,7 @@ async function getCareTrackingById() {
 }
 
 onMounted(() => {
-  // getCareTrackingById()
+  getCareTrackingById()
   connectSocket()
   listenToMessages()
   fetchMessages()
@@ -315,6 +312,14 @@ onBeforeUnmount(() => {
     </div>
 
     <PreviewDocumentModal v-if="currentUrl" :file-url="currentUrl" @close="currentUrl = ''"/>
+
+    <CareTrackingSlideover
+        v-if="openCareTrackingDetail && careTrackingDetail"
+        v-model:open="openCareTrackingDetail"
+        :care-tracking="careTrackingDetail"
+        readonly
+        @close="openCareTrackingDetail = false"
+    />
   </div>
 </template>
 

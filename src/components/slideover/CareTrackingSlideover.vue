@@ -5,7 +5,7 @@ import CareTrackingDocumentInputFile from "~/components/inputs/CareTrackingDocum
 import AppointmentListItem, {type AppointmentListItemType} from "~/components/appointments/AppointmentListItem.vue";
 
 const isOpen = defineModel('open', {type: Boolean, required: true});
-const props = defineProps<{ careTracking: CareTracking }>();
+const props = defineProps<{ careTracking: CareTracking, readonly?: boolean }>();
 defineEmits(['on-close', 'on-update', 'on-end', 'on-delete', 'on-add-appointment']);
 
 const {showError, handleError} = useNotify();
@@ -113,7 +113,7 @@ function toAppointment(appointment: CareTrackingAppointment): AppointmentListIte
         <!-- Rendez-vous       -->
         <div class="flex justify-between items-baseline pt-6">
           <h3 class="text-lg font-semibold">Tous les rendez-vous</h3>
-          <div>
+          <div v-if="!readonly">
             <UButton
                 color="primary"
                 label="Ajouter un rendez-vous"
@@ -160,7 +160,7 @@ function toAppointment(appointment: CareTrackingAppointment): AppointmentListIte
       </div>
     </template>
     <template #footer>
-      <div class="fit flex flex-col space-y-2">
+      <div v-if="!readonly" class="fit flex flex-col space-y-2">
         <UButton block color="primary" @click="$emit('on-update', props.careTracking)">
           Modifier
         </UButton>

@@ -2,14 +2,19 @@
 
 import InputFileBase from "~/components/inputs/base/InputFileBase.vue";
 import {useMediaApi} from "~/services/media/media.api";
+import {careTrackingApi} from "~/services/care-tracking/care-tracking.api";
 
 defineEmits<{
   (e: 'uploaded', files: { url: string, id: string }[]): void;
 }>()
 
+const props = defineProps<{
+  careTrackingId: string;
+}>()
+
 const {deleteFile} = useMediaApi()
 const {showError, handleError} = useNotify()
-// const {uploadMessageFiles} = messagesApi();
+const {uploadCareTrackingFiles: uploadCareTrackingFiles} = careTrackingApi();
 
 const files = ref<{ url: string, id: string }[]>([]);
 const isLoading = ref(false);
@@ -22,14 +27,13 @@ async function onUploadFiles(filesToUpload: File[]) {
       return;
     }
 
-    // const uploadedFiles = await uploadMessageFiles(filesToUpload);
-    // uploadedFiles.forEach((file) => {
-    //   files.value.push({
-    //     url: file.url,
-    //     id: file.id
-    //   })
-    // });
-    // modelValue.value = files.value.map(file => file.id);
+    const uploadedFiles = await uploadCareTrackingFiles(filesToUpload, props.careTrackingId, "Autre");
+    uploadedFiles.forEach((file) => {
+      files.value.push({
+        url: file.url,
+        id: file.id
+      })
+    });
   } catch (error) {
     handleError("Erreur lors de l'envoi des fichiers", error);
   } finally {
@@ -40,7 +44,7 @@ async function onUploadFiles(filesToUpload: File[]) {
 async function onDeleteFile(id: string) {
   isLoading.value = true;
   try {
-    await deleteFile(`/doctors/profile/${id}`);
+    await deleteFile(`/doctors/care-tracking/${props.careTrackingId}/documents/${id}`);
     files.value = files.value.filter(file => file.id !== id);
   } catch (error) {
     handleError("Erreur lors de la suppression de la photo de profil", error);

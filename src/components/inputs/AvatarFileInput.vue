@@ -43,8 +43,7 @@ async function onUploadFiles(filesToUpload: File[]) {
 async function onDeleteFile(id: string) {
   isLoading.value = true;
   try {
-    //todo handle delete file properly
-    // await deleteFile(`/doctors/profile/${id}`);
+    await deleteFile(`/doctors/onboarding/documents/${id}`);
     files.value = files.value.filter(file => file.id !== id);
     avatar.value = '';
     avatar2.value = '';

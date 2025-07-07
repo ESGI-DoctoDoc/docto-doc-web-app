@@ -2,6 +2,7 @@
 
 import InputFileBase from "~/components/inputs/base/InputFileBase.vue";
 import {doctorsApi} from "~/services/doctors/doctors.api";
+import {useMediaApi} from "~/services/media/media.api";
 
 const modelValue = defineModel('files', {
   type: Array as () => string[],
@@ -9,6 +10,7 @@ const modelValue = defineModel('files', {
 });
 const {showError, handleError} = useNotify();
 const {uploadDoctorDocuments} = doctorsApi();
+const {deleteFile} = useMediaApi()
 
 const isLoading = ref(false);
 const files = ref<{ url: string, id: string }[]>([]);
@@ -44,8 +46,7 @@ async function onUploadFiles(filesToUpload: File[]) {
 async function onDeleteFile(id: string) {
   isLoading.value = true;
   try {
-    //todo handle delete file properly
-    // await deleteFile(`/doctors/profile/${id}`);
+    await deleteFile(`/doctors/onboarding/documents/${id}`);
     files.value = files.value.filter(file => file.id !== id);
   } catch (error) {
     handleError("Erreur lors de la suppression de la photo de profil", error);

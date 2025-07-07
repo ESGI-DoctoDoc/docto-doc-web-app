@@ -92,6 +92,25 @@ export const careTrackingApi = () => {
             .map(result => (result as PromiseFulfilledResult<{ url: string, id: string }>).value);
     }
 
+    async function uploadCareTrackingFiles(files: File[], careTrackingId: string, type: string): Promise<{ url: string; id: string }[]> {
+        const promises = files.map(async (file) => {
+            const {preUploadFile, getSignedUrl, uploadFile, getFile} = useMediaApi();
+            const document = await preUploadFile({
+                endPoint: `/doctors/care-tracking/${careTrackingId}/documents`,
+                filename: file.name + '-' + Date.now(),
+                type: type as 'Autre', // todo Corentin completos
+            });
+            const signedUrl = await getSignedUrl(`/doctors/care-tracking/upload-url/${document.id}`);
+            await uploadFile(file, signedUrl.url);
+            return getFile(`/doctors/care-tracking/${careTrackingId}/documents/${document.id}`);
+        })
+
+        const results = await Promise.allSettled(promises);
+        return results
+            .filter(result => result.status === 'fulfilled')
+            .map(result => (result as PromiseFulfilledResult<{ url: string, id: string }>).value);
+    }
+
     return {
         fetchCareTracking,
         fetchCareTrackingById,
@@ -99,6 +118,7 @@ export const careTrackingApi = () => {
         updateCareTracking,
         removeCareTracking,
         uploadMessageFiles,
+        uploadCareTrackingFiles
     };
 };
 

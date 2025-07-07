@@ -160,6 +160,7 @@ function toAppointment(appointment: CareTrackingAppointment): AppointmentListIte
             </UButton>
             <template #body>
               <CareTrackingDocumentInputFile
+                  :care-tracking-id="careTrackingDetail.id"
                   @uploaded="(files) => {
                   if(careTrackingDetail) {
                     careTrackingDetail.files.push(...files.map(file => file.url))

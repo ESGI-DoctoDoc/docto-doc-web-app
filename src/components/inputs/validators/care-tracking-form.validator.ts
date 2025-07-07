@@ -13,6 +13,6 @@ export const updateCareTrackingSchema = z.object({
     name: z.string()
         .min(1, 'form.careTracking.name.required')
         .max(128, 'form.careTracking.name.max'),
-    description: z.string().max(256, 'form.careTracking.description.max'),
+    description: z.string().min(1, 'form.careTracking.description.required').max(256, 'form.careTracking.description.max'),
 });
 export type UpdateCareTrackingForm = z.infer<typeof updateCareTrackingSchema>;

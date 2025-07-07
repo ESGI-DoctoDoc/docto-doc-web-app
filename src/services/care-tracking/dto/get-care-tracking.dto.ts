@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import {z} from 'zod';
 
 export interface GetCareTrackingDto {
     page?: number;
@@ -58,7 +58,7 @@ export const getCareTrackingByIdResponseSchema = z.object({
         doctorNotes: z.string().nullable().optional(),
     })).nullable(),
     doctors: z.array(careTrackingDoctorSchema),
-    files: z.array(z.string()),
+    files: z.array(z.string()).nullable().optional(),
     createdAt: z.string(),
 });
 

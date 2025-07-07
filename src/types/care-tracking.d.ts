@@ -39,6 +39,7 @@ export interface CareTrackingDetail {
 export interface CareTracking {
     id: string;
     name: string;
+    description?: string | null;
     patient: CareTrackingPatient;
     endedAt?: string | null;
     createdAt: string;

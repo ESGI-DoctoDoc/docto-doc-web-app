@@ -136,6 +136,20 @@ function toAppointment(appointment: CareTrackingAppointment): AppointmentListIte
           />
         </div>
 
+        <h3 class="text-lg font-semibold pt-6">Médecins associés</h3>
+        <AppDivider class="w-full pb-4 pt-2"/>
+        <div class="flex flex-col space-y-2">
+          <div v-if="careTrackingDetail.doctors.length == 0">
+            <div class="text-center text-gray-500">Aucun médecin associé à ce suivi de dossier.</div>
+          </div>
+          <div v-else>
+            <ul class="list-disc pl-5">
+              <li v-for="(doctor, index) in careTrackingDetail.doctors" :key="index">
+                {{ doctor.firstName }} {{ doctor.lastName }}
+              </li>
+            </ul>
+          </div>
+        </div>
 
         <!-- Documents       -->
         <div class="flex justify-between items-baseline pt-6">

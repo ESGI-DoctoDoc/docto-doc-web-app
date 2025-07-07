@@ -60,8 +60,9 @@ function onError(event: FormErrorEvent) {
         <UFormField class="w-full" label="Nom du suivi" name="name" required>
           <UInput v-model="form.name" class="w-full" placeholder="Nom du suivi de dossier" required/>
         </UFormField>
-        <UFormField class="w-full" label="Description du suivi" name="description">
-          <InputAreaBase v-model="form.description" class="w-full" placeholder="Description du suivi de dossier"/>
+        <UFormField class="w-full" label="Description du suivi" name="description" required>
+          <InputAreaBase v-model="form.description" class="w-full" name="description"
+                         placeholder="Description du suivi de dossier"/>
         </UFormField>
         <PatientsSelect v-if="!careTracking" v-model:patient="form.patient"/>
       </UForm>

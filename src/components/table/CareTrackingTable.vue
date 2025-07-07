@@ -48,7 +48,7 @@ const columns: TableColumn<CareTracking>[] = [
 function getCareTrackingOptions(row: CareTracking) {
   return [
     {
-      label: 'Vour les messages',
+      label: 'Voir les messages',
       icon: 'i-lucide-message-square',
       onClick: () => emits('onMessage', row)
     },

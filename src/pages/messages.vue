@@ -11,6 +11,9 @@ import {careTrackingApi} from "~/services/care-tracking/care-tracking.api";
 import {useDebounceFn} from '@vueuse/core';
 import {ref} from "vue";
 import PreviewDocumentModal from "~/components/modals/PreviewDocumentModal.vue";
+import {useMessageSocket} from "~/composables/useMessageSocket";
+import {messageApi} from "~/services/messages/message.api";
+import dayjs from "dayjs";
 import DocumentsPreview from "~/components/DocumentsPreview.vue";
 import CareTrackingSlideover from "~/components/slideover/CareTrackingSlideover.vue";
 
@@ -25,6 +28,11 @@ const route = useRoute()
 const {showError, handleError} = useNotify()
 const {getUser} = useSession()
 const {fetchCareTrackingById} = careTrackingApi()
+const user = getUser()
+const {postMessage, getMessages} = messageApi();
+
+const careTrackingId = route.params.id as string;
+const { connect, disconnect, receivedMessages } = useMessageSocket(careTrackingId);
 
 const form = reactive<SendMessageForm>({
   message: '',
@@ -47,6 +55,8 @@ const isLoading = ref(true);
 const isLoadingMore = ref(false);
 const previewError = ref<boolean[]>([]);
 const currentUrl = ref('');
+const lastCursor = ref<{ sentAt: string, id: string } | null>(null);
+const hasMore = ref(true);
 
 const messages = ref<Message[]>([]);
 const careTrackingDetail = ref<CareTrackingDetail>();
@@ -63,70 +73,80 @@ watch(messages, () => {
 
 async function fetchMessages() {
   isLoading.value = true;
-  await new Promise(resolve => setTimeout(resolve, 1000)); // simulate delay
-  messages.value = [
-    {
-      id: '1',
-      sender: {id: '1', name: 'Docteur1', avatarUrl: 'https://via.placeholder.com/40'},
-      content: {text: 'Bonjour, comment allez-vous ?', files: []},
-      sendAt: '2025-07-03T09:00:00Z',
-    },
-    {
-      id: '2',
-      sender: {id: '00000000-0000-0000-0000-000000000004', name: 'Moi', avatarUrl: 'https://via.placeholder.com/40'},
-      content: {text: 'Je vais bien, merci !', files: []},
-      sendAt: '2025-07-03T09:02:00Z',
-    },
-    {
-      id: '3',
-      sender: {id: '1', name: 'Docteur1', avatarUrl: 'https://via.placeholder.com/40'},
-      content: {text: 'Avez-vous pris vos médicaments ?', files: []},
-      sendAt: '2025-07-03T09:03:00Z',
-    },
-    {
-      id: '5',
-      sender: {id: '1', name: 'Docteur1', avatarUrl: 'https://via.placeholder.com/40'},
-      content: {text: 'Parfait. Continuez comme ça.', files: ['https://picsum.photos/536/354']},
-      sendAt: '2025-07-03T09:05:00Z',
-    },
-    {
-      id: '6',
-      sender: {id: '00000000-0000-0000-0000-000000000004', name: 'Moi', avatarUrl: 'https://via.placeholder.com/40'},
-      content: {text: 'Merci docteur !', files: []},
-      sendAt: '2025-07-03T09:06:00Z',
-    },
-    {
-      id: '7',
-      sender: {id: '1', name: 'Docteur1', avatarUrl: 'https://via.placeholder.com/40'},
-      content: {text: 'À bientôt pour un nouveau suivi.', files: []},
-      sendAt: '2025-07-03T09:07:00Z',
+  try {
+    const response = await getMessages(careTrackingId);
+    const ordered = [...response].reverse();
+
+    messages.value = ordered.map((message) => ({
+      id: message.id,
+      sender: {
+        id: message.sender.id,
+        name: message.sender.name,
+        avatarUrl: message.sender.avatarUrl,
+      },
+      content: {
+        text: message.content.text,
+        files: message.content.files,
+      },
+      sentAt: message.sentAt,
+    }));
+
+    if (messages.value.length > 0) {
+      const first = messages.value[0];
+      lastCursor.value = {
+        sentAt: first.sentAt,
+        id: first.id,
+      };
     }
-  ];
-  isLoading.value = false;
+
+    hasMore.value = response.length === 8;
+  } catch (error) {
+    showError('Erreur de récupération', 'Impossible de charger les messages.');
+    console.error(error);
+  } finally {
+    isLoading.value = false;
+  }
 }
 
 async function loadMoreMessages() {
+  if (!hasMore.value || isLoadingMore.value || !lastCursor.value) return;
+
   isLoadingMore.value = true;
-  await new Promise(resolve => setTimeout(resolve, 1000)); // simulate delay
-  const newMessages: Message[] = [
-    {
-      id: '8',
-      sender: {id: '1', name: 'Docteur1', avatarUrl: 'https://via.placeholder.com/40'},
-      content: {
-        text: null,
-        files: ['https://picsum.photos/536/354', 'https://picsum.photos.fr/no-content', 'https://picsum.photos/536/354', 'https://picsum.photos/536/354']
+
+  try {
+    const response = await getMessages(careTrackingId, lastCursor.value);
+
+    const newMessages = response.map((message) => ({
+      id: message.id,
+      sender: {
+        id: message.sender.id,
+        name: message.sender.name,
+        avatarUrl: message.sender.avatarUrl,
       },
-      sendAt: '2025-07-03T09:08:00Z',
-    },
-    {
-      id: '9',
-      sender: {id: '00000000-0000-0000-0000-000000000004', name: 'Moi', avatarUrl: 'https://via.placeholder.com/40'},
-      content: {text: 'Merci pour le suivi.', files: []},
-      sendAt: '2025-07-03T09:09:00Z',
+      content: {
+        text: message.content.text,
+        files: message.content.files,
+      },
+      sendAt: message.sentAt,
+    }));
+
+    messages.value.unshift(...[...newMessages].reverse());
+
+    if (newMessages.length > 0) {
+      const oldest = newMessages[0];
+      lastCursor.value = {
+        sentAt: oldest.sendAt,
+        id: oldest.id,
+      };
     }
-  ];
-  messages.value.unshift(...newMessages);
-  isLoadingMore.value = false;
+
+    hasMore.value = newMessages.length === 8;
+  } catch (error) {
+    showError('Erreur de récupération', 'Impossible de charger plus de messages.');
+    console.error(error);
+  } finally {
+    isLoadingMore.value = false;
+  }
 }
 
 const onScroll = useDebounceFn(() => {
@@ -144,31 +164,68 @@ function isMessageFromMe(message: Message) {
   return message.sender.id === user?.doctor?.id;
 }
 
-// TODO: Initialiser la connexion WebSocket
 function connectSocket() {
+  connect();
 }
 
-// TODO: Se déconnecter proprement du socket
 function disconnectSocket() {
+  disconnect()
 }
 
-// TODO: Écouter les nouveaux messages entrants via socket
 function listenToMessages() {
+  watch(() => receivedMessages.value.length, () => {
+    if (receivedMessages.value.length > 0) {
+      const lastMessage = receivedMessages.value[receivedMessages.value.length - 1];
+      messages.value.push(lastMessage);
+      console.log(lastMessage);
+      nextTick(() => {
+        if (messagesContainer.value) {
+          messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+        }
+      });
+    }
+  });
 }
 
-// TODO: Envoyer un message via socket
-function sendMessage(form: FormSubmitEvent<SendMessageForm>) {
-  console.log("form is accepted", form.data);
-  messages.value = [
-    ...messages.value,
-    {
-      id: String(messages.value.length + 1),
-      sender: {id: '00000000-0000-0000-0000-000000000004', name: 'Moi', avatarUrl: 'https://via.placeholder.com/40'},
-      content: {text: form.data.message, files: null},
-      sendAt: new Date().toISOString(),
-    }
-  ];
-  form.data.message = '';
+async function sendMessage(formEvent: FormSubmitEvent<SendMessageForm>) {
+  if (!careTrackingDetail.value || !careTrackingDetail.value.doctors.length) {
+    showError('Erreur', 'Aucun docteur associé au suivi de dossier.');
+    return;
+  }
+
+  const userDoctorId = user?.doctor?.id;
+  const doctor = careTrackingDetail.value.doctors.find(doc => doc.id === userDoctorId)
+      || careTrackingDetail.value.doctors[0];
+
+  const fullName = `${doctor.firstName} ${doctor.lastName}`;
+
+  const messageToSend: Message = {
+    id: crypto.randomUUID(),
+    sender: {
+      id: doctor.id,
+      name: fullName,
+      avatarUrl: doctor.profilePictureUrl,
+    },
+    content: {
+      text: formEvent.data.message,
+      files: formEvent.data.files ?? [],
+    },
+    sentAt: dayjs().toDate(),
+  };
+
+  try {
+    const trimmedContent = messageToSend.content.text?.trimEnd() ?? '';
+    await postMessage(careTrackingId, {
+      content: trimmedContent,
+      files: messageToSend.content.files ?? [],
+    });
+    form.message = '';
+    form.files = [];
+    showDropZone.value = false;
+  } catch (error) {
+    showError('Erreur d\'envoi', 'Impossible d\'envoyer le message');
+    console.error(error);
+  }
 }
 
 function onError(event: FormErrorEvent) {
@@ -202,11 +259,14 @@ async function getCareTrackingById() {
   }
 }
 
-onMounted(() => {
-  getCareTrackingById()
-  connectSocket()
-  listenToMessages()
-  fetchMessages()
+onMounted(async () => {
+  await getCareTrackingById()
+
+  if (careTrackingDetail.value) {
+    connectSocket()
+    listenToMessages()
+    await fetchMessages()
+  }
 })
 
 onBeforeUnmount(() => {
@@ -227,8 +287,15 @@ onBeforeUnmount(() => {
         <!-- Header       -->
         <div class="flex items-center justify-between px-4 py-2 border-b-gray-300 border-b">
           <div class="flex flex-col mb-2">
-            <div class="text-xl font-medium">Nom suivi de dossier</div>
-            <div class="text-sm">Docteur1, Docteur2, ...</div>
+            <div class="text-xl font-medium">{{ careTrackingDetail?.name || 'Nom suivi de dossier' }}</div>
+            <div class="text-sm">
+              <template v-if="careTrackingDetail && careTrackingDetail.doctors.length > 0">
+                {{ careTrackingDetail.doctors.map(doc => `${doc.firstName} ${doc.lastName}`).join(', ') }}
+              </template>
+              <template v-else>
+                Aucun docteur associé
+              </template>
+            </div>
           </div>
           <div>
             <UDropdownMenu :items="dropdownItems">
@@ -269,9 +336,9 @@ onBeforeUnmount(() => {
                 <div class="font-medium">{{ message.sender.name }}</div>
               </div>
               <div
-                  v-if="message.content.text != null"
+                  v-if="message.content.text"
                   :class="{ 'bg-info-100': isMessageFromMe(message), 'bg-gray-50': !isMessageFromMe(message) }"
-                  class="border border-gray-300 rounded-md p-3 text-black"
+                  class="border border-gray-300 rounded-md p-3 text-black message-content"
               >
                 {{ message.content.text }}
               </div>
@@ -279,7 +346,9 @@ onBeforeUnmount(() => {
                   v-if="message.content.files && message.content.files.length > 0"
                   :files="message.content.files"
               />
-              <div class="text-sm text-gray-500">Le 12/10/2023 à 14:30</div>
+              <div class="text-sm text-gray-500">
+                {{ dayjs(message.sentAt).format("DD/MM/YYYY HH:mm") }}
+              </div>
             </div>
           </div>
         </div>
@@ -296,7 +365,11 @@ onBeforeUnmount(() => {
               @error="onError"
               @submit="sendMessage"
           >
-            <MessageInputFile v-if="showDropZone" v-model:files="form.files"/>
+            <MessageInputFile
+                v-if="showDropZone && careTrackingDetail?.id"
+                v-model:files="form.files"
+                :care-tracking-id="careTrackingDetail?.id"
+            />
             <UFormField class="text-left" name="message">
               <InputAreaBase
                   v-model="form.message"
@@ -325,5 +398,9 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-
+.message-content {
+  white-space: pre-wrap;
+  max-width: 100%;
+  overflow-x: auto;
+}
 </style>

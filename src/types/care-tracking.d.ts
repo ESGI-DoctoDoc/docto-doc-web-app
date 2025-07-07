@@ -8,6 +8,13 @@ export interface CareTrackingPatient {
     phone: string;
 }
 
+export interface CareTrackingDoctor {
+    id: string;
+    firstName: string;
+    lastName: string;
+    profilePictureUrl: string;
+}
+
 export interface CareTrackingAppointment {
     id: string;
     medicalConcern: AppointmentMedicalConcern;
@@ -24,6 +31,7 @@ export interface CareTrackingDetail {
     name: string;
     patient: CareTrackingPatient;
     appointments: CareTrackingAppointment[]
+    doctors: CareTrackingDoctor[];
     files: string[];
     createdAt: string;
 }

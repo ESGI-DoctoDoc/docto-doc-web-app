@@ -35,17 +35,38 @@ const badgeColor = computed(() => {
     case "cancelled-unexcused":
       return 'error';
     case "cancelled-excused":
-      return 'info';
+      return 'error';
     case "completed":
       return 'success';
     case "upcoming":
-      return 'primary';
+      return 'info';
     case "waiting-room":
       return 'info';
     default:
       return 'neutral';
   }
 })
+const formattedStatus = computed(() => {
+  const status = props.appointment?.status;
+  switch (status) {
+    case 'upcoming':
+      return 'À venir';
+    case 'confirmed':
+      return 'Confirmé';
+    case 'locked':
+      return 'Verrouillé';
+    case 'cancelled-excused':
+      return 'Annulé (excusé)';
+    case 'cancelled-unexcused':
+      return 'Annulé (non excusé)';
+    case 'completed':
+      return 'Terminé';
+    case 'waiting-room':
+      return 'En salle d\'attente';
+    default:
+      return '';
+  }
+});
 
 </script>
 
@@ -61,7 +82,7 @@ const badgeColor = computed(() => {
     <div class="">
       <div class="flex justify-end items-center space-x-2 w-full">
         <!-- todo add component here               -->
-        <UBadge :color="badgeColor" :label="appointment.status"/>
+        <UBadge :color="badgeColor" :label="formattedStatus"/>
         <UIcon
             class="cursor-pointer"
             name="i-lucide-chevron-right"

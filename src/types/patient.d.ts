@@ -26,4 +26,5 @@ export interface PatientAppointment {
 export interface PatientDetails extends Patient {
     noShow: number;
     appointments: PatientAppointment[];
+    files: string[];
 }

@@ -7,6 +7,7 @@ import {useSession} from "~/composables/auth/useSession";
 import {useClipboard} from "@vueuse/core";
 import AppointmentListItem, {type AppointmentListItemType} from "~/components/appointments/AppointmentListItem.vue";
 import {useDeeplink} from "~/composables/useDeeplink";
+import MedicalRecordInputFile from "~/components/inputs/MedicalRecordInputFile.vue";
 
 const isOpen = defineModel('isOpen', {
   type: Boolean,
@@ -17,10 +18,10 @@ const props = defineProps<{
   patient: Patient
 }>()
 
-defineEmits(['on-close', 'on-update', 'on-delete'])
+const emits = defineEmits(['on-close', 'on-update', 'on-delete'])
 
 const {navigateToResourceWithFilter} = useDeeplink()
-const {showError, showSuccess} = useNotify()
+const {showError, showSuccess, handleError} = useNotify()
 const {copy} = useClipboard()
 const {fetchPatientById} = patientsApi()
 const {getUser} = useSession()
@@ -43,11 +44,8 @@ async function fetchPatientDetails() {
 
     patientDetail.value = await fetchPatientById(props!.patient.id);
   } catch (error) {
-    if (error instanceof Error) {
-      showError('Erreur lors de la récupération des détails du patient', error.message);
-    } else {
-      showError('Une erreur est survenue lors de la récupération des détails du patient.');
-    }
+    handleError('Erreur lors de la récupération des détails du patient', error);
+    emits('on-close');
   } finally {
     loading.value = false;
   }
@@ -168,6 +166,25 @@ function toAppointment(appointment: PatientAppointment): AppointmentListItemType
               :appointment="toAppointment(appointment)"
           />
         </div>
+
+        <!-- Documents       -->
+        <div class="flex justify-between items-baseline pt-6">
+          <h3 class="text-lg font-semibold">Documents</h3>
+          <UModal close title="Ajouter un fichier">
+            <UButton color="primary" label="Ajouter un fichier" size="sm" variant="outline"/>
+            <template #body>
+              <MedicalRecordInputFile
+                  @uploaded="(files) => {
+                  if(patientDetail) {
+                    (patientDetail.files ?? []).push(...files.map(file => file.url))
+                  }
+                }"
+              />
+            </template>
+          </UModal>
+        </div>
+        <AppDivider class="w-full pb-4 pt-2"/>
+        <DocumentsPreview v-if="patientDetail.files" :files="patientDetail.files" last-view-all/>
       </div>
     </template>
     <template #footer>

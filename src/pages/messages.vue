@@ -13,6 +13,7 @@ import {ref} from "vue";
 import PreviewDocumentModal from "~/components/modals/PreviewDocumentModal.vue";
 import {useMessageSocket} from "~/composables/useMessageSocket";
 import {messageApi} from "~/services/messages/message.api";
+import dayjs from "dayjs";
 
 definePageMeta({
   title: 'Messages',
@@ -56,6 +57,8 @@ const isLoading = ref(true);
 const isLoadingMore = ref(false);
 const previewError = ref<boolean[]>([]);
 const currentUrl = ref('');
+const lastCursor = ref<{ sentAt: string, id: string } | null>(null);
+const hasMore = ref(true);
 
 const messages = ref<Message[]>([]);
 const careTrackingDetail = ref<CareTrackingDetail>();
@@ -74,7 +77,9 @@ async function fetchMessages() {
   isLoading.value = true;
   try {
     const response = await getMessages(careTrackingId);
-    messages.value = response.map((message) => ({
+    const ordered = [...response].reverse();
+
+    messages.value = ordered.map((message) => ({
       id: message.id,
       sender: {
         id: message.sender.id,
@@ -85,8 +90,18 @@ async function fetchMessages() {
         text: message.content.text,
         files: message.content.files,
       },
-      sendAt: message.sendAt,
+      sentAt: message.sentAt,
     }));
+
+    if (messages.value.length > 0) {
+      const first = messages.value[0];
+      lastCursor.value = {
+        sentAt: first.sentAt,
+        id: first.id,
+      };
+    }
+
+    hasMore.value = response.length === 8;
   } catch (error) {
     showError('Erreur de récupération', 'Impossible de charger les messages.');
     console.error(error);
@@ -96,11 +111,44 @@ async function fetchMessages() {
 }
 
 async function loadMoreMessages() {
+  if (!hasMore.value || isLoadingMore.value || !lastCursor.value) return;
+
   isLoadingMore.value = true;
-  await new Promise(resolve => setTimeout(resolve, 1000)); // simulate delay
-  const newMessages: Message[] = [];
-  messages.value.unshift(...newMessages);
-  isLoadingMore.value = false;
+
+  try {
+    const response = await getMessages(careTrackingId, lastCursor.value);
+
+    const newMessages = response.map((message) => ({
+      id: message.id,
+      sender: {
+        id: message.sender.id,
+        name: message.sender.name,
+        avatarUrl: message.sender.avatarUrl,
+      },
+      content: {
+        text: message.content.text,
+        files: message.content.files,
+      },
+      sendAt: message.sentAt,
+    }));
+
+    messages.value.unshift(...[...newMessages].reverse());
+
+    if (newMessages.length > 0) {
+      const oldest = newMessages[0];
+      lastCursor.value = {
+        sentAt: oldest.sendAt,
+        id: oldest.id,
+      };
+    }
+
+    hasMore.value = newMessages.length === 8;
+  } catch (error) {
+    showError('Erreur de récupération', 'Impossible de charger plus de messages.');
+    console.error(error);
+  } finally {
+    isLoadingMore.value = false;
+  }
 }
 
 const onScroll = useDebounceFn(() => {
@@ -131,6 +179,7 @@ function listenToMessages() {
     if (receivedMessages.value.length > 0) {
       const lastMessage = receivedMessages.value[receivedMessages.value.length - 1];
       messages.value.push(lastMessage);
+      console.log(lastMessage);
       nextTick(() => {
         if (messagesContainer.value) {
           messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
@@ -140,7 +189,7 @@ function listenToMessages() {
   });
 }
 
-async function sendMessage(form: FormSubmitEvent<SendMessageForm>) {
+async function sendMessage(formEvent: FormSubmitEvent<SendMessageForm>) {
   if (!careTrackingDetail.value || !careTrackingDetail.value.doctors.length) {
     showError('Erreur', 'Aucun docteur associé au suivi de dossier.');
     return;
@@ -153,24 +202,28 @@ async function sendMessage(form: FormSubmitEvent<SendMessageForm>) {
   const fullName = `${doctor.firstName} ${doctor.lastName}`;
 
   const messageToSend: Message = {
+    id: crypto.randomUUID(),
     sender: {
       id: doctor.id,
       name: fullName,
       avatarUrl: doctor.profilePictureUrl,
     },
     content: {
-      text: form.data.message,
-      files: form.data.files ?? [],
+      text: formEvent.data.message,
+      files: formEvent.data.files ?? [],
     },
-    sendAt: new Date().toISOString(),
+    sentAt: dayjs().toDate(),
   };
 
   try {
+    const trimmedContent = messageToSend.content.text?.trimEnd() ?? '';
     await postMessage(careTrackingId, {
-      content: messageToSend.content.text ?? '',
-      files: form.data.files ?? [],
+      content: trimmedContent,
+      files: messageToSend.content.files ?? [],
     });
-    form.data.message = '';
+    form.message = '';
+    form.files = [];
+    showDropZone.value = false;
   } catch (error) {
     showError('Erreur d\'envoi', 'Impossible d\'envoyer le message');
     console.error(error);
@@ -284,9 +337,9 @@ onBeforeUnmount(() => {
                 <div class="font-medium">{{ message.sender.name }}</div>
               </div>
               <div
-                  v-if="message.content.text != null"
+                  v-if="message.content.text"
                   :class="{ 'bg-info-100': isMessageFromMe(message), 'bg-gray-50': !isMessageFromMe(message) }"
-                  class="border border-gray-300 rounded-md p-3 text-black"
+                  class="border border-gray-300 rounded-md p-3 text-black message-content"
               >
                 {{ message.content.text }}
               </div>
@@ -316,7 +369,7 @@ onBeforeUnmount(() => {
                 </div>
               </div>
               <div class="text-sm text-gray-500">
-                {{ new Date(message.sendAt).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) }}
+                {{ dayjs(message.sentAt).format("DD/MM/YYYY HH:mm") }}
               </div>
             </div>
           </div>
@@ -359,5 +412,9 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-
+.message-content {
+  white-space: pre-wrap;
+  max-width: 100%;
+  overflow-x: auto;
+}
 </style>

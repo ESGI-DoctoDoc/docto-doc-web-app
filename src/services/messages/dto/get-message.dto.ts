@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+export interface MessageCursor {
+    sentAt: string;
+    id: string;
+}
 export const messageSenderSchema = z.object({
     id: z.string().uuid(),
     name: z.string(),
@@ -15,9 +19,18 @@ export const getMessageResponseSchema = z.object({
     id: z.string().uuid(),
     sender: messageSenderSchema,
     content: messageContentSchema,
-    sendAt: z.string(),
+    sentAt: z.string(),
 });
 
 export const getMessagesResponseSchema = z.array(getMessageResponseSchema);
 
 export type GetMessagesResponse = z.infer<typeof getMessagesResponseSchema>;
+
+export const getMessageQuerySchema = z.object({
+    cursorSentAt: z
+        .string()
+        .optional(),
+    cursorId: z.string().uuid().optional(),
+});
+
+export type GetMessagesQuerySchema = z.infer<typeof getMessageQuerySchema>;

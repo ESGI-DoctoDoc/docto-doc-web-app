@@ -1,6 +1,11 @@
 import {RequestBuilder} from '~/api/request-builder';
 import {type SendMessageDto, type SendMessageRequest, sendMessageRequestSchema,} from './dto/send-message.dto';
-import {type GetMessagesResponse, getMessagesResponseSchema} from './dto/get-message.dto';
+import {
+    getMessageQuerySchema,
+    type GetMessagesQuerySchema,
+    type GetMessagesResponse,
+    getMessagesResponseSchema, type MessageCursor
+} from './dto/get-message.dto';
 
 export const messageApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
@@ -17,11 +22,19 @@ export const messageApi = () => {
             });
     }
 
-    function getMessages(careTrackingId: string) {
+    function getMessages(careTrackingId: string, cursor?: MessageCursor) {
         return new RequestBuilder(BASE_API_URL)
             .get(`/doctors/${careTrackingId}/messages`)
+            .withQuery<GetMessagesQuerySchema>(getMessageQuerySchema)
             .withResponse<GetMessagesResponse>(getMessagesResponseSchema)
-            .execute();
+            .execute({
+                query: cursor
+                    ? {
+                        cursorSentAt: cursor.sentAt,
+                        cursorId: cursor.id,
+                    }
+                    : {},
+            });
     }
 
     return {

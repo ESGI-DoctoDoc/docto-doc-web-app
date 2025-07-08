@@ -6,6 +6,7 @@ import {doctorsApi} from "~/services/doctors/doctors.api";
 import DoctorDetailSlideover from "~/components/slideover/DoctorDetailSlideover.vue";
 import DoctorsTable from "~/components/table/DoctorsTable.vue";
 import DoctorConfirmationModal from "~/components/modals/DoctorConfirmationModal.vue";
+import DoctorReportModal from "~/components/modals/DoctorReportModal.vue";
 
 definePageMeta({
   title: 'Tous les medécins',
@@ -22,6 +23,7 @@ const doctors = ref<Doctor[]>([])
 const currentDoctor = ref<Doctor>()
 const openDoctorDetail = ref(false)
 const openVerification = ref(false)
+const openReport = ref(false)
 
 async function getDoctors() {
   isLoading.value = true
@@ -47,12 +49,17 @@ function onShowVerification(doctor: Doctor) {
   openVerification.value = true
 }
 
+function onShowReport(doctor: Doctor) {
+  currentDoctor.value = doctor
+  openReport.value = true
+}
+
 function onClose() {
   openDoctorDetail.value = false
   currentDoctor.value = undefined
 }
 
-async function onVerificationChanged(type: 'validated' | 'reject') {
+async function onVerificationChanged(type: 'validated' | 'refused') {
   openVerification.value = false
   if (!currentDoctor.value) {
     return
@@ -108,6 +115,7 @@ onMounted(() => {
         :doctor="currentDoctor"
         @on-close="onClose()"
         @on-verification="onShowVerification($event)"
+        @on-check-report="onShowReport($event)"
     />
 
     <DoctorConfirmationModal
@@ -115,6 +123,13 @@ onMounted(() => {
         v-model:open="openVerification"
         :doctor="currentDoctor"
         @on-submit="onVerificationChanged($event)"
+    />
+
+    <DoctorReportModal
+        v-if="openReport && currentDoctor"
+        v-model:open="openReport"
+        :doctor="currentDoctor"
+        @on-close="openReport = false; currentDoctor = undefined"
     />
   </div>
 </template>

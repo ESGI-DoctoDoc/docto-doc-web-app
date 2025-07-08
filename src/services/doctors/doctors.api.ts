@@ -20,6 +20,11 @@ import {
     updateDoctorBodySchema,
     type UpdateDoctorProfile
 } from "~/services/doctors/dto/update-doctors.dto";
+import {type GetReportingResponse, getReportingResponseSchema} from "~/services/doctors/dto/get-reporting.dto";
+import {
+    type GetMedicalConcernsResponse,
+    getMedicalConcernsResponseSchema
+} from "~/services/medical-concerns/dto/get-medical-concers.dto";
 
 export const doctorsApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
@@ -121,6 +126,20 @@ export const doctorsApi = () => {
             });
     }
 
+    async function fetchDoctorReporting(doctorId: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .get(`/admin/doctors/${doctorId}/reporting`)
+            .withResponse<GetReportingResponse>(getReportingResponseSchema)
+            .execute();
+    }
+
+    async function fetchDoctorMedicalConcerns(doctorId: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .get(`/doctors/${doctorId}/medical-concerns`)
+            .withResponse<GetMedicalConcernsResponse>(getMedicalConcernsResponseSchema)
+            .execute();
+    }
+
     return {
         fetchDoctors,
         fetchDoctorById,
@@ -132,5 +151,7 @@ export const doctorsApi = () => {
         fetchNotifications,
         markAsReadNotification,
         updateDoctorProfile,
+        fetchDoctorReporting,
+        fetchDoctorMedicalConcerns,
     }
 }

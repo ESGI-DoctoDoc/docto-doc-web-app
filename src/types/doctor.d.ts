@@ -5,21 +5,23 @@ export interface Doctor {
     email: string;
     phone: string;
     rpps?: string | null;
-    address?: {
+    bio: string;
+    address: {
         formatted: string;
         latitude: number;
         longitude: number;
     }
-    speciality?: {
+    speciality: {
         id: string;
         name: string;
-    } | null;
+    };
     birthdate?: string | null;
     isVerified: boolean;
     createdAt: string;
 }
 
 export interface DoctorDetail extends Doctor {
+    isReported: boolean;
     isEmailVerified: boolean;
     subscriptions?: Array<{
         id: string;
@@ -54,4 +56,17 @@ export interface DoctorProfile {
     } | null;
     bio?: string | null;
     profilePictureUrl?: string | null;
+}
+
+export interface DoctorReporting {
+    id: string;
+    reporter: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+    }
+    explanation: string;
+    status: 'pending' | 'resolved' | 'rejected';
+    createdAt: string;
 }

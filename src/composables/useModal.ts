@@ -16,6 +16,8 @@ export const useModals = () => {
         return modal.open()
     }
 
+    // const showSendEmailModal = ()
+
     return {
         showPopupContinueModal,
         showCancelAppointmentReasonModal,

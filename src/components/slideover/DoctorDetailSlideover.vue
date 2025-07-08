@@ -13,7 +13,7 @@ const props = defineProps<{
   doctor: Doctor
 }>()
 
-defineEmits(['on-close', 'on-verification'])
+defineEmits(['on-close', 'on-verification', 'on-check-report'])
 
 const {showError, showSuccess} = useNotify()
 const {copy} = useClipboard()
@@ -99,8 +99,20 @@ function formatPhoneNumber(phone: string): string {
 
       <div v-else-if="doctorDetail" class="flex flex-col space-y-2">
         <div
+            v-if="!doctorDetail.isReported"
+            class="border border-error-500 bg-error-50 text-error-900 p-4 rounded flex justify-between items-center"
+        >
+          <div>
+            <p>Ce docteur a été signalé par un patient</p>
+          </div>
+          <UButton color="error" variant="solid" @click="$emit('on-check-report', doctorDetail)">
+            Voir le(s) signalement(s)
+          </UButton>
+        </div>
+
+        <div
             v-if="!doctorDetail.isVerified"
-            class="border border-green-500 bg-green-50 text-green-900 p-4 rounded flex justify-between items-center mb-4"
+            class="border border-green-500 bg-green-50 text-green-900 p-4 rounded flex justify-between items-center"
         >
           <div>
             <p>En attente de confirmation</p>
@@ -109,6 +121,10 @@ function formatPhoneNumber(phone: string): string {
             Vérifier ses informations
           </UButton>
         </div>
+
+        <h2 class="text-xl font-medium pt-6">Informations personnelles</h2>
+        <AppDivider class="w-full pb-4 pt-2"/>
+
         <div class="flex justify-between space-y-1">
           <div>Prénom</div>
           <div class="cursor-pointer" @click="copyToClipboard(doctorDetail.firstName)">
@@ -160,7 +176,9 @@ function formatPhoneNumber(phone: string): string {
         <!--          <div>{{ doctorDetail.address?.formatted ?? 'Non renseignée' }}</div>-->
         <!--        </div>-->
 
-        <h3 class="mt-4 text-lg font-semibold">Statistiques d’activité</h3>
+        <h2 class="text-xl font-medium pt-6">Statistiques d’activité</h2>
+        <AppDivider class="w-full pb-4 pt-2"/>
+
         <div class="flex justify-between space-y-1">
           <div>Nombre de rendez-vous</div>
           <div>{{ doctorDetail.counter.appointments }}</div>

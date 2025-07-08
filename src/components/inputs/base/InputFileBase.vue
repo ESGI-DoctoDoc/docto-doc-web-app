@@ -8,13 +8,12 @@ type InputFileType = 'image/*' | 'application/pdf';
 interface InputFileProps {
   types: InputFileType[]
   max?: number
+  lazy?: boolean
 }
 
 interface InputFileEmits {
   (e: 'update:modelValue', value: string[]): void;
-
   (e: 'on-files-selected', files: File[]): void;
-
   (e: 'on-delete-file', id: string): void;
 }
 
@@ -76,7 +75,7 @@ function handleDrop(event: DragEvent) {
 }
 
 
-function handleMaxFiles(files: File[]) {
+async function handleMaxFiles(files: File[]) {
   const maxAllowed = props.max ?? Infinity;
   const remainingSlots = maxAllowed - uploadedFiles.value.length;
 
@@ -86,6 +85,9 @@ function handleMaxFiles(files: File[]) {
   }
 
   const filesToEmit = files.slice(0, remainingSlots);
+  if (props.lazy) {
+    await localUpload(filesToEmit)
+  }
 
   if (files.length > remainingSlots) {
     show({
@@ -97,6 +99,16 @@ function handleMaxFiles(files: File[]) {
   }
 
   emits('on-files-selected', filesToEmit);
+}
+
+async function localUpload(files: File[]) {
+  const uploaded: { url: string; id: string }[] = files.map((file) => {
+    const url = URL.createObjectURL(file);
+    const id = Math.random().toString(36).substring(2, 9);
+    return {url, id};
+  });
+
+  uploadedFiles.value = uploaded;
 }
 
 async function removeFile(id: string) {

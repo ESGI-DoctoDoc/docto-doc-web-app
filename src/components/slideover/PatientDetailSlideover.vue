@@ -174,6 +174,7 @@ function toAppointment(appointment: PatientAppointment): AppointmentListItemType
             <UButton color="primary" label="Ajouter un fichier" size="sm" variant="outline"/>
             <template #body>
               <MedicalRecordInputFile
+                  :medical-record-id="patientDetail.id"
                   @uploaded="(files) => {
                   if(patientDetail) {
                     (patientDetail.files ?? []).push(...files.map(file => file.url))

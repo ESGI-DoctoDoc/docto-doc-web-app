@@ -12,7 +12,10 @@ const {showError, handleError} = useNotify();
 const {fetchCareTrackingById} = careTrackingApi();
 
 const loading = ref(true);
+const addDocumentModal = ref(false);
 const careTrackingDetail = ref<CareTrackingDetail>();
+
+const fileInput = ref<InstanceType<typeof CareTrackingDocumentInputFile>>();
 
 async function getCareTrackingDetails() {
   loading.value = true;
@@ -154,17 +157,19 @@ function toAppointment(appointment: CareTrackingAppointment): AppointmentListIte
         <!-- Documents       -->
         <div class="flex justify-between items-baseline pt-6">
           <h3 class="text-lg font-semibold">Documents</h3>
-          <UModal close title="Ajouter des fichiers">
+          <UModal v-model:open="addDocumentModal" close title="Ajouter des fichiers">
             <UButton color="primary" size="sm" variant="outline">
               Ajouter un fichier
             </UButton>
             <template #body>
               <CareTrackingDocumentInputFile
+                  ref="fileInput"
                   :care-tracking-id="careTrackingDetail.id"
                   @uploaded="(files) => {
                   if(careTrackingDetail) {
-                    careTrackingDetail.files.push(...files.map(file => file.url))
+                    (careTrackingDetail.files ?? []).push(...files.map(file => file.url))
                   }
+                  addDocumentModal = false;
                 }"
               />
             </template>

@@ -445,11 +445,11 @@ function onCancelContextMenu(open: boolean) {
   }
 }
 
-function onToday() {
+async function onToday() {
   calendarRef.value?.getApi().today();
   currentStartDate.value = dayjs().startOf('week').format('YYYY-MM-DD');
-  getAppointments(currentStartDate.value);
-  fetchAbsences(currentStartDate.value);
+  await getAppointments(currentStartDate.value);
+  await fetchAbsences(currentStartDate.value);
 }
 
 onMounted(async () => {

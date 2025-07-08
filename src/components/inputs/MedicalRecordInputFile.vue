@@ -1,42 +1,45 @@
 <script lang="ts" setup>
 
 import InputFileBase from "~/components/inputs/base/InputFileBase.vue";
-import {useMediaApi} from "~/services/media/media.api";
-import type {FormErrorEvent, FormSubmitEvent} from "@nuxt/ui";
 import {
   type MedicalRecordForm,
   medicalRecordFormSchema
 } from "~/components/inputs/validators/Medical-record-form.validator";
+import type {FormErrorEvent, FormSubmitEvent} from "@nuxt/ui";
+import type {DocumentType} from "~/types/care-tracking";
+import {patientsApi} from "~/services/patients/patient.api";
+
+const props = defineProps<{
+  medicalRecordId: string;
+}>()
 
 const emits = defineEmits<{
   (e: 'uploaded', files: { url: string, id: string }[]): void;
 }>()
 
-const {deleteFile} = useMediaApi()
 const {showError, handleError} = useNotify()
-// const {uploadMessageFiles} = messagesApi();
+const {uploadMedicalRecordFiles} = patientsApi();
 
 const files = ref<{ url: string, id: string }[]>([]);
 const isLoading = ref(false);
 
-const form = ref({
-  type: 'other',
-  files: []
+const filesToUpload = ref<File[]>([]);
+const form = ref<MedicalRecordForm>({
+  type: 'Autre',
 })
 
-async function onUploadFiles(filesToUpload: File[]) {
+async function onUploadFiles(fileToUpload: File, type: DocumentType) {
   isLoading.value = true;
   try {
-    if (filesToUpload.length === 0) {
+    if (!fileToUpload) {
       showError('Aucun fichier sélectionné');
       return;
     }
 
-    const fileToUpload = filesToUpload[0];
-    //todo
-    emits('uploaded', [{url: '', id: 'temp-id'}]);
+    const uploadedFiles = await uploadMedicalRecordFiles([fileToUpload], props.medicalRecordId, type);
+    emits('uploaded', uploadedFiles);
   } catch (error) {
-    handleError("Erreur lors de l'envoi du fichier", error);
+    handleError("Erreur lors de l'envoi des fichiers", error);
   } finally {
     isLoading.value = false;
   }
@@ -45,7 +48,6 @@ async function onUploadFiles(filesToUpload: File[]) {
 async function onDeleteFile(id: string) {
   isLoading.value = true;
   try {
-    await deleteFile(`/doctors/profile/${id}`);
     files.value = files.value.filter(file => file.id !== id);
   } catch (error) {
     handleError("Erreur lors de la suppression de la photo de profil", error);
@@ -54,13 +56,27 @@ async function onDeleteFile(id: string) {
   }
 }
 
+async function executeUploadFiles(type: DocumentType) {
+  if (filesToUpload.value.length > 0) {
+    await onUploadFiles(filesToUpload.value[0], type);
+    filesToUpload.value = [];
+  } else {
+    showError('Aucun fichier à envoyer');
+  }
+}
+
+function onFilesSelected(files: File[]) {
+  filesToUpload.value = files;
+}
+
 async function onSubmit(event: FormSubmitEvent<MedicalRecordForm>) {
   isLoading.value = true;
   try {
-    if (event.data.files.length === 0) {
+    if (filesToUpload.value.length === 0) {
       showError('Aucun fichier sélectionné');
       return;
     }
+    await executeUploadFiles(event.data.type);
   } catch (error) {
     handleError("Erreur lors de l'envoi du formulaire", error);
   } finally {
@@ -88,10 +104,11 @@ function onError(event: FormErrorEvent) {
         <USelect
             v-model="form.type"
             :items="[
-              { label: 'Rapport médical', value: 'medical_report' },
-              { label: 'Ordonnance', value: 'prescription' },
-              { label: 'Résultats d\'analyses', value: 'test_results' },
-              { label: 'Autre', value: 'other' }
+              { label: 'Rapport médical', value: 'Rapport médical' },
+              { label: 'Ordonnance', value: 'Ordonnance' },
+              { label: 'Certificat médical', value: 'Certificat médical' },
+              { label: 'Résultats d\'analyses', value: 'Résultats d\'analyses' },
+              { label: 'Autre', value: 'Autre' }
             ]"
             class="w-full"
             placeholder="Sélectionnez un type de document"
@@ -102,7 +119,8 @@ function onError(event: FormErrorEvent) {
             v-model:files="files"
             :max="1"
             :types="['image/*', 'application/pdf']"
-            @on-files-selected="onUploadFiles"
+            lazy
+            @on-files-selected="onFilesSelected"
             @on-delete-file="onDeleteFile"
         />
       </UFormField>

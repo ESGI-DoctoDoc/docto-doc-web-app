@@ -18,6 +18,7 @@ import {
 } from './dto/create-care-tracking.dto';
 import type {AppPagination} from "~/api/app-pagination.type";
 import {useMediaApi} from "~/services/media/media.api";
+import type {DocumentType} from "~/types/care-tracking";
 
 export const careTrackingApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
@@ -92,13 +93,16 @@ export const careTrackingApi = () => {
             .map(result => (result as PromiseFulfilledResult<{ url: string, id: string }>).value);
     }
 
-    async function uploadCareTrackingFiles(files: File[], careTrackingId: string, type: string): Promise<{ url: string; id: string }[]> {
+    async function uploadCareTrackingFiles(files: File[], careTrackingId: string, type: DocumentType): Promise<{
+        url: string;
+        id: string
+    }[]> {
         const promises = files.map(async (file) => {
             const {preUploadFile, getSignedUrl, uploadFile, getFile} = useMediaApi();
             const document = await preUploadFile({
                 endPoint: `/doctors/care-tracking/${careTrackingId}/documents`,
                 filename: file.name + '-' + Date.now(),
-                type: type as 'Autre', // todo Corentin completos
+                type: type,
             });
             const signedUrl = await getSignedUrl(`/doctors/care-tracking/upload-url/${document.id}`);
             await uploadFile(file, signedUrl.url);

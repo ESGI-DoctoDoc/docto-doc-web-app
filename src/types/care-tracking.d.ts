@@ -1,5 +1,7 @@
 import type {AppointmentMedicalConcern, AppointmentStatus} from "~/types/appointment";
 
+export type DocumentType = 'Rapport médical' | 'Ordonnance' | 'Certificat médical' | "Résultats d'analyses" | 'Autre'
+
 export interface CareTrackingPatient {
     id: string;
     firstName: string;

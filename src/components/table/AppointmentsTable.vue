@@ -21,6 +21,7 @@ const {handleError} = useNotify()
 const {searchAppointmentsByPatient} = appointmentApi()
 
 const isLoadingMore = ref(false)
+const isSearching = ref(false)
 const tableData = ref<Appointment[]>(props.data)
 
 watch(
@@ -33,7 +34,7 @@ watch(
 
 function onTableScroll() {
   const el = tableBodyRef.value
-  if (!el) return
+  if (!el || isSearching.value) return
 
   const scrollBottom = el.scrollTop + el.clientHeight
   const isAtBottom = scrollBottom >= el.scrollHeight - 10
@@ -155,8 +156,10 @@ async function onSearch() {
   }
 
   if (search.value.length <= 2) {
+    isSearching.value = false;
     return;
   }
+  isSearching.value = true;
 
   isLoadingMore.value = true;
   try {

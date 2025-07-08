@@ -6,19 +6,32 @@ import type {TableColumn} from "@nuxt/ui";
 import type {Speciality} from "~/types/speciality";
 import CreateSpecialityModal from "~/components/modals/CreateSpecialityModal.vue";
 import type {CreateSpecialityForm} from "~/components/inputs/validators/speciality-form.validator";
+import {specialityApi} from "~/services/specialities/speciality.api";
 
-defineProps<{
+const props = defineProps<{
   data: Speciality[]
   loading: boolean
 }>()
 
 const emits = defineEmits(['onCreateSpeciality', 'on-update-speciality', 'onLoadMore'])
+const {handleError} = useNotify()
+const {searchSpecialitiesByName} = specialityApi()
 
 const isOpen = ref(false)
 const updateSpeciality = ref(false)
-const isLoadingMore = ref(false)
 const currentSpeciality = ref<Speciality>();
 const tableBodyRef = ref<HTMLElement | null>(null)
+const isLoadingMore = ref(false)
+const isSearching = ref(false)
+const tableData = ref<Speciality[]>(props.data)
+
+watch(
+    () => props.data,
+    (newData) => {
+      tableData.value = newData;
+    },
+    {immediate: true}
+)
 
 const search = ref('')
 const table = ref('table')
@@ -52,7 +65,7 @@ const columns: TableColumn<Speciality>[] = [
 
 function onTableScroll() {
   const el = tableBodyRef.value
-  if (!el) return
+  if (!el || isSearching.value) return
 
   const scrollBottom = el.scrollTop + el.clientHeight
   const isAtBottom = scrollBottom >= el.scrollHeight - 10
@@ -96,6 +109,29 @@ function onUpdateSpeciality(form: CreateSpecialityForm) {
   })
 }
 
+async function onSearch() {
+  if (search.value?.trim() === '') {
+    tableData.value = props.data;
+    return;
+  }
+
+  if (search.value.length <= 2) {
+    isSearching.value = false;
+    return;
+  }
+  isSearching.value = true;
+
+  isLoadingMore.value = true;
+  try {
+    tableData.value = await searchSpecialitiesByName(search.value?.trim());
+  } catch (error) {
+    handleError('Erreur lors de la recherche', error)
+  } finally {
+    isLoadingMore.value = false;
+  }
+}
+
+
 </script>
 
 <template>
@@ -104,7 +140,7 @@ function onUpdateSpeciality(form: CreateSpecialityForm) {
         v-model:search="search"
         button-label="Créer une spécialité"
         searchable
-        @update:search="table?.tableApi?.getColumn('name')?.setFilterValue($event)"
+        @update:search="onSearch()"
         @button-click="isOpen = true"
     />
 

@@ -2,6 +2,8 @@ import {RequestBuilder} from '~/api/request-builder'
 import {
     type GetAppointmentByIdResponse,
     getAppointmentByIdResponseSchema,
+    type GetAppointmentsByNameResponse,
+    getAppointmentsByNameSchema,
     type GetAppointmentsDto,
     type GetAppointmentsQuery,
     getAppointmentsQuerySchema,
@@ -130,7 +132,7 @@ export const appointmentApi = () => {
         return new RequestBuilder(BASE_API_URL)
             .get('/search/appointments')
             .withQuery<GetAppointmentsQuery>(getAppointmentsQuerySchema)
-            .withResponse<GetAppointmentsResponse>(getAppointmentsSchema)
+            .withResponse<GetAppointmentsByNameResponse>(getAppointmentsByNameSchema)
             .execute({
                 query: {
                     name: query,

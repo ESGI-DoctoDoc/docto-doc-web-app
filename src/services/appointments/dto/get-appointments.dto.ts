@@ -11,6 +11,41 @@ export const getAppointmentsQuerySchema = appPaginationSchema.extend({
 })
 export type GetAppointmentsQuery = z.infer<typeof getAppointmentsQuerySchema>;
 
+export const getAppointmentsByNameSchema = z.array(
+    z.object({
+        id: z.string(),
+        doctor: z.object({
+            id: z.string(),
+            firstName: z.string(),
+            lastName: z.string(),
+            email: z.string(),
+        }),
+        patient: z.object({
+            id: z.string(),
+            name: z.string(),
+            email: z.string(),
+            phone: z.string(),
+            birthdate: z.string(),
+        }),
+        medicalConcern: z.object({
+            id: z.string(),
+            name: z.string(),
+        }),
+        start: z.string(),
+        startHour: z.string(),
+        status: z.enum([
+            'upcoming',
+            'confirmed',
+            'locked',
+            'cancelled-excused',
+            'cancelled-unexcused',
+            'completed',
+            'waiting-room',
+        ]),
+    })
+);
+export type GetAppointmentsByNameResponse = z.infer<typeof getAppointmentsByNameSchema>;
+
 export const getAppointmentsSchema = z.array(
     z.object({
         id: z.string(),

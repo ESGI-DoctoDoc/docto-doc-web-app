@@ -126,6 +126,18 @@ export const appointmentApi = () => {
             .execute()
     }
 
+    function searchAppointmentsByPatient(query: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .get('/search/appointments')
+            .withQuery<GetAppointmentsQuery>(getAppointmentsQuerySchema)
+            .withResponse<GetAppointmentsResponse>(getAppointmentsSchema)
+            .execute({
+                query: {
+                    name: query,
+                }
+            })
+    }
+
     return {
         fetchAppointments,
         fetchAppointmentById,
@@ -133,5 +145,6 @@ export const appointmentApi = () => {
         updateAppointment,
         cancelAppointment,
         endAppointment,
+        searchAppointmentsByPatient,
     }
 }

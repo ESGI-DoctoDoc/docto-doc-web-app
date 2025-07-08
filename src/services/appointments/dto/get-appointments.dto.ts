@@ -7,6 +7,7 @@ export interface GetAppointmentsDto {
 
 export const getAppointmentsQuerySchema = appPaginationSchema.extend({
     startDate: z.string().optional(),
+    name: z.string().optional(),
 })
 export type GetAppointmentsQuery = z.infer<typeof getAppointmentsQuerySchema>;
 

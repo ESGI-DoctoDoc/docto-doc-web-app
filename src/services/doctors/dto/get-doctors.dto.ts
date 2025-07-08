@@ -3,6 +3,7 @@ import {z} from 'zod';
 export const getDoctorsQuerySchema = z.object({
     page: z.number().optional(),
     size: z.number().optional(),
+    name: z.string().optional(),
 })
 export type GetDoctorsQuery = z.infer<typeof getDoctorsQuerySchema>;
 
@@ -68,3 +69,17 @@ export const getDoctorProfileResponseSchema = z.object({
     profilePictureUrl: z.string().nullable().optional(),
 })
 export type GetDoctorProfileResponse = z.infer<typeof getDoctorProfileResponseSchema>;
+
+export const getDoctorsByNameResponseSchema = z.array(z.object({
+    id: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
+    email: z.string(),
+    phone: z.string(),
+    speciality: z.object({
+        id: z.string(),
+        name: z.string(),
+    }),
+    createdAt: z.string(),
+}))
+export type GetDoctorsByNameResponse = z.infer<typeof getDoctorsByNameResponseSchema>;

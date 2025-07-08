@@ -174,7 +174,8 @@ async function getNotifications() {
   try {
     allNotifications.value = await fetchNotifications()
   } catch (error) {
-    handleError("Une erreur est survenue lors de la récupération des notifications.", error)
+    console.error(error)
+    // handleError("Une erreur est survenue lors de la récupération des notifications.", error)
   }
 }
 

@@ -3,6 +3,8 @@ import {
     type GetCareTrackingByIdResponse,
     getCareTrackingByIdResponseSchema,
     type GetCareTrackingDto,
+    type GetCareTrackingsByPatientNameResponse,
+    getCareTrackingsByPatientNameResponseSchema,
     type GetCareTrackingsQuery,
     getCareTrackingsQuerySchema,
     type GetCareTrackingsResponse,
@@ -115,6 +117,18 @@ export const careTrackingApi = () => {
             .map(result => (result as PromiseFulfilledResult<{ url: string, id: string }>).value);
     }
 
+    async function searchCareTrackingByPatientName(name: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .get('/doctors/care-tracking/search')
+            .withQuery<GetCareTrackingsQuery>(getCareTrackingsQuerySchema)
+            .withResponse<GetCareTrackingsByPatientNameResponse>(getCareTrackingsByPatientNameResponseSchema)
+            .execute({
+                query: {
+                    name: name
+                }
+            });
+    }
+
     return {
         fetchCareTracking,
         fetchCareTrackingById,
@@ -122,7 +136,8 @@ export const careTrackingApi = () => {
         updateCareTracking,
         removeCareTracking,
         uploadMessageFiles,
-        uploadCareTrackingFiles
+        uploadCareTrackingFiles,
+        searchCareTrackingByPatientName,
     };
 };
 

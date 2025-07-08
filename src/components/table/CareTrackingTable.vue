@@ -4,6 +4,7 @@ import TableHeaderDefault from '~/components/table/TableHeaderDefault.vue'
 import type {TableColumn, TableRow} from "@nuxt/ui";
 import type {CareTracking} from "~/types/care-tracking";
 import {useSession} from "~/composables/auth/useSession";
+import {careTrackingApi} from "~/services/care-tracking/care-tracking.api";
 
 const props = defineProps<{
   data: CareTracking[]
@@ -12,9 +13,21 @@ const props = defineProps<{
 
 const emits = defineEmits(['onUpdate', 'onRemove', 'onCreate', 'onDetail', 'onLoadMore', 'onMessage'])
 const {getUser} = useSession()
+const {handleError} = useNotify()
+const {searchCareTrackingByPatientName} = careTrackingApi()
 
 const tableBodyRef = ref<HTMLElement | null>(null)
 const isLoadingMore = ref(false)
+const isSearching = ref(false)
+const tableData = ref<CareTracking[]>(props.data)
+
+watch(
+    () => props.data,
+    (newData) => {
+      tableData.value = newData;
+    },
+    {immediate: true}
+)
 
 const canCreate = computed(() => {
   const user = getUser()
@@ -36,8 +49,7 @@ const columns: TableColumn<CareTracking>[] = [
   {
     accessorKey: 'endedAt',
     header: 'État du suivi',
-    // cell: ({row}) => dayjs(row.original.endedAt).isBefore(dayjs()) ? 'Terminé' : 'En cours'
-    cell: ({row}) => 'En cours'
+    cell: ({row}) => row.original.endedAt ? 'Terminé' : 'En cours'
   },
   {
     id: 'actions',
@@ -76,7 +88,7 @@ function onSelect(row: TableRow<CareTracking>) {
 
 function onTableScroll() {
   const el = tableBodyRef.value
-  if (!el) return
+  if (!el || isSearching.value) return
   const scrollBottom = el.scrollTop + el.clientHeight
   const isAtBottom = scrollBottom >= el.scrollHeight - 10
   if (isAtBottom && !isLoadingMore.value) {
@@ -84,6 +96,28 @@ function onTableScroll() {
     emits('onLoadMore', () => {
       isLoadingMore.value = false
     })
+  }
+}
+
+async function onSearch() {
+  if (search.value?.trim() === '') {
+    tableData.value = props.data;
+    return;
+  }
+
+  if (search.value.length <= 2) {
+    isSearching.value = false;
+    return;
+  }
+  isSearching.value = true;
+
+  isLoadingMore.value = true;
+  try {
+    tableData.value = await searchCareTrackingByPatientName(search.value?.trim());
+  } catch (error) {
+    handleError('Erreur lors de la recherche', error)
+  } finally {
+    isLoadingMore.value = false;
   }
 }
 
@@ -95,7 +129,7 @@ function onTableScroll() {
         v-model:search="search"
         :button-label="canCreate ? 'Ajouter un suivi de dossier' : ''"
         searchable
-        @update:search="table?.tableApi?.getColumn('name')?.setFilterValue($event)"
+        @update:search="onSearch()"
         @button-click="onAddClick"
     />
 

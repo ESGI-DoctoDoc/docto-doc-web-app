@@ -136,6 +136,7 @@ onMounted(() => {
     />
     <CreateMedicalConcernModal
         v-if="openCreateModal"
+        v-model:open="openCreateModal"
         @on-submit="onCreate"
     />
     <CreateMedicalConcernModal

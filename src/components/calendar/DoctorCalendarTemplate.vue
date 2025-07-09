@@ -148,7 +148,7 @@ async function onCreateSlot(form: CreateSlotForm) {
   try {
     await createSlot(form);
     showCreateSlot.value = false
-    await fetchSlots();
+    await fetchSlots(currentStartDate.value);
     showSuccess('Créneau créé avec succès');
   } catch (error) {
     if (error instanceof Error) {

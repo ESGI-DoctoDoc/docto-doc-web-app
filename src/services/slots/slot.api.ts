@@ -1,5 +1,6 @@
 import {RequestBuilder} from "~/api/request-builder";
 import {
+    type CreateExceptionalSlotBody, createExceptionalSlotBodySchema,
     type CreateSlotDto,
     type CreateSlotMonthlyBody,
     createSlotMonthlyBodySchema,
@@ -77,6 +78,19 @@ export const slotApi = () => {
                 .execute({
                     body: {
                         day: requestDto.day,
+                        startHour: requestDto.startHour,
+                        endHour: requestDto.endHour,
+                        start: requestDto.start,
+                        end: requestDto.end,
+                        medicalConcerns: requestDto.medicalConcerns
+                    }
+                })
+        } else {
+            return new RequestBuilder(BASE_API_URL)
+                .post('/doctors/slots')
+                .withBody<CreateExceptionalSlotBody>(createExceptionalSlotBodySchema)
+                .execute({
+                    body: {
                         startHour: requestDto.startHour,
                         endHour: requestDto.endHour,
                         start: requestDto.start,

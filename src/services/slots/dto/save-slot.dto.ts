@@ -33,6 +33,15 @@ export const createSlotWeeklyBodySchema = z.object({
 });
 export type CreateSlotWeeklyBody = z.infer<typeof createSlotWeeklyBodySchema>;
 
+export const createExceptionalSlotBodySchema = z.object({
+    startHour: z.string(),
+    endHour: z.string(),
+    start: z.string().optional(),
+    end: z.string().optional(),
+    medicalConcerns: z.array(z.string().uuid()),
+});
+export type CreateExceptionalSlotBody = z.infer<typeof createExceptionalSlotBodySchema>;
+
 // export const createSlotResponseSchema = z.object({
 //     id: z.string(),
 // });

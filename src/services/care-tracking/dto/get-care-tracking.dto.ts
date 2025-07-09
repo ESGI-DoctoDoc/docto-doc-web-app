@@ -9,6 +9,7 @@ export interface GetCareTrackingDto {
 export const getCareTrackingsQuerySchema = z.object({
     page: z.number().optional(),
     size: z.number().optional(),
+    name: z.string().optional(),
 });
 export type GetCareTrackingsQuery = z.infer<typeof getCareTrackingsQuerySchema>;
 
@@ -65,3 +66,11 @@ export const getCareTrackingByIdResponseSchema = z.object({
 export const getCareTrackingsResponseSchema = z.array(careTrackingSchema);
 export type GetCareTrackingsResponse = z.infer<typeof getCareTrackingsResponseSchema>;
 export type GetCareTrackingByIdResponse = z.infer<typeof getCareTrackingByIdResponseSchema>;
+
+export const getCareTrackingsByPatientNameResponseSchema = z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    patient: careTrackingPatientSchema,
+    endedAt: z.string().nullable().optional(),
+}));
+export type GetCareTrackingsByPatientNameResponse = z.infer<typeof getCareTrackingsByPatientNameResponseSchema>;

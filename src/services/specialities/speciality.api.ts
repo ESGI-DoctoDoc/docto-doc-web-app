@@ -55,9 +55,22 @@ export const specialityApi = () => {
             })
     }
 
+    async function searchSpecialitiesByName(name: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .get('/admin/search/specialities')
+            .withQuery<GetSpecialitiesQuery>(getSpecialitiesQuerySchema)
+            .withResponse<GetSpecialitiesResponse>(getSpecialitiesResponseSchema)
+            .execute({
+                query: {
+                    name: name
+                }
+            });
+    }
+
     return {
         getSpecialities,
         createSpeciality,
         updateSpeciality,
+        searchSpecialitiesByName,
     }
 }

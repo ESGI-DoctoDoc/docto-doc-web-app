@@ -22,7 +22,7 @@ export const useDeeplink = () => {
     }
 
     function navigateToResource(path: string, id: string) {
-        const isValidId = string().uuid().safeParse(id).success
+        const isValidId = string().safeParse(id).success
         if (!isValidId) {
             console.error(`Invalid ID: ${id}`)
             return

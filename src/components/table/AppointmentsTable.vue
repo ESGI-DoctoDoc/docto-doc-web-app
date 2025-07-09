@@ -7,6 +7,7 @@ import {useSession} from "~/composables/auth/useSession";
 import type {DropdownMenuItem} from "#ui/components/DropdownMenu.vue";
 import type {Appointment} from "~/types/appointment";
 import dayjs from "dayjs";
+import {appointmentApi} from "~/services/appointments/appointment.api";
 
 const props = defineProps<{
   data: Appointment[]
@@ -16,11 +17,24 @@ const props = defineProps<{
 const emits = defineEmits(['onDetail', 'onUpdate', 'onReschedule', 'onCancel', 'onDelete', 'onLoadMore'])
 const tableBodyRef = ref<HTMLElement | null>(null)
 
+const {handleError} = useNotify()
+const {searchAppointmentsByPatient} = appointmentApi()
+
 const isLoadingMore = ref(false)
+const isSearching = ref(false)
+const tableData = ref<Appointment[]>(props.data)
+
+watch(
+    () => props.data,
+    (newData) => {
+      tableData.value = newData;
+    },
+    {immediate: true}
+)
 
 function onTableScroll() {
   const el = tableBodyRef.value
-  if (!el) return
+  if (!el || isSearching.value) return
 
   const scrollBottom = el.scrollTop + el.clientHeight
   const isAtBottom = scrollBottom >= el.scrollHeight - 10
@@ -135,6 +149,28 @@ function getAppointmentOptions(row: Appointment): DropdownMenuItem[] {
   return options
 }
 
+async function onSearch() {
+  if (search.value?.trim() === '') {
+    tableData.value = props.data;
+    return;
+  }
+
+  if (search.value.length <= 2) {
+    isSearching.value = false;
+    return;
+  }
+  isSearching.value = true;
+
+  isLoadingMore.value = true;
+  try {
+    tableData.value = await searchAppointmentsByPatient(search.value?.trim());
+  } catch (error) {
+    handleError('Erreur lors de la recherche', error)
+  } finally {
+    isLoadingMore.value = false;
+  }
+}
+
 </script>
 
 <template>
@@ -142,7 +178,7 @@ function getAppointmentOptions(row: Appointment): DropdownMenuItem[] {
     <TableHeaderDefault
         v-model:search="search"
         searchable
-        @update:search="table?.tableApi?.getColumn('name')?.setFilterValue($event)"
+        @update:search="onSearch()"
     />
 
     <div
@@ -154,7 +190,7 @@ function getAppointmentOptions(row: Appointment): DropdownMenuItem[] {
           ref="table"
           empty="Liste vide"
           :columns="columns"
-          :data="data"
+          :data="tableData"
           sticky
           @select="onSelect"
       >

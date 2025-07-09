@@ -5,6 +5,8 @@ import {
     getDoctorByIdResponseSchema,
     type GetDoctorProfileResponse,
     getDoctorProfileResponseSchema,
+    type GetDoctorsByNameResponse,
+    getDoctorsByNameResponseSchema,
     type GetDoctorsQuery,
     getDoctorsQuerySchema,
     type GetDoctorsResponse,
@@ -140,6 +142,18 @@ export const doctorsApi = () => {
             .execute();
     }
 
+    async function searchDoctorsByName(name: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .get('/admin/search/doctors')
+            .withQuery<GetDoctorsQuery>(getDoctorsQuerySchema)
+            .withResponse<GetDoctorsByNameResponse>(getDoctorsByNameResponseSchema)
+            .execute({
+                query: {
+                    name: name,
+                }
+            });
+    }
+
     return {
         fetchDoctors,
         fetchDoctorById,
@@ -153,5 +167,6 @@ export const doctorsApi = () => {
         updateDoctorProfile,
         fetchDoctorReporting,
         fetchDoctorMedicalConcerns,
+        searchDoctorsByName,
     }
 }

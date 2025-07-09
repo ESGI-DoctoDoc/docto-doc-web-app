@@ -2,6 +2,8 @@ import {RequestBuilder} from '~/api/request-builder'
 import {
     type GetAppointmentByIdResponse,
     getAppointmentByIdResponseSchema,
+    type GetAppointmentsByNameResponse,
+    getAppointmentsByNameSchema,
     type GetAppointmentsDto,
     type GetAppointmentsQuery,
     getAppointmentsQuerySchema,
@@ -126,6 +128,31 @@ export const appointmentApi = () => {
             .execute()
     }
 
+    function searchAppointmentsByPatient(query: string) {
+        const {getUser} = useSession()
+        const user = getUser()
+        if(user?.user.role === 'admin') {
+            return new RequestBuilder(BASE_API_URL)
+                .get('/admin/search/appointments')
+                .withQuery<GetAppointmentsQuery>(getAppointmentsQuerySchema)
+                .withResponse<GetAppointmentsByNameResponse>(getAppointmentsByNameSchema)
+                .execute({
+                    query: {
+                        name: query,
+                    }
+                })
+        }
+        return new RequestBuilder(BASE_API_URL)
+            .get('/doctors/search/appointments')
+            .withQuery<GetAppointmentsQuery>(getAppointmentsQuerySchema)
+            .withResponse<GetAppointmentsByNameResponse>(getAppointmentsByNameSchema)
+            .execute({
+                query: {
+                    name: query,
+                }
+            })
+    }
+
     return {
         fetchAppointments,
         fetchAppointmentById,
@@ -133,5 +160,6 @@ export const appointmentApi = () => {
         updateAppointment,
         cancelAppointment,
         endAppointment,
+        searchAppointmentsByPatient,
     }
 }

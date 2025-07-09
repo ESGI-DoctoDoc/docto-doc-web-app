@@ -3,6 +3,8 @@ import type {Patient, PatientDetails} from '~/types/patient'
 import {
     type GetPatientByIdResponse,
     getPatientByIdResponseSchema,
+    type GetPatientsByNameResponse,
+    getPatientsByNameResponseSchema,
     getPatientsQuerySchema,
     type GetPatientsQuerySchema,
     type GetPatientsResponse,
@@ -58,9 +60,22 @@ export const patientsApi = () => {
             .map(result => (result as PromiseFulfilledResult<{ url: string, id: string }>).value);
     }
 
+    async function searchPatientByName(name: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .get('/doctors/search/patients')
+            .withQuery<GetPatientsQuerySchema>(getPatientsQuerySchema)
+            .withResponse<GetPatientsByNameResponse>(getPatientsByNameResponseSchema)
+            .execute({
+                query: {
+                    name: name
+                }
+            })
+    }
+
     return {
         fetchPatients,
         fetchPatientById,
         uploadMedicalRecordFiles,
+        searchPatientByName,
     }
 }

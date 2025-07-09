@@ -4,6 +4,7 @@ import {ref} from 'vue'
 import TableHeaderDefault from '~/components/table/TableHeaderDefault.vue'
 import type {TableColumn, TableRow} from "@nuxt/ui";
 import type {Doctor} from "~/types/doctor";
+import {doctorsApi} from "~/services/doctors/doctors.api";
 
 const props = defineProps<{
   data: Doctor[]
@@ -11,14 +12,26 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits(['onDetail', 'onLoadMore', 'onCoverage'])
-
 const tableBodyRef = ref<HTMLElement | null>(null)
 
+const {handleError} = useNotify()
+const {searchDoctorsByName} = doctorsApi()
+
 const isLoadingMore = ref(false)
+const isSearching = ref(false)
+const tableData = ref<Doctor[]>(props.data)
+
+watch(
+    () => props.data,
+    (newData) => {
+      tableData.value = newData;
+    },
+    {immediate: true}
+)
 
 function onTableScroll() {
   const el = tableBodyRef.value
-  if (!el) return
+  if (!el || isSearching.value) return
 
   const scrollBottom = el.scrollTop + el.clientHeight
   const isAtBottom = scrollBottom >= el.scrollHeight - 10
@@ -69,6 +82,28 @@ function onSelect(row: TableRow<Doctor>) {
   emits('onDetail', doctor);
 }
 
+async function onSearch() {
+  if (search.value?.trim() === '') {
+    tableData.value = props.data;
+    return;
+  }
+
+  if (search.value.length <= 2) {
+    isSearching.value = false;
+    return;
+  }
+  isSearching.value = true;
+
+  isLoadingMore.value = true;
+  try {
+    tableData.value = await searchDoctorsByName(search.value?.trim());
+  } catch (error) {
+    handleError('Erreur lors de la recherche', error)
+  } finally {
+    isLoadingMore.value = false;
+  }
+}
+
 </script>
 
 <template>
@@ -76,7 +111,7 @@ function onSelect(row: TableRow<Doctor>) {
     <TableHeaderDefault
         v-model:search="search"
         searchable
-        @update:search="table?.tableApi?.getColumn('name')?.setFilterValue($event)"
+        @update:search="onSearch()"
     >
       <template #left>
         <UButton
@@ -97,7 +132,7 @@ function onSelect(row: TableRow<Doctor>) {
           ref="table"
           empty="Liste vide"
           :columns="columns"
-          :data="data"
+          :data="tableData"
           sticky
           @select="onSelect"
       >

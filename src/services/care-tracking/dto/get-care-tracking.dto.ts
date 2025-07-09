@@ -71,6 +71,6 @@ export const getCareTrackingsByPatientNameResponseSchema = z.array(z.object({
     id: z.string(),
     name: z.string(),
     patient: careTrackingPatientSchema,
-    endedAt: z.string().nullable().optional(),
+    closedAt: z.string().nullable().optional(),
 }));
 export type GetCareTrackingsByPatientNameResponse = z.infer<typeof getCareTrackingsByPatientNameResponseSchema>;

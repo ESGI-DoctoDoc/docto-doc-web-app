@@ -30,7 +30,7 @@ export const patientsApi = () => {
 
     function fetchPatientById(id: string) {
         return new RequestBuilder(BASE_API_URL)
-            .get(`/patients/${id}`)
+            .get(`/doctors/patients/${id}`)
             .withResponse<GetPatientByIdResponse>(getPatientByIdResponseSchema)
             .execute() as Promise<PatientDetails>
     }

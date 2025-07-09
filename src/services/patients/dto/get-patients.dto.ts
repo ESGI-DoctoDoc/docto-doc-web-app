@@ -37,7 +37,7 @@ export const getPatientByIdResponseSchema = z.object({
             endHour: z.string(),
             cancelledReason: z.string().nullable().optional(),
             comment: z.string().nullable().optional(),
-            status: z.enum(['upcoming', 'cancelled-excused', 'cancelled-unexcused', 'completed', 'waiting-room']),
+            status: z.enum(['confirmed', 'upcoming', 'cancelled-excused', 'cancelled-unexcused', 'completed', 'waiting-room']),
         })
     ),
     createdAt: z.string(),

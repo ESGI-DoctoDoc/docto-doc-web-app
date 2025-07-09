@@ -130,6 +130,12 @@ export const careTrackingApi = () => {
             });
     }
 
+    async function closeCareTracking(careTrackingId: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .patch(`/doctors/care-tracking/${careTrackingId}/close`)
+            .execute();
+    }
+
     return {
         fetchCareTracking,
         fetchCareTrackingById,
@@ -139,6 +145,7 @@ export const careTrackingApi = () => {
         uploadMessageFiles,
         uploadCareTrackingFiles,
         searchCareTrackingByPatientName,
+        closeCareTracking,
     };
 };
 

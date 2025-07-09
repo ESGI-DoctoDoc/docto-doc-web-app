@@ -65,7 +65,7 @@ export class ApiClient {
                     logoutUser();
                 }
 
-                throw new Error(error.response?._data?.message ?? 'Erreur inconnue');
+                throw new Error(error.response?._data?.code ?? 'Erreur inconnue');
             }
             console.error('Erreur inconnue :', error);
             throw error;

@@ -58,7 +58,6 @@ const currentAppointment = ref<Appointment | null>(null);
 const selectedHours = ref<[string, string, string]>(); // [date, startHour, endHour]
 const items = [
   {label: 'Créer une absence', onSelect: () => onActions('absence')},
-  {label: 'Créer une ouverture exceptionnelle', onSelect: () => onActions('exceptional_opening')},
   {label: 'Prendre un rendez-vous', onSelect: () => onActions('appointment')}
 ] satisfies ContextMenuItem[];
 

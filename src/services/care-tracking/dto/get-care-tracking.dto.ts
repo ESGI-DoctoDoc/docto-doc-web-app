@@ -10,6 +10,7 @@ export const getCareTrackingsQuerySchema = z.object({
     page: z.number().optional(),
     size: z.number().optional(),
     name: z.string().optional(),
+    patientId: z.string().optional(),
 });
 export type GetCareTrackingsQuery = z.infer<typeof getCareTrackingsQuerySchema>;
 

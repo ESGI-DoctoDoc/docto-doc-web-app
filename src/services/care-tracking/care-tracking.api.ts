@@ -33,7 +33,8 @@ export const careTrackingApi = () => {
             .execute({
                 query: {
                     page: requestDto.page,
-                    size: requestDto.size
+                    size: requestDto.size,
+                    patientId: requestDto.patientId,
                 }
             });
     }

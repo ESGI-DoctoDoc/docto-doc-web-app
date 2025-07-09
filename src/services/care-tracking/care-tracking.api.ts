@@ -119,7 +119,7 @@ export const careTrackingApi = () => {
 
     async function searchCareTrackingByPatientName(name: string) {
         return new RequestBuilder(BASE_API_URL)
-            .get('/doctors/care-tracking/search')
+            .get('/doctors/search/care-tracking')
             .withQuery<GetCareTrackingsQuery>(getCareTrackingsQuerySchema)
             .withResponse<GetCareTrackingsByPatientNameResponse>(getCareTrackingsByPatientNameResponseSchema)
             .execute({

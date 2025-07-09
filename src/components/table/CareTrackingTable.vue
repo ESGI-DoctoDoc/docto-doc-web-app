@@ -142,7 +142,7 @@ async function onSearch() {
           ref="table"
           empty="Liste vide"
           :columns="columns"
-          :data="data"
+          :data="tableData"
           sticky
           @select="onSelect"
       >

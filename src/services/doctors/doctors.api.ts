@@ -125,7 +125,7 @@ export const doctorsApi = () => {
 
     async function searchDoctorsByName(name: string) {
         return new RequestBuilder(BASE_API_URL)
-            .get('/doctors/search')
+            .get('/admin/search/doctors')
             .withQuery<GetDoctorsQuery>(getDoctorsQuerySchema)
             .withResponse<GetDoctorsByNameResponse>(getDoctorsByNameResponseSchema)
             .execute({

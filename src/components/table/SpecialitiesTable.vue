@@ -154,7 +154,7 @@ async function onSearch() {
         empty="Liste vide"
         :loading="loading"
         :columns="columns"
-        :data="data"
+        :data="tableData"
         sticky
     >
       <template #expanded="{ row }">

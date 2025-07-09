@@ -62,7 +62,7 @@ export const patientsApi = () => {
 
     async function searchPatientByName(name: string) {
         return new RequestBuilder(BASE_API_URL)
-            .get('/doctors/patients/search')
+            .get('/doctors/search/patients')
             .withQuery<GetPatientsQuerySchema>(getPatientsQuerySchema)
             .withResponse<GetPatientsByNameResponse>(getPatientsByNameResponseSchema)
             .execute({

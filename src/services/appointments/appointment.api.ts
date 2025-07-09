@@ -129,8 +129,21 @@ export const appointmentApi = () => {
     }
 
     function searchAppointmentsByPatient(query: string) {
+        const {getUser} = useSession()
+        const user = getUser()
+        if(user?.user.role === 'admin') {
+            return new RequestBuilder(BASE_API_URL)
+                .get('/admin/search/appointments')
+                .withQuery<GetAppointmentsQuery>(getAppointmentsQuerySchema)
+                .withResponse<GetAppointmentsByNameResponse>(getAppointmentsByNameSchema)
+                .execute({
+                    query: {
+                        name: query,
+                    }
+                })
+        }
         return new RequestBuilder(BASE_API_URL)
-            .get('/search/appointments')
+            .get('/doctors/search/appointments')
             .withQuery<GetAppointmentsQuery>(getAppointmentsQuerySchema)
             .withResponse<GetAppointmentsByNameResponse>(getAppointmentsByNameSchema)
             .execute({

@@ -47,9 +47,9 @@ const columns: TableColumn<CareTracking>[] = [
     cell: ({row}) => row.original.patient.firstName + ' ' + row.original.patient.lastName
   },
   {
-    accessorKey: 'endedAt',
+    accessorKey: 'closedAt',
     header: 'État du suivi',
-    cell: ({row}) => row.original.endedAt ? 'Terminé' : 'En cours'
+    cell: ({row}) => row.original.closedAt ? 'Terminé' : 'En cours'
   },
   {
     id: 'actions',

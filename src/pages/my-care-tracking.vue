@@ -33,7 +33,8 @@ const {
   fetchCareTracking,
   createCareTracking,
   updateCareTracking,
-  removeCareTracking
+  removeCareTracking,
+  closeCareTracking,
 } = careTrackingApi();
 const {resetPagination, nextPage} = usePagination()
 
@@ -139,8 +140,21 @@ function onShowSaveAppointmentModal(careTrackingDetail: CareTrackingDetail) {
   openSaveAppointmentModal.value = true;
 }
 
-function onEnd() {
-
+async function onEnd() {
+  isLoading.value = true;
+  try {
+    if (currentCareTracking.value) {
+      await closeCareTracking(currentCareTracking.value.id);
+      showSuccess('Suivi de dossier terminé');
+      openDetail.value = false;
+      currentCareTracking.value = null;
+      await getCareTrackings();
+    }
+  } catch (error) {
+    handleError('Erreur lors de la clôture du suivi', error);
+  } finally {
+    isLoading.value = false;
+  }
 }
 
 onMounted(() => {

@@ -32,6 +32,7 @@ export const careTrackingSchema = z.object({
     id: z.string(),
     name: z.string(),
     patient: careTrackingPatientSchema,
+    closedAt: z.string().nullable().optional(),
     createdAt: z.string(),
 });
 

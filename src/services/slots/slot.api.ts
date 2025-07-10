@@ -1,11 +1,15 @@
 import {RequestBuilder} from "~/api/request-builder";
 import {
-    type CreateExceptionalSlotBody, createExceptionalSlotBodySchema,
+    type CreateExceptionalSlotBody,
+    createExceptionalSlotBodySchema,
     type CreateSlotDto,
     type CreateSlotMonthlyBody,
     createSlotMonthlyBodySchema,
     type CreateSlotWeeklyBody,
     createSlotWeeklyBodySchema,
+    type UpdateSlotBody,
+    updateSlotBodySchema,
+    type UpdateSlotDto,
 } from "~/services/slots/dto/save-slot.dto";
 import {
     type GetSlotAvailableDto,
@@ -100,11 +104,45 @@ export const slotApi = () => {
         }
     }
 
+    async function updateSlot(id: string, requestDto: UpdateSlotDto) {
+        if (requestDto.allSlot) {
+            return new RequestBuilder(BASE_API_URL)
+                .put(`/doctors/slots/${id}/recurrence`)
+                .withBody<UpdateSlotBody>(updateSlotBodySchema)
+                .execute({
+                    body: {
+                        startHour: requestDto.startHour,
+                        endHour: requestDto.endHour,
+                        medicalConcerns: requestDto.medicalConcerns
+                    }
+                })
+        } else {
+            return new RequestBuilder(BASE_API_URL)
+                .put(`/doctors/slots/${id}`)
+                .withBody<UpdateSlotBody>(updateSlotBodySchema)
+                .execute({
+                    body: {
+                        startHour: requestDto.startHour,
+                        endHour: requestDto.endHour,
+                        medicalConcerns: requestDto.medicalConcerns
+                    }
+                })
+        }
+    }
+
+    function deleteSlot(id: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .delete(`/doctors/slots/${id}`)
+            .execute();
+    }
+
 
     return {
         getSlotsAvailable,
         getSlots,
         getSlotById,
-        createSlot
+        createSlot,
+        updateSlot,
+        deleteSlot,
     }
 }

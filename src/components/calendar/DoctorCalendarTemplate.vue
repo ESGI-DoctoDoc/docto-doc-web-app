@@ -7,7 +7,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
 import CalendarEventDetailSlideover from "~/components/slideover/CalendarEventDetailSlideover.vue";
 import CreateSlotModal from "~/components/modals/CreateSlotModal.vue";
-import type {CreateSlotForm} from "~/components/inputs/validators/slot-form.validator";
+import type {CreateSlotForm, UpdateSlotForm} from "~/components/inputs/validators/slot-form.validator";
 import {slotApi} from "~/services/slots/slot.api";
 import {useCalendar} from "~/composables/calendar/useCalendar";
 import type {Slot, SlotDetail} from "~/types/slot";
@@ -23,7 +23,7 @@ defineEmits<{
 
 const {showError, showSuccess} = useNotify()
 const {mapSlotToCalendarEvent, doctorSlotsTemplate} = useCalendar()
-const {createSlot, getSlots} = slotApi();
+const {createSlot, getSlots, updateSlot, deleteSlot} = slotApi();
 
 
 const loading = ref(true);
@@ -161,12 +161,23 @@ async function onCreateSlot(form: CreateSlotForm) {
   }
 }
 
-async function onUpdateSlot(/*form: CreateSlotForm*/) {
+async function onUpdateSlot(form: UpdateSlotForm & { allSlot?: boolean }) {
   loading.value = true;
   try {
-    // const slot = await updateSlot(form);
-    // console.log(slot);
+    if (!currentSlotDetail.value) {
+      showError('Aucun créneau sélectionné pour la mise à jour.');
+      return;
+    }
+
+    await updateSlot(currentSlotDetail.value.id, {
+      startHour: form.startHour,
+      endHour: form.endHour,
+      medicalConcerns: form.medicalConcerns,
+      allSlot: form.allSlot ?? false,
+    });
     showUpdateSlot.value = false
+    currentSlotDetail.value = undefined;
+    await fetchSlots(currentStartDate.value);
     showSuccess('Créneau mis à jour avec succès');
   } catch (error) {
     if (error instanceof Error) {
@@ -189,6 +200,24 @@ async function fetchSlots(start?: string) {
     doctorSlotsTemplate.value = calendarOptions.value.events;
   } catch (error) {
     console.error('Error loading slots:', error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function onDelete(slotId: string) {
+  loading.value = true;
+  try {
+    await deleteSlot(slotId);
+    showSuccess('Créneau supprimé avec succès');
+    currentSlotDetail.value = undefined;
+    await fetchSlots(currentStartDate.value);
+  } catch (error) {
+    if (error instanceof Error) {
+      showError('Erreur lors de la suppression du créneau', error.message);
+    } else {
+      showError('Une erreur est survenue lors de la suppression du créneau.');
+    }
   } finally {
     loading.value = false;
   }
@@ -258,6 +287,7 @@ onMounted(() => {
         :slot-id="currentSlot.id"
         @on-close="currentSlot = undefined"
         @on-update="showUpdateSlot = true; showEventDetail = false; currentSlotDetail = $event"
+        @on-delete="onDelete($event)"
     />
     <CreateSlotModal
         v-if="showCreateSlot"
@@ -270,7 +300,7 @@ onMounted(() => {
         v-model:open="showUpdateSlot"
         :slot-detail="currentSlotDetail"
         @on-submit="onUpdateSlot"
-        @on-cancel="showEventDetail = true; currentSlot = {id: currentSlotDetail.id}; showEventDetail = true"
+        @on-cancel="currentSlotDetail = undefined; showUpdateSlot = false"
     />
   </div>
 </template>

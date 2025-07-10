@@ -22,6 +22,8 @@ const emit = defineEmits<{
 
 const {showError} = useNotify()
 
+const isUpdate = computed(() => !!props.slotDetail.id);
+
 const form = ref<CreateSlotForm>({
   day: props.slotDetail.day,
   startHour: props.slotDetail.startHour,
@@ -85,7 +87,7 @@ function onError(event: FormErrorEvent) {
       >
         <h3 class="text-lg font-semibold">Jour et heures de consultation</h3>
         <!-- Jour -->
-        <FormField class="w-full" label="Jour" name="day">
+        <FormField v-if="!isUpdate" class="w-full" label="Jour" name="day">
           <USelect
               v-model="form.day"
               :items="daysOfWeek"
@@ -124,7 +126,7 @@ function onError(event: FormErrorEvent) {
             multiple
         />
 
-        <h3 class="text-lg font-semibold mt-4">Périodicité</h3>
+        <h3 v-if="!isUpdate" class="text-lg font-semibold mt-4">Périodicité</h3>
         <!-- Récurrence -->
         <FormField class="w-full" label="Récurrence" name="recurrence">
           <USelect
@@ -136,7 +138,7 @@ function onError(event: FormErrorEvent) {
           />
         </FormField>
 
-        <FormField v-if="form.recurrence === 'monthly'" label="Jour du mois" name="dayNumber">
+        <FormField v-if="form.recurrence === 'monthly' && !isUpdate" label="Jour du mois" name="dayNumber">
           <UInput
               v-model="form.dayNumber"
               class="w-full"
@@ -147,7 +149,7 @@ function onError(event: FormErrorEvent) {
           />
         </FormField>
 
-        <h3 v-if="form.recurrence !== 'none'" class="text-lg font-semibold mt-4">Plage de périodicité</h3>
+        <h3 v-if="form.recurrence !== 'none' && !isUpdate" class="text-lg font-semibold mt-4">Plage de périodicité</h3>
         <!-- Date de début -->
         <FormField v-if="form.recurrence !== 'none'" class="w-full" label="Date de début" name="start">
           <UInput
@@ -155,10 +157,11 @@ function onError(event: FormErrorEvent) {
               class="w-full"
               type="date"
           />
+          £
         </FormField>
 
         <!-- Date de fin (optionnelle) -->
-        <FormField v-if="form.recurrence !== 'none'" class="w-full" label="Date de fin" name="end">
+        <FormField v-if="form.recurrence !== 'none' && !isUpdate" class="w-full" label="Date de fin" name="end">
           <UInput
               v-model="form.end"
               class="w-full"

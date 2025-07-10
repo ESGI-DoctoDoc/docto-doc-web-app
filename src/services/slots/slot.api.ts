@@ -106,9 +106,8 @@ export const slotApi = () => {
 
     async function updateSlot(id: string, requestDto: UpdateSlotDto) {
         if (requestDto.allSlot) {
-            console.log("Updating all slots is not implemented yet.");
             return new RequestBuilder(BASE_API_URL)
-                .put(`/doctors/slots/${id}`)
+                .put(`/doctors/slots/${id}/recurrence`)
                 .withBody<UpdateSlotBody>(updateSlotBodySchema)
                 .execute({
                     body: {
@@ -118,7 +117,6 @@ export const slotApi = () => {
                     }
                 })
         } else {
-            console.log("Updating a specific slot.");
             return new RequestBuilder(BASE_API_URL)
                 .put(`/doctors/slots/${id}`)
                 .withBody<UpdateSlotBody>(updateSlotBodySchema)

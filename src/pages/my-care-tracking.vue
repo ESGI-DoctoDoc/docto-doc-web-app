@@ -11,6 +11,8 @@ import type {
 } from "~/components/inputs/validators/care-tracking-form.validator";
 import {usePagination} from "~/composables/usePagination";
 import SaveAppointmentModal from "~/components/modals/SaveAppointmentModal.vue";
+import type {CreateAppointmentForm} from "~/components/inputs/validators/appointment-form.validator";
+import {appointmentApi} from "~/services/appointments/appointment.api";
 
 definePageMeta({
   title: 'Suivi de dossier',
@@ -20,6 +22,8 @@ definePageMeta({
 })
 
 const {showSuccess, handleError} = useNotify();
+const {createAppointment} = appointmentApi()
+
 const isLoading = ref(true);
 const openCreateModal = ref(false);
 const openDetail = ref(false);
@@ -157,6 +161,28 @@ async function onEnd() {
   }
 }
 
+async function onCreateAppointment(form: CreateAppointmentForm) {
+  isLoading.value = true;
+  try {
+    await createAppointment({
+      patientId: form.patient,
+      medicalConcernId: form.medicalConcern,
+      start: form.start,
+      startHour: form.startHour,
+      careTrackingId: form.careTracking,
+      notes: form.notes,
+      answers: form.answers,
+    });
+    showSuccess('Rendez-vous créé avec succès');
+    openSaveAppointmentModal.value = false;
+    currentCareTrackingDetail.value = undefined;
+  } catch (error) {
+    handleError("Erreur lors de la création du rendez-vous", error)
+  } finally {
+    isLoading.value = false;
+  }
+}
+
 onMounted(() => {
   resetPagination();
   getCareTrackings();
@@ -208,6 +234,7 @@ onMounted(() => {
         v-model:open="openSaveAppointmentModal"
         :care-tracking-id="currentCareTrackingDetail.id"
         :patient-id="currentCareTrackingDetail.patient.id"
+        @on-submit="onCreateAppointment($event)"
     />
   </div>
 </template>

@@ -175,6 +175,8 @@ async function onUpdateSlot(form: UpdateSlotForm) {
       medicalConcerns: form.medicalConcerns,
     });
     showUpdateSlot.value = false
+    currentSlotDetail.value = undefined;
+    await fetchSlots(currentStartDate.value);
     showSuccess('Créneau mis à jour avec succès');
   } catch (error) {
     if (error instanceof Error) {

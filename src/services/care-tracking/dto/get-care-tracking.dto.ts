@@ -62,6 +62,7 @@ export const getCareTrackingByIdResponseSchema = z.object({
     })).nullable(),
     doctors: z.array(careTrackingDoctorSchema),
     files: z.array(z.string()).nullable().optional(),
+    closedAt: z.string().nullable().optional(),
     createdAt: z.string(),
 });
 

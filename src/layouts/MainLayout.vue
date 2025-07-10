@@ -6,6 +6,7 @@ import {subscriptionApi} from "~/services/subscriptions/subscription.api";
 import SettingsModal from "~/components/modals/SettingsModal.vue";
 import {doctorsApi} from "~/services/doctors/doctors.api";
 import type {DoctorNotification} from "~/types/doctor-notification";
+import dayjs from "dayjs";
 
 const route = useRoute()
 const router = useRouter()
@@ -282,10 +283,11 @@ onUnmounted(() => {
                         :key="notification.id"
                         class="flex justify-between items-center space-x-6 px-4 py-2 rounded-lg bg-gray-100 "
                     >
-                      <div>
-                        <p class="text-sm font-medium">{{ notification.title }}</p>
+                      <div class="max-w-sm">
+                        <small class="text-xs">{{ dayjs(notification.createdAt).format('DD/MM/YYYY HH:mm') }}</small>
+                        <p class="font-medium">{{ notification.title }}</p>
                         <p v-if="notification.content" class="text-xs text-gray-600">{{ notification.content }}</p>
-                        <div v-else class="text-xs text-gray-600">Pas de contenu</div>
+                        <div v-else class="text-gray-600">Pas de contenu</div>
                       </div>
                       <UButton
                           icon="i-heroicons-check"

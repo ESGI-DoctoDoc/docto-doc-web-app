@@ -188,6 +188,7 @@ onMounted(() => {
         :appointment="currentAppointment"
         @on-close="onClose()"
         @on-update="onShowUpdate($event)"
+        @on-cancel="onShowCancel"
     />
   </div>
 </template>

@@ -30,7 +30,7 @@ onMounted(() => {
     <div
         v-for="(file, fileIndex) in files"
         :key="fileIndex"
-        class="border border-gray-300 rounded p-2 bg-white shadow-sm w-full"
+        class="border border-gray-300 rounded p-2 bg-white shadow-sm w-full overflow-hidden"
         style="min-width: 230px; min-height: 180px; max-width: 230px; max-height: 180px; position: relative;"
     >
       <template v-if="!previewError[fileIndex]">

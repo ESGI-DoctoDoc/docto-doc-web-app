@@ -2,7 +2,7 @@
 
 import type {FormErrorEvent, FormSubmitEvent} from "@nuxt/ui";
 import DoctorMedicalConcernsSelect from "~/components/inputs/DoctorMedicalConcernsSelect.vue";
-import {type CreateSlotForm, createSlotSchema} from "~/components/inputs/validators/slot-form.validator";
+import {type UpdateSlotForm, updateSlotSchema} from "~/components/inputs/validators/slot-form.validator";
 import type {SlotDetail} from "~/types/slot";
 import FormField from "~/components/inputs/base/FormField.vue";
 
@@ -16,43 +16,20 @@ const open = defineModel('open', {
 })
 
 const emit = defineEmits<{
-  (e: 'onSubmit', value: CreateSlotForm): void;
+  (e: 'onSubmit', value: UpdateSlotForm): void;
   (e: 'onCancel'): void;
 }>()
 
 const {showError} = useNotify()
 
-const isUpdate = computed(() => !!props.slotDetail.id);
-
-const form = ref<CreateSlotForm>({
-  day: props.slotDetail.day,
+const form = ref<UpdateSlotForm>({
   startHour: props.slotDetail.startHour,
   endHour: props.slotDetail.endHour,
-  recurrence: props.slotDetail.recurrence || 'none',
-  start: props.slotDetail.start,
-  end: props.slotDetail.end,
-  dayNumber: props.slotDetail.dayNumber,
-  medicalConcerns: props.slotDetail.medicalConcerns.map(concern => concern.id),
+  medicalConcerns: props.slotDetail.medicalConcerns?.map(m => m.id) || [],
 });
 
-const daysOfWeek = [
-  {label: 'Lundi', value: 'monday'},
-  {label: 'Mardi', value: 'tuesday'},
-  {label: 'Mercredi', value: 'wednesday'},
-  {label: 'Jeudi', value: 'thursday'},
-  {label: 'Vendredi', value: 'friday'},
-  {label: 'Samedi', value: 'saturday'},
-  {label: 'Dimanche', value: 'sunday'}
-]
 
-const recurrences = [
-  {label: 'Aucune (exceptionnel)', value: 'none'},
-  {label: 'Hebdomadaire', value: 'weekly'},
-  {label: 'Mensuel', value: 'monthly'},
-]
-
-
-function onSubmit(form: FormSubmitEvent<CreateSlotForm>) {
+function onSubmit(form: FormSubmitEvent<UpdateSlotForm>) {
   console.log("form is accepted", form.data);
   emit('onSubmit', form.data);
 }
@@ -79,22 +56,13 @@ function onError(event: FormErrorEvent) {
     <template #body>
       <UForm
           id="create-absence-form"
-          :schema="createSlotSchema"
+          :schema="updateSlotSchema"
           :state="form"
           class="flex flex-col space-y-4"
           @error="onError"
           @submit="onSubmit"
       >
         <h3 class="text-lg font-semibold">Jour et heures de consultation</h3>
-        <!-- Jour -->
-        <FormField v-if="!isUpdate" class="w-full" label="Jour" name="day">
-          <USelect
-              v-model="form.day"
-              :items="daysOfWeek"
-              class="w-full"
-              placeholder="Sélectionnez un jour"
-          />
-        </FormField>
 
         <div class="w-full flex space-x-4">
           <!-- Heure de début -->
@@ -118,57 +86,13 @@ function onError(event: FormErrorEvent) {
           </FormField>
         </div>
 
-        <h3 class="text-lg font-semibold mt-4">Motifs de consultation</h3>
+        <h3 class="text-lg font-semibold ">Motifs de consultation</h3>
         <!-- Motifs de consultation -->
         <DoctorMedicalConcernsSelect
             v-model:medical-concern="form.medicalConcerns"
             class="w-full"
             multiple
         />
-
-        <h3 v-if="!isUpdate" class="text-lg font-semibold mt-4">Périodicité</h3>
-        <!-- Récurrence -->
-        <FormField class="w-full" label="Récurrence" name="recurrence">
-          <USelect
-              v-model="form.recurrence"
-              :items="recurrences"
-              class="w-full"
-              clearable
-              placeholder="Aucune (exceptionnel)"
-          />
-        </FormField>
-
-        <FormField v-if="form.recurrence === 'monthly' && !isUpdate" label="Jour du mois" name="dayNumber">
-          <UInput
-              v-model="form.dayNumber"
-              class="w-full"
-              max="28"
-              min="1"
-              placeholder="1-28"
-              type="number"
-          />
-        </FormField>
-
-        <h3 v-if="form.recurrence !== 'none' && !isUpdate" class="text-lg font-semibold mt-4">Plage de périodicité</h3>
-        <!-- Date de début -->
-        <FormField v-if="form.recurrence !== 'none'" class="w-full" label="Date de début" name="start">
-          <UInput
-              v-model="form.start"
-              class="w-full"
-              type="date"
-          />
-          £
-        </FormField>
-
-        <!-- Date de fin (optionnelle) -->
-        <FormField v-if="form.recurrence !== 'none' && !isUpdate" class="w-full" label="Date de fin" name="end">
-          <UInput
-              v-model="form.end"
-              class="w-full"
-              type="date"
-          />
-        </FormField>
-
       </UForm>
     </template>
     <template #footer>

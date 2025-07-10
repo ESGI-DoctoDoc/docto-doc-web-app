@@ -11,6 +11,12 @@ export interface CreateSlotDto {
     medicalConcerns: string[];
 }
 
+export interface UpdateSlotDto {
+    startHour: string;
+    endHour: string;
+    medicalConcerns: string[];
+}
+
 export const createSlotMonthlyBodySchema = z.object({
     startHour: z.string(),
     endHour: z.string(),
@@ -41,7 +47,9 @@ export const createExceptionalSlotBodySchema = z.object({
 });
 export type CreateExceptionalSlotBody = z.infer<typeof createExceptionalSlotBodySchema>;
 
-// export const createSlotResponseSchema = z.object({
-//     id: z.string(),
-// });
-// export type CreateSlotResponse = z.infer<typeof createSlotResponseSchema>;
+export const updateSlotBodySchema = z.object({
+    startHour: z.string(),
+    endHour: z.string(),
+    medicalConcerns: z.array(z.string().uuid()),
+})
+export type UpdateSlotBody = z.infer<typeof updateSlotBodySchema>;

@@ -111,3 +111,33 @@ export const createSlotSchema = z.object({
     }
 });
 export type CreateSlotForm = z.infer<typeof createSlotSchema>;
+
+export const updateSlotSchema = z.object({
+    startHour: startHour,
+    endHour: endHour,
+    medicalConcerns: medicalConcernIds,
+}).superRefine((data, ctx) => {
+    const {startHour, endHour} = data;
+
+    const startTime = dayjs(`2020-01-01T${startHour}`);
+    const endTime = dayjs(`2020-01-01T${endHour}`);
+
+    // 1. Vérifier que l'heure de fin est après l'heure de début
+    if (!endTime.isAfter(startTime)) {
+        ctx.addIssue({
+            path: ['endHour'],
+            code: z.ZodIssueCode.custom,
+            message: "form.slot.hour.afterStart",
+        });
+    }
+
+    // 2. Vérifier qu'il y a au moins 15 minutes entre début et fin
+    if (endTime.diff(startTime, 'minute') < 15) {
+        ctx.addIssue({
+            path: ['endHour'],
+            code: z.ZodIssueCode.custom,
+            message: "form.slot.hour.minDuration",
+        });
+    }
+});
+export type UpdateSlotForm = z.infer<typeof updateSlotSchema>;

@@ -7,7 +7,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import frLocale from '@fullcalendar/core/locales/fr'
 import CalendarEventDetailSlideover from "~/components/slideover/CalendarEventDetailSlideover.vue";
 import CreateSlotModal from "~/components/modals/CreateSlotModal.vue";
-import type {CreateSlotForm} from "~/components/inputs/validators/slot-form.validator";
+import type {CreateSlotForm, UpdateSlotForm} from "~/components/inputs/validators/slot-form.validator";
 import {slotApi} from "~/services/slots/slot.api";
 import {useCalendar} from "~/composables/calendar/useCalendar";
 import type {Slot, SlotDetail} from "~/types/slot";
@@ -23,7 +23,7 @@ defineEmits<{
 
 const {showError, showSuccess} = useNotify()
 const {mapSlotToCalendarEvent, doctorSlotsTemplate} = useCalendar()
-const {createSlot, getSlots} = slotApi();
+const {createSlot, getSlots, updateSlot} = slotApi();
 
 
 const loading = ref(true);
@@ -161,11 +161,19 @@ async function onCreateSlot(form: CreateSlotForm) {
   }
 }
 
-async function onUpdateSlot(/*form: CreateSlotForm*/) {
+async function onUpdateSlot(form: UpdateSlotForm) {
   loading.value = true;
   try {
-    // const slot = await updateSlot(form);
-    // console.log(slot);
+    if (!currentSlotDetail.value) {
+      showError('Aucun créneau sélectionné pour la mise à jour.');
+      return;
+    }
+
+    await updateSlot(currentSlotDetail.value.id, {
+      startHour: form.startHour,
+      endHour: form.endHour,
+      medicalConcerns: form.medicalConcerns,
+    });
     showUpdateSlot.value = false
     showSuccess('Créneau mis à jour avec succès');
   } catch (error) {

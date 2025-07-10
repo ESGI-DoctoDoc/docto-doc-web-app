@@ -94,7 +94,6 @@ export const slotApi = () => {
                         startHour: requestDto.startHour,
                         endHour: requestDto.endHour,
                         start: requestDto.start,
-                        end: requestDto.end,
                         medicalConcerns: requestDto.medicalConcerns
                     }
                 })

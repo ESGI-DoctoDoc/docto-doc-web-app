@@ -37,7 +37,6 @@ export const createExceptionalSlotBodySchema = z.object({
     startHour: z.string(),
     endHour: z.string(),
     start: z.string().optional(),
-    end: z.string().optional(),
     medicalConcerns: z.array(z.string().uuid()),
 });
 export type CreateExceptionalSlotBody = z.infer<typeof createExceptionalSlotBodySchema>;

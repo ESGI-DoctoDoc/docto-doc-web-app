@@ -108,57 +108,8 @@ async function verifyPayment(paymentId: string) {
   }
 }
 
-const allNotifications = ref<DoctorNotification[]>([
-  {
-    id: '1',
-    title: 'Nouvelle notification',
-    content: 'Ceci est un exemple de notification.',
-    isRead: false,
-    createdAt: "2025-01-01",
-  },
-  {
-    id: '2',
-    title: 'Mise à jour importante',
-    content: 'Veuillez vérifier les dernières mises à jour.',
-    isRead: true,
-    createdAt: "2025-01-02",
-  },
-  {
-    id: '3',
-    title: 'Mise à jour importante',
-    content: 'Veuillez vérifier les dernières mises à jour.',
-    isRead: false,
-    createdAt: "2025-01-02",
-  },
-  {
-    id: '4',
-    title: 'Mise à jour importante',
-    content: 'Veuillez vérifier les dernières mises à jour.',
-    isRead: false,
-    createdAt: "2025-01-02",
-  },
-  {
-    id: '5',
-    title: 'Mise à jour importante',
-    content: 'Veuillez vérifier les dernières mises à jour.',
-    isRead: false,
-    createdAt: "2025-01-02",
-  },
-  {
-    id: '6',
-    title: 'Mise à jour importante',
-    content: 'Veuillez vérifier les dernières mises à jour.',
-    isRead: false,
-    createdAt: "2025-01-02",
-  },
-  {
-    id: '7',
-    title: 'Mise à jour importante',
-    content: 'Veuillez vérifier les dernières mises à jour.',
-    isRead: false,
-    createdAt: "2025-01-02",
-  }
-])
+const allNotifications = ref<DoctorNotification[]>([])
+
 const unreadNotifications = computed(() => {
   return allNotifications.value.filter(notification => notification.isRead === false)
 })

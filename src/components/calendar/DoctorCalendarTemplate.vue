@@ -161,7 +161,7 @@ async function onCreateSlot(form: CreateSlotForm) {
   }
 }
 
-async function onUpdateSlot(form: UpdateSlotForm) {
+async function onUpdateSlot(form: UpdateSlotForm & { allSlot?: boolean }) {
   loading.value = true;
   try {
     if (!currentSlotDetail.value) {
@@ -173,6 +173,7 @@ async function onUpdateSlot(form: UpdateSlotForm) {
       startHour: form.startHour,
       endHour: form.endHour,
       medicalConcerns: form.medicalConcerns,
+      allSlot: form.allSlot ?? false,
     });
     showUpdateSlot.value = false
     currentSlotDetail.value = undefined;
@@ -280,7 +281,7 @@ onMounted(() => {
         v-model:open="showUpdateSlot"
         :slot-detail="currentSlotDetail"
         @on-submit="onUpdateSlot"
-        @on-cancel="showEventDetail = true; currentSlot = {id: currentSlotDetail.id}; showEventDetail = true"
+        @on-cancel="currentSlotDetail = undefined; showUpdateSlot = false"
     />
   </div>
 </template>

@@ -1,5 +1,6 @@
 import PopupContinue from "~/components/modals/PopupContinue.vue";
 import CancelAppointmentReason from "~/components/modals/CancelAppointmentReason.vue";
+import UpdateOneOrAllSlot from "~/components/modals/UpdateOneOrAllSlot.vue";
 
 export const useModals = () => {
     const showPopupContinueModal = (message: string) => {
@@ -18,8 +19,16 @@ export const useModals = () => {
 
     // const showSendEmailModal = ()
 
+    const showUpdateOneOrAllSlot = (message: string) => {
+        const overlay = useOverlay()
+        const modal = overlay.create(UpdateOneOrAllSlot);
+
+        return modal.open({message})
+    }
+
     return {
         showPopupContinueModal,
         showCancelAppointmentReasonModal,
+        showUpdateOneOrAllSlot,
     }
 }

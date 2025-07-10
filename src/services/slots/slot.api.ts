@@ -105,16 +105,31 @@ export const slotApi = () => {
     }
 
     async function updateSlot(id: string, requestDto: UpdateSlotDto) {
-        return new RequestBuilder(BASE_API_URL)
-            .put(`/doctors/slots/${id}`)
-            .withBody<UpdateSlotBody>(updateSlotBodySchema)
-            .execute({
-                body: {
-                    startHour: requestDto.startHour,
-                    endHour: requestDto.endHour,
-                    medicalConcerns: requestDto.medicalConcerns
-                }
-            })
+        if (requestDto.allSlot) {
+            console.log("Updating all slots is not implemented yet.");
+            return new RequestBuilder(BASE_API_URL)
+                .put(`/doctors/slots/${id}`)
+                .withBody<UpdateSlotBody>(updateSlotBodySchema)
+                .execute({
+                    body: {
+                        startHour: requestDto.startHour,
+                        endHour: requestDto.endHour,
+                        medicalConcerns: requestDto.medicalConcerns
+                    }
+                })
+        } else {
+            console.log("Updating a specific slot.");
+            return new RequestBuilder(BASE_API_URL)
+                .put(`/doctors/slots/${id}`)
+                .withBody<UpdateSlotBody>(updateSlotBodySchema)
+                .execute({
+                    body: {
+                        startHour: requestDto.startHour,
+                        endHour: requestDto.endHour,
+                        medicalConcerns: requestDto.medicalConcerns
+                    }
+                })
+        }
     }
 
 

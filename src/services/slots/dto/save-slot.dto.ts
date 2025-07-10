@@ -15,6 +15,7 @@ export interface UpdateSlotDto {
     startHour: string;
     endHour: string;
     medicalConcerns: string[];
+    allSlot: boolean;
 }
 
 export const createSlotMonthlyBodySchema = z.object({

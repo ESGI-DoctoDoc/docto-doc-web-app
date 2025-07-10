@@ -5,6 +5,7 @@ import DoctorMedicalConcernsSelect from "~/components/inputs/DoctorMedicalConcer
 import {type UpdateSlotForm, updateSlotSchema} from "~/components/inputs/validators/slot-form.validator";
 import type {SlotDetail} from "~/types/slot";
 import FormField from "~/components/inputs/base/FormField.vue";
+import {useModals} from "~/composables/useModal";
 
 const props = defineProps<{
   slotDetail: SlotDetail;
@@ -16,10 +17,11 @@ const open = defineModel('open', {
 })
 
 const emit = defineEmits<{
-  (e: 'onSubmit', value: UpdateSlotForm): void;
+  (e: 'onSubmit', value: UpdateSlotForm & { allSlot: boolean }): void;
   (e: 'onCancel'): void;
 }>()
 
+const {showUpdateOneOrAllSlot, showPopupContinueModal} = useModals()
 const {showError} = useNotify()
 
 const form = ref<UpdateSlotForm>({
@@ -29,9 +31,27 @@ const form = ref<UpdateSlotForm>({
 });
 
 
-function onSubmit(form: FormSubmitEvent<UpdateSlotForm>) {
-  console.log("form is accepted", form.data);
-  emit('onSubmit', form.data);
+async function onSubmit(form: FormSubmitEvent<UpdateSlotForm>) {
+  if (props.slotDetail.recurrence !== 'none') {
+    const instance = showUpdateOneOrAllSlot("Voulez-vous modifier cette plage d'ouverture pour tous les créneaux récurrents ?");
+    const result = await instance.result;
+    if (result?.cancel === true || !result) {
+      emit('onCancel');
+      return;
+    }
+
+    if (result?.allSlot === true) {
+      emit('onSubmit', {...form.data, allSlot: true});
+    } else {
+      emit('onSubmit', {...form.data, allSlot: false});
+    }
+  } else {
+    const instance = showPopupContinueModal("Voulez-vous modifier cette plage d'ouverture ?");
+    const result = await instance.result;
+    if (result) {
+      emit('onSubmit', {...form.data, allSlot: false});
+    }
+  }
 }
 
 function onError(event: FormErrorEvent) {

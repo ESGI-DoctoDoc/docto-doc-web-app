@@ -132,6 +132,12 @@ export const slotApi = () => {
         }
     }
 
+    function deleteSlot(id: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .delete(`/doctors/slots/${id}`)
+            .execute();
+    }
+
 
     return {
         getSlotsAvailable,
@@ -139,5 +145,6 @@ export const slotApi = () => {
         getSlotById,
         createSlot,
         updateSlot,
+        deleteSlot,
     }
 }

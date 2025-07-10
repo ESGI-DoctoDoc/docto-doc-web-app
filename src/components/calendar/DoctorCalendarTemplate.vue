@@ -23,7 +23,7 @@ defineEmits<{
 
 const {showError, showSuccess} = useNotify()
 const {mapSlotToCalendarEvent, doctorSlotsTemplate} = useCalendar()
-const {createSlot, getSlots, updateSlot} = slotApi();
+const {createSlot, getSlots, updateSlot, deleteSlot} = slotApi();
 
 
 const loading = ref(true);
@@ -205,6 +205,24 @@ async function fetchSlots(start?: string) {
   }
 }
 
+async function onDelete(slotId: string) {
+  loading.value = true;
+  try {
+    await deleteSlot(slotId);
+    showSuccess('Créneau supprimé avec succès');
+    currentSlotDetail.value = undefined;
+    await fetchSlots(currentStartDate.value);
+  } catch (error) {
+    if (error instanceof Error) {
+      showError('Erreur lors de la suppression du créneau', error.message);
+    } else {
+      showError('Une erreur est survenue lors de la suppression du créneau.');
+    }
+  } finally {
+    loading.value = false;
+  }
+}
+
 function onNext() {
   calendarRef.value?.getApi().next();
   currentStartDate.value = dayjs(currentStartDate.value)
@@ -269,6 +287,7 @@ onMounted(() => {
         :slot-id="currentSlot.id"
         @on-close="currentSlot = undefined"
         @on-update="showUpdateSlot = true; showEventDetail = false; currentSlotDetail = $event"
+        @on-delete="onDelete($event)"
     />
     <CreateSlotModal
         v-if="showCreateSlot"

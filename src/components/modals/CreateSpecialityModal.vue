@@ -4,6 +4,7 @@ import type {CreateSpecialityForm} from "~/components/inputs/validators/speciali
 import {createSpecialitySchema} from "~/components/inputs/validators/speciality-form.validator";
 import type {FormSubmitEvent} from "@nuxt/ui";
 import type {Speciality} from "~/types/speciality";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const open = defineModel('open', {
   type: Boolean,
@@ -47,9 +48,9 @@ function onSubmit(form: FormSubmitEvent<CreateSpecialityForm>) {
           class="flex flex-col space-y-4 w-full"
           @submit.prevent="onSubmit"
       >
-        <UFormField class="w-full" label="Nom de la spécialité" name="name" required>
+        <FormField class="w-full" label="Nom de la spécialité" name="name" required>
           <UInput v-model="form.name" class="w-full" placeholder="Entrez le nom de la spécialité" type="text"/>
-        </UFormField>
+        </FormField>
 
         <UButton v-if="speciality" block label="Modifier la spécialité" type="submit"/>
         <UButton v-else block label="Ajouter un motif de consultation" type="submit"/>

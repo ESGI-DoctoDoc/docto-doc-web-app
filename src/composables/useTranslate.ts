@@ -1,7 +1,7 @@
 import {useI18n} from "vue-i18n";
 
 export const useTranslate = () => {
-    const {t} = useI18n()
+    const {t, messages} = useI18n()
 
     const translateDate = (date: string, format: string) => {
         const dateObj = new Date(date);
@@ -33,6 +33,7 @@ export const useTranslate = () => {
     }
 
     const translate = (key: string, params: Record<string, unknown> = {}) => {
+        console.log(messages)
         const translated = t(key, params);
         if (translated === key) {
             console.warn(`Translation key "${key}" not found`);

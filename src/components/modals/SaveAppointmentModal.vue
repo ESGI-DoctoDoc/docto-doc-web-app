@@ -13,6 +13,7 @@ import CareTrackingSelect from "~/components/inputs/CareTrackingSelect.vue";
 import AnswerQuestions from "~/components/questions/AnswerQuestions.vue";
 import SlotAvailableSelect from "~/components/slots/SlotAvailableSelect.vue";
 import dayjs from "dayjs";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const open = defineModel('open', {
   type: Boolean,
@@ -124,7 +125,7 @@ function onError(event: FormErrorEvent) {
         </div>
 
         <h3 class="text-lg font-semibold">Date et heure du rendez-vous</h3>
-        <UFormField
+        <FormField
             label="Date du rendez-vous"
             name="start"
             required
@@ -135,7 +136,7 @@ function onError(event: FormErrorEvent) {
               placeholder="Sélectionnez une date"
               type="date"
           />
-        </UFormField>
+        </FormField>
         <SlotAvailableSelect
             v-model:date="form.start"
             v-model:medical-concern="form.medicalConcern"
@@ -153,7 +154,7 @@ function onError(event: FormErrorEvent) {
         />
 
         <h3 class="text-lg font-semibold">Notes</h3>
-        <UFormField
+        <FormField
             class="w-full"
             label="Notes sur le rendez-vous"
             name="notes"
@@ -164,7 +165,7 @@ function onError(event: FormErrorEvent) {
               class="w-full"
               placeholder="Notes sur le rendez-vous"
           />
-        </UFormField>
+        </FormField>
       </UForm>
     </template>
     <template #footer>

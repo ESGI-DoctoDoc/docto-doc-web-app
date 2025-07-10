@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import {ref} from 'vue';
 import {specialityApi} from "~/services/specialities/speciality.api";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const speciality = defineModel('speciality', {
   type: String,
@@ -44,7 +45,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <UFormField class="w-full" label="Spécialité" name="speciality" required>
+  <FormField class="w-full" label="Spécialité" name="speciality" required>
     <USelectMenu
         v-model="specialityLocal"
         :disabled="isLoading || specialitiesItems.length === 0"
@@ -56,7 +57,7 @@ onMounted(() => {
         variant="outline"
         @update:model-value="speciality = $event.label || ''"
     />
-  </UFormField>
+  </FormField>
 </template>
 
 <style scoped>

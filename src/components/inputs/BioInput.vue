@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 
 import InputAreaBase from "~/components/inputs/base/InputAreaBase.vue";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const modelValue = defineModel('modelValue', {
   type: String,
@@ -11,9 +12,9 @@ const modelValue = defineModel('modelValue', {
 </script>
 
 <template>
-  <UFormField label="Bio" name="bio" required>
+  <FormField label="Bio" name="bio" required>
     <InputAreaBase v-model="modelValue" :rows="3" placeholder="Votre bio."/>
-  </UFormField>
+  </FormField>
 </template>
 
 <style scoped>

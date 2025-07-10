@@ -7,6 +7,7 @@ import {
 } from "~/components/inputs/validators/medical-concern-form.validator";
 import {MedicalConcernDuration} from "~/types/medical-concern-duration";
 import type {MedicalConcern} from "~/types/medical-concern";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const open = defineModel('open', {
   type: Boolean,
@@ -64,18 +65,18 @@ const durations = [
             class="flex flex-col space-y-4 w-full"
             @submit.prevent="onSubmit"
         >
-          <UFormField class="w-full" label="Nom du motif" name="name" required>
+          <FormField class="w-full" label="Nom du motif" name="name" required>
             <UInput v-model="form.name" class="w-full" placeholder="Entrez le nom de la spécialité" type="text"/>
-          </UFormField>
-          <UFormField class="w-full" label="Durée de la consultation" name="duration" required>
+          </FormField>
+          <FormField class="w-full" label="Durée de la consultation" name="duration" required>
             <USelect
                 v-model="form.duration"
                 :items="durations"
                 class="w-full"
                 placeholder="Sélectionnez la durée de la consultation"
             />
-          </UFormField>
-          <UFormField class="w-full" label="Prix de la consultation" name="price" required>
+          </FormField>
+          <FormField class="w-full" label="Prix de la consultation" name="price" required>
             <UInput
                 v-model.number="form.price"
                 class="w-full"
@@ -83,7 +84,7 @@ const durations = [
                 placeholder="Entrez le prix de la consultation"
                 type="number"
             />
-          </UFormField>
+          </FormField>
 
           <UButton v-if="medicalConcern" block label="Modifier le motif de consultation" type="submit"/>
           <UButton v-else block label="Ajouter un motif de consultation" type="submit"/>

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 
 import {autocompleteApi} from "~/services/autocompleteApi/autocomplete.api";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const modelValue = defineModel('modelValue', {
   type: String,
@@ -38,7 +39,7 @@ watch(searchTerm, (term) => {
 </script>
 
 <template>
-  <UFormField class="w-full text-left" label="Adresse de consultation" name="address" required>
+  <FormField class="w-full text-left" label="Adresse de consultation" name="address" required>
     <UInputMenu
         v-model="modelValue"
         v-model:search-term="searchTerm"
@@ -52,7 +53,7 @@ watch(searchTerm, (term) => {
         size="md"
         type="text"
     />
-  </UFormField>
+  </FormField>
 </template>
 
 <style scoped>

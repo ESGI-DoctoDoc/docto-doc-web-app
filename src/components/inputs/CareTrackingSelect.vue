@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 
 import {careTrackingApi} from "~/services/care-tracking/care-tracking.api";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const careTracking = defineModel('careTracking', {
   type: String as PropType<string>,
@@ -60,7 +61,7 @@ watch(
 </script>
 
 <template>
-  <UFormField :required label="Sélectionnez un suivi de dossier" name="careTracking">
+  <FormField :required label="Sélectionnez un suivi de dossier" name="careTracking">
     <USelect
         v-model="careTracking"
         :disabled="disabled || loading || careTrackingItems.length === 0"
@@ -69,7 +70,7 @@ watch(
         :placeholder="careTrackingItems.length === 0 ? 'Aucun suivi de dossier disponible' : 'Sélectionnez un suivi de dossier'"
         class="w-full"
     />
-  </UFormField>
+  </FormField>
 </template>
 
 <style scoped>

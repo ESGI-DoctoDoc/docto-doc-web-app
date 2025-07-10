@@ -3,6 +3,7 @@
 import InputFileBase from "~/components/inputs/base/InputFileBase.vue";
 import {useMediaApi} from "~/services/media/media.api";
 import {careTrackingApi} from "~/services/care-tracking/care-tracking.api";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const modelValue = defineModel('files', {
   type: Array as () => string[],
@@ -63,7 +64,7 @@ async function onDeleteFile(id: string) {
 </script>
 
 <template>
-  <UFormField class="text-left" label="Fichiers" name="files">
+  <FormField class="text-left" label="Fichiers" name="files">
     <InputFileBase
         v-model:files="files"
         :max="4"
@@ -72,7 +73,7 @@ async function onDeleteFile(id: string) {
         @on-files-selected="onUploadFiles"
         @on-delete-file="onDeleteFile"
     />
-  </UFormField>
+  </FormField>
 </template>
 
 <style scoped>

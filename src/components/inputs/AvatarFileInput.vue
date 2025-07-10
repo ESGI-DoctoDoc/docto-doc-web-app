@@ -4,6 +4,7 @@ import PictureInput from "~/components/inputs/PictureInput.vue";
 import InputFileBase from "~/components/inputs/base/InputFileBase.vue";
 import {doctorsApi} from "~/services/doctors/doctors.api";
 import {useMediaApi} from "~/services/media/media.api";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const avatar = defineModel('avatar', {
   type: String,
@@ -63,7 +64,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <UFormField class="text-left" label="Votre photo de profil" name="profilePictureUrl" required>
+  <FormField class="text-left" label="Votre photo de profil" name="profilePictureUrl" required>
     <UInput class="hidden"/>
     <div class="flex flex-row space-x-4 mt-3">
       <div class="w-auto flex justify-center items-center">
@@ -80,7 +81,7 @@ onMounted(() => {
         />
       </div>
     </div>
-  </UFormField>
+  </FormField>
 </template>
 
 <style scoped>

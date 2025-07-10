@@ -65,7 +65,8 @@ export class ApiClient {
                     logoutUser();
                 }
 
-                throw new Error(error.response?._data?.code ?? 'Erreur inconnue');
+                const errorCode = error.response?._data?.code ? `errors.${error.response._data.code}` : 'errors.unknown';
+                throw new Error(errorCode);
             }
             console.error('Erreur inconnue :', error);
             throw error;

@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 
+import FormField from "~/components/inputs/base/FormField.vue";
+
 const modelValue = defineModel('modelValue', {
   type: String,
   default: ''
@@ -14,7 +16,7 @@ const show = ref(false)
 </script>
 
 <template>
-  <UFormField label="Mot de passe" name="password" required>
+  <FormField label="Mot de passe" name="password" required>
     <template #hint>
       <NuxtLink v-if="forgotPassword" class="text-primary" to="/auth/forgotPassword">Oublié ?</NuxtLink>
     </template>
@@ -38,7 +40,7 @@ const show = ref(false)
         />
       </template>
     </UInput>
-  </UFormField>
+  </FormField>
 </template>
 
 <style scoped>

@@ -4,6 +4,7 @@ import type {Doctor, DoctorReporting} from "~/types/doctor";
 import {doctorsApi} from "~/services/doctors/doctors.api";
 import type {MedicalConcern} from "~/types/medical-concern";
 import dayjs from "dayjs";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const open = defineModel('open', {
   type: Boolean,
@@ -118,29 +119,29 @@ const items = ref([
         <UTabs :items="items" class="w-full" default-value="profil">
           <template #profil>
             <div v-if="doctor" class="w-full flex flex-col space-y-4 mt-4">
-              <UFormField class="w-full" label="Spécialité">
+              <FormField class="w-full" label="Spécialité">
                 <UInput :model-value="doctor?.speciality?.name" class="w-full" disabled/>
-              </UFormField>
+              </FormField>
               <div class="flex flex-row gap-4">
-                <UFormField class="w-1/2" label="Prénom">
+                <FormField class="w-1/2" label="Prénom">
                   <UInput :model-value="doctor.firstName" class="w-full"/>
-                </UFormField>
-                <UFormField class="w-1/2" label="Nom">
+                </FormField>
+                <FormField class="w-1/2" label="Nom">
                   <UInput :model-value="doctor.lastName" class="w-full"/>
-                </UFormField>
+                </FormField>
               </div>
-              <UFormField label="Email">
+              <FormField label="Email">
                 <UInput :model-value="doctor.email" class="w-full text-left" disabled/>
-              </UFormField>
-              <UFormField label="Adresse">
+              </FormField>
+              <FormField label="Adresse">
                 <UInput :model-value="doctor?.address?.formatted" class="w-full text-left"/>
-              </UFormField>
-              <UFormField label="Biographie">
+              </FormField>
+              <FormField label="Biographie">
                 <UTextarea
                     :model-value="doctor.bio" :rows="4" class="w-full text-left"
                     placeholder="Parlez-nous de vous..."
                 />
-              </UFormField>
+              </FormField>
             </div>
           </template>
 

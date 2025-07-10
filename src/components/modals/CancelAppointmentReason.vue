@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 
+import FormField from "~/components/inputs/base/FormField.vue";
+
 defineProps<{
   message: string
 }>()
@@ -26,9 +28,9 @@ function cancel() {
   <UModal title="Souhaitez-vous annuler le rendez-vous ?" @close="cancel">
     <template #body>
       <div class="flex flex-col space-y-2.5">
-        <UFormField label="Raison de l'annulation" name="cancel-reason" required>
+        <FormField label="Raison de l'annulation" name="cancel-reason" required>
           <USelect v-model="reason" :items="reasons" class="w-full"/>
-        </UFormField>
+        </FormField>
         <div class="flex justify-center gap-4 mt-4">
           <UButton class="w-1/2" @click="cancel">Non</UButton>
           <UButton :disabled="!reason" class="w-1/2" color="error" @click="confirm">Oui</UButton>

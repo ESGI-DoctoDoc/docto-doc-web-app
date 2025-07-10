@@ -2,6 +2,7 @@
 
 
 import {patientsApi} from "~/services/patients/patient.api";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const patient = defineModel('patient', {
   type: String as PropType<string>,
@@ -56,7 +57,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <UFormField label="Sélectionnez un patient" name="patient" required>
+  <FormField label="Sélectionnez un patient" name="patient" required>
     <USelectMenu
         v-model="patientLocal"
         :disabled="loading || disabled"
@@ -73,7 +74,7 @@ onMounted(() => {
         </div>
       </template>
     </USelectMenu>
-  </UFormField>
+  </FormField>
 </template>
 
 <style scoped>

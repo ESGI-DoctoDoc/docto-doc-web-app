@@ -4,6 +4,7 @@ import type {FormErrorEvent, FormSubmitEvent} from "@nuxt/ui";
 import DoctorMedicalConcernsSelect from "~/components/inputs/DoctorMedicalConcernsSelect.vue";
 import {type CreateSlotForm, createSlotSchema} from "~/components/inputs/validators/slot-form.validator";
 import type {SlotDetail} from "~/types/slot";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const props = defineProps<{
   slotDetail: SlotDetail;
@@ -84,35 +85,35 @@ function onError(event: FormErrorEvent) {
       >
         <h3 class="text-lg font-semibold">Jour et heures de consultation</h3>
         <!-- Jour -->
-        <UFormField class="w-full" label="Jour" name="day">
+        <FormField class="w-full" label="Jour" name="day">
           <USelect
               v-model="form.day"
               :items="daysOfWeek"
               class="w-full"
               placeholder="Sélectionnez un jour"
           />
-        </UFormField>
+        </FormField>
 
         <div class="w-full flex space-x-4">
           <!-- Heure de début -->
-          <UFormField class="w-1/2" label="Heure de début" name="startHour">
+          <FormField class="w-1/2" label="Heure de début" name="startHour">
             <UInput
                 v-model="form.startHour"
                 class="w-full"
                 placeholder="HH:mm"
                 type="time"
             />
-          </UFormField>
+          </FormField>
 
           <!-- Heure de fin -->
-          <UFormField class="w-1/2" label="Heure de fin" name="endHour">
+          <FormField class="w-1/2" label="Heure de fin" name="endHour">
             <UInput
                 v-model="form.endHour"
                 class="w-full"
                 placeholder="HH:mm"
                 type="time"
             />
-          </UFormField>
+          </FormField>
         </div>
 
         <h3 class="text-lg font-semibold mt-4">Motifs de consultation</h3>
@@ -125,7 +126,7 @@ function onError(event: FormErrorEvent) {
 
         <h3 class="text-lg font-semibold mt-4">Périodicité</h3>
         <!-- Récurrence -->
-        <UFormField class="w-full" label="Récurrence" name="recurrence">
+        <FormField class="w-full" label="Récurrence" name="recurrence">
           <USelect
               v-model="form.recurrence"
               :items="recurrences"
@@ -133,9 +134,9 @@ function onError(event: FormErrorEvent) {
               clearable
               placeholder="Aucune (exceptionnel)"
           />
-        </UFormField>
+        </FormField>
 
-        <UFormField v-if="form.recurrence === 'monthly'" label="Jour du mois" name="dayNumber">
+        <FormField v-if="form.recurrence === 'monthly'" label="Jour du mois" name="dayNumber">
           <UInput
               v-model="form.dayNumber"
               class="w-full"
@@ -144,26 +145,26 @@ function onError(event: FormErrorEvent) {
               placeholder="1-28"
               type="number"
           />
-        </UFormField>
+        </FormField>
 
         <h3 v-if="form.recurrence !== 'none'" class="text-lg font-semibold mt-4">Plage de périodicité</h3>
         <!-- Date de début -->
-        <UFormField v-if="form.recurrence !== 'none'" class="w-full" label="Date de début" name="start">
+        <FormField v-if="form.recurrence !== 'none'" class="w-full" label="Date de début" name="start">
           <UInput
               v-model="form.start"
               class="w-full"
               type="date"
           />
-        </UFormField>
+        </FormField>
 
         <!-- Date de fin (optionnelle) -->
-        <UFormField v-if="form.recurrence !== 'none'" class="w-full" label="Date de fin" name="end">
+        <FormField v-if="form.recurrence !== 'none'" class="w-full" label="Date de fin" name="end">
           <UInput
               v-model="form.end"
               class="w-full"
               type="date"
           />
-        </UFormField>
+        </FormField>
 
       </UForm>
     </template>

@@ -7,6 +7,7 @@ import {computed} from 'vue';
 import {type ProfileForm, profileSchema} from "~/components/inputs/validators/user-form.validator";
 import type {FormErrorEvent} from "@nuxt/ui";
 import AvatarFileInput from "~/components/inputs/AvatarFileInput.vue";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const open = defineModel('open', {
   type: Boolean,
@@ -91,38 +92,38 @@ onMounted(() => {
 
         <AvatarFileInput v-model:avatar="profilePictureUrl" class="w-full" name="profilePictureUrl"/>
 
-        <UFormField class="w-full" label="Spécialité">
+        <FormField class="w-full" label="Spécialité">
           <UInput v-model="doctor.speciality.name" class="w-full" disabled/>
-        </UFormField>
+        </FormField>
         <div class="flex flex-row gap-4">
-          <UFormField class="w-1/2" label="Prénom">
+          <FormField class="w-1/2" label="Prénom">
             <UInput v-model="doctor.firstName" class="w-full"/>
-          </UFormField>
-          <UFormField class="w-1/2" label="Nom">
+          </FormField>
+          <FormField class="w-1/2" label="Nom">
             <UInput v-model="doctor.lastName" class="w-full"/>
-          </UFormField>
+          </FormField>
         </div>
-        <UFormField label="Email">
+        <FormField label="Email">
           <UInput v-model="doctor.email" class="w-full text-left" disabled/>
-        </UFormField>
-        <UFormField label="Téléphone">
+        </FormField>
+        <FormField label="Téléphone">
           <UInput :model-value="formattedPhone" class="w-full text-left" disabled/>
-        </UFormField>
-        <UFormField v-if="doctor.address" label="Adresse">
+        </FormField>
+        <FormField v-if="doctor.address" label="Adresse">
           <UInput v-model="doctor.address.formatted" class="w-full text-left"/>
-        </UFormField>
-        <UFormField label="Biographie">
+        </FormField>
+        <FormField label="Biographie">
           <UTextarea
               v-model="doctor.bio" :rows="4" class="w-full text-left"
               placeholder="Parlez-nous de vous..."
           />
-        </UFormField>
-        <UFormField v-if="doctor.subscription" class="" label="Licence">
+        </FormField>
+        <FormField v-if="doctor.subscription" class="" label="Licence">
           <p>
             Du {{ dayjs(doctor.subscription?.start).format('DD/MM/YYYY') }}
             au {{ dayjs(doctor.subscription?.end).format('DD/MM/YYYY') }}
           </p>
-        </UFormField>
+        </FormField>
 
         <UButton
             block

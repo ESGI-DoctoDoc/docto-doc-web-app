@@ -8,7 +8,8 @@ export default defineNuxtPlugin(({vueApp}) => {
         locale: 'fr',
         messages: {
             fr: frLocale
-        }
+        },
+        flatJson: true,
     })
 
     vueApp.use(i18n)

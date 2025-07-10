@@ -2,6 +2,7 @@
 
 import {medicalConcernsApi} from "~/services/medical-concerns/medical-concerns.api";
 import type {MedicalConcernQuestion} from "~/types/medical-concern-question";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const answers = defineModel('answers', {
   type: Array as PropType<{ questionId: string, answer: string }[]>,
@@ -97,7 +98,7 @@ onMounted(() => {
   </div>
   <div v-else class="flex flex-col space-y-2">
     <div v-for="question in questions" :key="question.id" class="flex flex-col space-y-1">
-      <UFormField :label="question.question" :name="`question-${question.id}`" :required="question.isMandatory">
+      <FormField :label="question.question" :name="`question-${question.id}`" :required="question.isMandatory">
         <UInput
             v-if="question.type === 'text'"
             :model-value="answers.find(a => a.questionId === question.id)?.answer || ''"
@@ -122,7 +123,7 @@ onMounted(() => {
             class="w-full"
             @update:model-value="(value) => onChange(question.id, value as string)"
         />
-      </uformfield>
+      </FormField>
     </div>
   </div>
 </template>

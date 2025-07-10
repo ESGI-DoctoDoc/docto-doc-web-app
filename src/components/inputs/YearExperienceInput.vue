@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import InputTextBase from "~/components/inputs/base/InputTextBase.vue"
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const modelValue = defineModel('modelValue', {
   type: Number,
@@ -9,7 +10,7 @@ const modelValue = defineModel('modelValue', {
 </script>
 
 <template>
-  <UFormField label="Année d'expérience" name="year" required>
+  <FormField label="Année d'expérience" name="year" required>
     <InputTextBase
         v-model="modelValue"
         color="primary"
@@ -19,5 +20,5 @@ const modelValue = defineModel('modelValue', {
         type="number"
         variant="outline"
     />
-  </UFormField>
+  </FormField>
 </template>

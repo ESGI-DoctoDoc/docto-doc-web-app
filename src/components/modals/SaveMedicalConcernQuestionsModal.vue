@@ -7,6 +7,7 @@ import {
   createMedicalConcernQuestionSchema
 } from "~/components/inputs/validators/medical-concern-question-form.validator";
 import type {MedicalConcernQuestion} from "~/types/medical-concern-question";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const open = defineModel('open', {
   type: Boolean,
@@ -168,10 +169,10 @@ function onError(event: FormErrorEvent) {
                 >{{ questionTypes.find(q => q.value === question.type)?.label || 'Type inconnu' }}
                 </div>
               </div>
-              <UFormField :name="`questions.${i}.question`" class="my-2 w-full" required>
+              <FormField :name="`questions.${i}.question`" class="my-2 w-full" required>
                 <UInput v-model.trim="question.question" class="w-full" placeholder="Entrez votre question"
                         type="text"/>
-              </UFormField>
+              </FormField>
               <UCheckbox v-model="question.isMandatory" label="Question obligatoire"/>
             </div>
             <div class="flex flex-col gap-1 self-start">
@@ -192,11 +193,11 @@ function onError(event: FormErrorEvent) {
             <h1>Options</h1>
             <div class="flex flex-col w-full space-y-1">
               <div v-for="(option, index) in question.options" :key="index" class="flex space-x-2 items-start">
-                <UFormField :name="`questions.${i}.options.${index}.label`" class="w-full">
+                <FormField :name="`questions.${i}.options.${index}.label`" class="w-full">
                   <UInput v-model="option.label" class="w-full" placeholder="Entrez l'option" type="text"
                           @update:model-value="option.value = option.label"/>
                   <UInput v-show="false" v-model="option.value" type="text"/>
-                </UFormField>
+                </FormField>
                 <UInput v-show="false" v-model="option.value" :name="`questions.${i}.options.${index}.value`"
                         type="text"/>
                 <UButton

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import {slotApi} from '~/services/slots/slot.api';
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const slot = defineModel('slot', {
   type: String as PropType<string>,
@@ -60,7 +61,7 @@ watch(
 </script>
 
 <template>
-  <UFormField label="Horaire disponible" required>
+  <FormField label="Horaire disponible" required>
     <USelect
         v-model="slot"
         :disabled="loading || slots.length === 0"
@@ -73,7 +74,7 @@ watch(
         <span :class="item.disabled ? 'line-through text-red-500' : ''">{{ item.label }}</span>
       </template>
     </USelect>
-  </UFormField>
+  </FormField>
 </template>
 
 <style scoped>

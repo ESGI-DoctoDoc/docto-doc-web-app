@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 
 import {medicalConcernsApi} from "~/services/medical-concerns/medical-concerns.api";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const medicalConcern = defineModel('medicalConcern', {
   type: [String, Array] as PropType<string[] | string>,
@@ -51,7 +52,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <UFormField :label class="w-full" name="medicalConcerns" required>
+  <FormField :label class="w-full" name="medicalConcerns" required>
     <USelect
         v-model="medicalConcern"
         :items="medicalConcernsItems"
@@ -61,7 +62,7 @@ onMounted(() => {
         :multiple
         placeholder="Sélectionnez un motif de consultation"
     />
-  </UFormField>
+  </FormField>
 </template>
 
 <style scoped>

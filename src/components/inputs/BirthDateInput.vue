@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import InputDateBase from "~/components/inputs/base/InputDateBase.vue"
+import FormField from "~/components/inputs/base/FormField.vue";
 
 // Déclaration du v-model venant du parent
 const modelValue = defineModel<string>('modelValue')
@@ -11,9 +12,9 @@ if (!modelValue.value) {
 </script>
 
 <template>
-  <UFormField label="Date de naissance" name="birthDate" required>
+  <FormField label="Date de naissance" name="birthDate" required>
     <InputDateBase v-model="modelValue" />
-  </UFormField>
+  </FormField>
 </template>
 
 <style scoped>

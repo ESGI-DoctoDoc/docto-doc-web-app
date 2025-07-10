@@ -8,6 +8,7 @@ import {
 } from "~/components/inputs/validators/doctor-absence-form.validator";
 import type {Absence} from "~/types/absence";
 import InputAreaBase from "~/components/inputs/base/InputAreaBase.vue";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const open = defineModel('open', {
   type: Boolean,
@@ -139,53 +140,53 @@ async function confirmDelete() {
 
         <h3 class="text-lg font-semibold">Jour et heures de l'absence</h3>
         <div v-if="!allDay" class="w-full flex space-x-4">
-          <UFormField class="w-2/3" label="Début" name="start" required>
+          <FormField class="w-2/3" label="Début" name="start" required>
             <UInput v-model="form.start" class="w-full" placeholder="Sélectionnez une date" type="date"/>
-          </UFormField>
-          <UFormField class="w-1/3" label="Heure" name="startHour" required>
+          </FormField>
+          <FormField class="w-1/3" label="Heure" name="startHour" required>
             <UInput
                 v-model="form.startHour"
                 class="w-full"
                 placeholder="HH:mm"
                 type="time"
             />
-          </UFormField>
+          </FormField>
         </div>
         <div v-if="!allDay" class="w-full flex space-x-4">
-          <UFormField class="w-2/3" label="Fin" name="end" required>
+          <FormField class="w-2/3" label="Fin" name="end" required>
             <UInput v-model="form.end" class="w-full" placeholder="Sélectionnez une date" type="date"/>
-          </UFormField>
-          <UFormField class="w-1/3" label="Heure" name="endHour" required>
+          </FormField>
+          <FormField class="w-1/3" label="Heure" name="endHour" required>
             <UInput
                 v-model="form.endHour"
                 class="w-full"
                 placeholder="HH:mm"
                 type="time"
             />
-          </UFormField>
+          </FormField>
         </div>
-        <UFormField v-else class="w-full" label="Jour" name="start" required>
+        <FormField v-else class="w-full" label="Jour" name="start" required>
           <UInput v-model="form.date" class="w-full" placeholder="Sélectionnez une date" type="date"/>
-        </UFormField>
+        </FormField>
         <UCheckbox v-model="allDay" label="Absence est pour la journée entière" @change="onSetFullDay()"/>
 
-        <!--        <UFormField class="w-full" label="Répéter">
+        <!--        <FormField class="w-full" label="Répéter">
                   <URadioGroup :items="items"/>
-                </UFormField>
+                </FormField>
 
-                <UFormField label="Date de fin de répétition">
+                <FormField label="Date de fin de répétition">
                   <InputDateBase/>
-                </UFormField>-->
+                </FormField>-->
 
         <h3 class="text-lg font-semibold mt-4">Motif de l'absence</h3>
-        <UFormField class="w-full" label="Description" name="description">
+        <FormField class="w-full" label="Description" name="description">
           <InputAreaBase
               v-model="form.description"
               class="w-full"
               :rows="3"
               placeholder="Entrez une description de l'absence"
           />
-        </UFormField>
+        </FormField>
 
         <h3 class="text-lg font-semibold mt-4">Prévenir les patients</h3>
         <UCheckbox

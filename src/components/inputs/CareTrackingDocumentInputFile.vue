@@ -8,6 +8,7 @@ import {
 } from "~/components/inputs/validators/Medical-record-form.validator";
 import type {FormErrorEvent, FormSubmitEvent} from "@nuxt/ui";
 import type {DocumentType} from "~/types/care-tracking";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const props = defineProps<{
   careTrackingId: string;
@@ -100,7 +101,7 @@ function onError(event: FormErrorEvent) {
         @error="onError"
         @submit="onSubmit"
     >
-      <UFormField class="text-left w-full" label="Type de document" name="type">
+      <FormField class="text-left w-full" label="Type de document" name="type">
         <USelect
             v-model="form.type"
             :items="[
@@ -113,8 +114,8 @@ function onError(event: FormErrorEvent) {
             class="w-full"
             placeholder="Sélectionnez un type de document"
         />
-      </UFormField>
-      <UFormField class="text-left" label="Fichiers" name="files">
+      </FormField>
+      <FormField class="text-left" label="Fichiers" name="files">
         <InputFileBase
             v-model:files="files"
             :max="1"
@@ -123,7 +124,7 @@ function onError(event: FormErrorEvent) {
             @on-files-selected="onFilesSelected"
             @on-delete-file="onDeleteFile"
         />
-      </UFormField>
+      </FormField>
 
       <UButton :loading="isLoading" block class="mt-4" type="submit">
         Ajouter le document

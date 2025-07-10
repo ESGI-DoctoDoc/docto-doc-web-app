@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import InputTextBase from "~/components/inputs/base/InputTextBase.vue"
+import FormField from "~/components/inputs/base/FormField.vue";
 
 const modelValue = defineModel('modelValue', {
   type: String,
@@ -9,7 +10,7 @@ const modelValue = defineModel('modelValue', {
 </script>
 
 <template>
-  <UFormField label="Email" name="email" required>
+  <FormField label="Email" name="email" required>
     <InputTextBase
         v-model="modelValue"
         name="email"
@@ -20,5 +21,5 @@ const modelValue = defineModel('modelValue', {
         variant="outline"
         color="primary"
     />
-  </UFormField>
+  </FormField>
 </template>

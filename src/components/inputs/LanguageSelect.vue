@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 
+import FormField from "~/components/inputs/base/FormField.vue";
+
 const language = defineModel('language', {
   type: Array as PropType<string[]>,
   default: 'Français',
@@ -20,7 +22,7 @@ const items = languages.map(s => ({
 </script>
 
 <template>
-  <UFormField class="w-full" label="Langue(s) parlée(s)" name="languages" required>
+  <FormField class="w-full" label="Langue(s) parlée(s)" name="languages" required>
     <USelect
         v-model="language"
         :items="items"
@@ -30,7 +32,7 @@ const items = languages.map(s => ({
         multiple
         variant="outline"
     />
-  </UFormField>
+  </FormField>
 </template>
 
 <style scoped>

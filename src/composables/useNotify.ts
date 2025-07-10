@@ -1,3 +1,5 @@
+import {useTranslate} from "~/composables/useTranslate";
+
 type NotifyOptions = {
     title: string
     description?: string
@@ -8,6 +10,7 @@ type NotifyOptions = {
 
 export const useNotify = () => {
     const toast = useToast()
+    const {translate} = useTranslate()
 
     const show = (options: NotifyOptions) => {
         toast.add({
@@ -31,7 +34,7 @@ export const useNotify = () => {
     const showError = (title: string, description?: string) => {
         show({
             title,
-            description,
+            description: description ? translate(description) : undefined,
             color: 'error',
             icon: 'i-heroicons-exclamation-triangle'
         })

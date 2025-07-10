@@ -16,6 +16,7 @@ import {messageApi} from "~/services/messages/message.api";
 import dayjs from "dayjs";
 import DocumentsPreview from "~/components/DocumentsPreview.vue";
 import CareTrackingSlideover from "~/components/slideover/CareTrackingSlideover.vue";
+import FormField from "~/components/inputs/base/FormField.vue";
 
 definePageMeta({
   title: 'Messages',
@@ -370,14 +371,14 @@ onBeforeUnmount(() => {
                 v-model:files="form.files"
                 :care-tracking-id="careTrackingDetail?.id"
             />
-            <UFormField class="text-left" name="message">
+            <FormField class="text-left" name="message">
               <InputAreaBase
                   v-model="form.message"
                   :rows="1"
                   class="flex-1"
                   placeholder="Écrivez un message..."
               />
-            </UFormField>
+            </FormField>
           </UForm>
           <UButton :loading="isLoading" form="sendMessageForm" icon="i-lucide-send" size="xl" type="submit"
                    variant="soft"/>

@@ -34,6 +34,7 @@ export interface CareTrackingDetail {
     patient: CareTrackingPatient;
     appointments: CareTrackingAppointment[]
     doctors: CareTrackingDoctor[];
+    closedAt?: string | null;
     files: string[];
     createdAt: string;
 }

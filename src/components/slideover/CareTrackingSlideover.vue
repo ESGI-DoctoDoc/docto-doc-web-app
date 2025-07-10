@@ -184,12 +184,9 @@ function toAppointment(appointment: CareTrackingAppointment): AppointmentListIte
         <UButton block color="primary" @click="$emit('on-update', props.careTracking)">
           Modifier
         </UButton>
-        <UButton block color="primary" variant="outline" @click="$emit('on-end', props.careTracking)">
+        <UButton v-if="!careTrackingDetail?.closedAt" block color="primary" variant="outline"
+                 @click="$emit('on-end', props.careTracking)">
           Fermer le suivi de dossier
-        </UButton>
-        <!--  todo handle admin       -->
-        <UButton v-if="false" block color="error" @click="$emit('on-delete', props.careTracking)">
-          Supprimer
         </UButton>
       </div>
     </template>

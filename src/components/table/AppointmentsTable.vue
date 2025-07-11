@@ -84,8 +84,28 @@ const columns: TableColumn<Appointment>[] = [
     cell: ({row}) => row.original?.medicalConcern?.name || 'Aucun motif spécifié',
   },
   {
-    accessorKey: 'status',
     header: 'Statut',
+    cell: ({row}) => {
+      const status = row.original.status
+      switch (status) {
+        case 'upcoming':
+          return 'À venir';
+        case 'confirmed':
+          return 'Confirmé';
+        case 'locked':
+          return 'Verrouillé';
+        case 'cancelled-excused':
+          return 'Annulé (excusé)';
+        case 'cancelled-unexcused':
+          return 'Annulé (non excusé)';
+        case 'completed':
+          return 'Terminé';
+        case 'waiting-room':
+          return 'En salle d’attente';
+        default:
+          return 'Inconnu';
+      }
+    }
   },
   {
     accessorKey: 'actions',

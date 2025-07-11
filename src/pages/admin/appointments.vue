@@ -46,7 +46,7 @@ async function onCancelAppointment(appointment: Appointment) {
   try {
     const instance = showCancelAppointmentReasonModal();
     const result = await instance.result as { reason: string };
-    const reason = result.reason.trim();
+    const reason = result?.reason?.trim();
     if (!reason) {
       showError('Annulation échouée', "Veuillez fournir une raison pour l'annulation.");
       return;

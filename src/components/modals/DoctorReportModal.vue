@@ -16,7 +16,6 @@ const props = defineProps<{
 }>()
 
 const {showError, handleError} = useNotify()
-const {showPopupContinueModal} = useModals()
 const {fetchDoctorReporting, fetchDoctorMedicalConcerns} = doctorsApi()
 
 const isLoading = ref(false)
@@ -44,24 +43,6 @@ async function getMedicalConcerns() {
   } finally {
     isLoading.value = false
   }
-}
-
-async function confirmRefused() {
-  const instance = showPopupContinueModal("Souhaitez-vous vraiment bannir ce médecin ?");
-  const result = await instance.result;
-  if (result) {
-    //todo call api
-  }
-}
-
-async function sendEmail() {
-  // const instance = showSendEmailModal({
-  //   email: props.doctor.email,
-  //
-  // })
-}
-
-async function sendEmailToReporter() {
 }
 
 onMounted(() => {

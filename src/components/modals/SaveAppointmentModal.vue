@@ -147,7 +147,7 @@ function onError(event: FormErrorEvent) {
 
         <h3 class="text-lg font-semibold">Lier le rendez-vous à un suivi de dossier</h3>
         <CareTrackingSelect
-            v-model="form.careTracking"
+            v-model:care-tracking="form.careTracking"
             v-model:patient-id="form.patient"
             :disabled="!!careTrackingId"
             class="w-full"

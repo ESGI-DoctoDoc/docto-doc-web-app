@@ -98,7 +98,7 @@ export const doctorAbsenceApi = () => {
 
     async function fetchAppointmentsOnDateAbsence(date: string) {
         return new RequestBuilder(BASE_API_URL)
-            .get(`/doctors/absences/appointments`)
+            .post(`/doctors/absences/appointments/date`)
             .withBody<GetAppointmentsOnDateAbsenceBody>(getAppointmentsOnDateAbsenceBodySchema)
             .withResponse<GetAppointmentsOnAbsenceResponse>(getAppointmentsOnAbsenceResponseSchema)
             .execute({
@@ -110,7 +110,7 @@ export const doctorAbsenceApi = () => {
 
     async function fetchAppointmentsOnAbsence(requestDto: GetAppointmentsOnAbsenceDto) {
         return new RequestBuilder(BASE_API_URL)
-            .get(`/doctors/absences/appointments`)
+            .post(`/doctors/absences/appointments`)
             .withBody<GetAppointmentsOnAbsenceBody>(getAppointmentsOnAbsenceBodySchema)
             .withResponse<GetAppointmentsOnAbsenceResponse>(getAppointmentsOnAbsenceResponseSchema)
             .execute({

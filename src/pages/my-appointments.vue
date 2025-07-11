@@ -46,6 +46,8 @@ async function onUpdate(form: UpdateAppointmentForm) {
       notes: form.notes,
       answers: form.answers,
     });
+    currentAppointment.value = undefined
+    openUpdateAppointment.value = false
     await getAppointments()
   } catch (error) {
     if (error instanceof Error) {

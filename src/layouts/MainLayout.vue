@@ -59,14 +59,6 @@ const checkoutLoading = ref(false)
 
 const isMobile = ref(false)
 
-onMounted(() => {
-  const checkMobile = () => {
-    isMobile.value = window.innerWidth < 1024 // arbitrary breakpoint for desktop
-  }
-  checkMobile()
-  window.addEventListener('resize', checkMobile)
-})
-
 function setDismissBanner() {
   const localStorageKey = 'dismissLicenseBanner'
   const dismissUntil = new Date()
@@ -167,10 +159,20 @@ onMounted(() => {
     verifyPayment(paymentId)
   }
 
+  // mobile detection
+  const checkMobile = () => {
+    isMobile.value = window.innerWidth < 1024 // arbitrary breakpoint for desktop
+  }
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+
   // fetch notifications every 5 minutes
   intervalId.value = setInterval(() => {
     getNotifications()
   }, 5 * 60 * 1000) // every 5 minutes
+
+  // fetch notifications
+  getNotifications()
 })
 
 onUnmounted(() => {
@@ -261,7 +263,7 @@ onUnmounted(() => {
                 </span>
               </div>
               <template #content>
-                <div class="min-w-96 p-4">
+                <div class="min-w-md p-4 max-w-md">
                   <h3 class="text-lg font-semibold mb-2">Notifications</h3>
                   <div class="flex space-x-2 mb-2">
                     <UButton
@@ -294,11 +296,13 @@ onUnmounted(() => {
                         <p v-if="notification.content" class="text-xs text-gray-600">{{ notification.content }}</p>
                         <div v-else class="text-gray-600">Pas de contenu</div>
                       </div>
-                      <UButton
-                          icon="i-heroicons-check"
-                          variant="subtle"
-                          @click="markNotificationAsRead(notification.id)"
-                      />
+                      <div v-if="notificationFilter === 'unread'">
+                        <UButton
+                            icon="i-heroicons-check"
+                            variant="subtle"
+                            @click="markNotificationAsRead(notification.id)"
+                        />
+                      </div>
                     </li>
                   </ul>
                 </div>

@@ -26,8 +26,8 @@ const form = ref<ProfileForm>({
   lastname: '',
   bio: '',
   address: '',
+  profilePictureUrl: '',
 });
-const profilePictureUrl = ref();
 
 const formattedPhone = computed(() => {
   if (!doctor.value?.phone) return '';
@@ -41,7 +41,7 @@ async function getMe() {
     form.value.lastname = doctor.value.lastName || '';
     form.value.bio = doctor.value.bio || '';
     form.value.address = doctor.value.address?.formatted || '';
-    profilePictureUrl.value = doctor.value?.profilePictureUrl || '';
+    form.value.profilePictureUrl = doctor.value.profilePictureUrl || '';
   } catch (error) {
     handleError('Erreur lors du chargement des informations du médecin', error);
   }
@@ -55,6 +55,7 @@ async function updateMe(form: ProfileForm) {
         lastname: form.lastname,
         bio: form.bio,
         address: form.address,
+        profilePictureUrl: form.profilePictureUrl,
       });
       await getMe();
       showSuccess('Informations modifiées.');
@@ -95,7 +96,7 @@ onMounted(() => {
           @submit.prevent="updateMe(form)"
       >
 
-        <AvatarFileInput v-model:avatar="profilePictureUrl" class="w-full" name="profilePictureUrl"/>
+        <AvatarFileInput v-model:avatar="form.profilePictureUrl" class="w-full" name="profilePictureUrl"/>
 
         <FormField class="w-full" label="Spécialité">
           <UInput v-model="doctor.speciality.name" class="w-full" disabled/>

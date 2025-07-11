@@ -140,6 +140,7 @@ export const doctorsApi = () => {
                     lastname: requestDto.lastname,
                     address: requestDto.address,
                     bio: requestDto.bio,
+                    profilePictureUrl: requestDto.profilePictureUrl,
                 }
             });
     }

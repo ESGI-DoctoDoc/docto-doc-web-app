@@ -194,6 +194,11 @@ async function sendMessage(formEvent: FormSubmitEvent<SendMessageForm>) {
     return;
   }
 
+  if (careTrackingDetail.value?.closedAt) {
+    showError('Erreur', 'Le suivi de dossier est fermé, vous ne pouvez pas envoyer de message.');
+    return;
+  }
+
   const userDoctorId = user?.doctor?.id;
   const doctor = careTrackingDetail.value.doctors.find(doc => doc.id === userDoctorId)
       || careTrackingDetail.value.doctors[0];
@@ -355,9 +360,14 @@ onBeforeUnmount(() => {
         </div>
 
         <!-- Input message -->
-        <div class="flex items-end space-x-2 mt-4 p-4 border-t border-t-gray-300">
-          <UButton color="neutral" icon="i-lucide-paperclip" size="xl" variant="soft"
-                   @click="showDropZone = !showDropZone"/>
+        <div class="flex items-center space-x-2 mt-4 p-4 border-t border-t-gray-300">
+          <UButton
+              :disabled="!!careTrackingDetail?.closedAt"
+              color="neutral"
+              icon="i-lucide-paperclip" size="xl"
+              variant="soft"
+              @click="showDropZone = !showDropZone"
+          />
           <UForm
               id="sendMessageForm"
               :schema="sendMessageSchema"
@@ -375,13 +385,21 @@ onBeforeUnmount(() => {
               <InputAreaBase
                   v-model="form.message"
                   :rows="1"
-                  class="flex-1"
+                  :disabled="!!careTrackingDetail?.closedAt"
                   placeholder="Écrivez un message..."
+                  class="flex-1 m-0 p-0"
               />
             </FormField>
           </UForm>
-          <UButton :loading="isLoading" form="sendMessageForm" icon="i-lucide-send" size="xl" type="submit"
-                   variant="soft"/>
+          <UButton
+              :disabled="!!careTrackingDetail?.closedAt"
+              :loading="isLoading"
+              form="sendMessageForm"
+              icon="i-lucide-send"
+              size="xl"
+              type="submit"
+              variant="soft"
+          />
         </div>
       </div>
     </div>
@@ -399,6 +417,9 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+:deep(.text-error) {
+  margin: 0 !important;
+}
 .message-content {
   white-space: pre-wrap;
   max-width: 100%;

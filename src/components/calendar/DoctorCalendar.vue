@@ -377,6 +377,7 @@ async function onShowCancel() {
 
     await cancelAppointment(currentAppointment.value.id, reason);
     showSuccess('Rendez-vous annulé avec succès');
+    await getAppointments(currentStartDate.value);
     showAppointmentDetail.value = false;
   } catch (error) {
     handleError("Erreur lors de l'annulation du rendez-vous", error)

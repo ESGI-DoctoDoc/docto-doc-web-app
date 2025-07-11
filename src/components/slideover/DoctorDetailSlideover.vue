@@ -99,7 +99,7 @@ function formatPhoneNumber(phone: string): string {
 
       <div v-else-if="doctorDetail" class="flex flex-col space-y-2">
         <div
-            v-if="!doctorDetail.isReported"
+            v-if="doctorDetail.isReported"
             class="border border-error-500 bg-error-50 text-error-900 p-4 rounded flex justify-between items-center"
         >
           <div>

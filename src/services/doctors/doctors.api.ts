@@ -154,7 +154,7 @@ export const doctorsApi = () => {
 
     async function fetchDoctorMedicalConcerns(doctorId: string) {
         return new RequestBuilder(BASE_API_URL)
-            .get(`/doctors/${doctorId}/medical-concerns`)
+            .get(`/admin/doctors/${doctorId}/medical-concerns`)
             .withResponse<GetMedicalConcernsResponse>(getMedicalConcernsResponseSchema)
             .execute();
     }

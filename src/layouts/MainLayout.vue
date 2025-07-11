@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 const route = useRoute()
 const router = useRouter()
 const {handleError, showSuccess} = useNotify()
-const {logoutUser, getUser, hasLicenseActive} = useSession()
+const {logoutUser, getUser, hasLicenseActive, setUserFromAuth} = useSession()
 const {checkoutLicense, checkoutLicenseConfirmation} = subscriptionApi();
 const {fetchNotifications, markAsReadNotification} = doctorsApi()
 

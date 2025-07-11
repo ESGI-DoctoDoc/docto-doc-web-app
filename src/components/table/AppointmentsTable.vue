@@ -56,62 +56,70 @@ const permissions = ref({
 
 const search = ref('')
 const table = ref('table')
-const columns: TableColumn<Appointment>[] = [
-  {
-    id: 'doctor',
-    header: 'Médecin',
-    accessorFn: (row) => row.doctor?.email,
-    cell: ({row}) => {
-      return row.original?.doctor?.email || 'Aucun médecin assigné';
+const computedColumns = computed<TableColumn<Appointment>[]>(() => {
+  const baseColumns: TableColumn<Appointment>[] = [
+    {
+      id: 'doctor',
+      header: 'Médecin',
+      accessorFn: (row) => row.doctor?.email,
+      cell: ({row}) => {
+        return row.original?.doctor?.email || 'Aucun médecin assigné';
+      },
     },
-  },
-  {
-    accessorKey: 'patient',
-    header: 'Nom du patient',
-    accessorFn: (row) => row.patient?.name,
-    cell: ({row}) => `${row.original.patient.name}`,
-  },
-  {
-    accessorKey: 'start',
-    header: 'Date',
-    cell: ({row}) => {
-      return dayjs(row.original.start).format('DD/MM/YYYY') + ' ' + row.original.startHour;
-    }
-  },
-  {
-    accessorKey: 'medicalConcern',
-    header: 'Motif de consultation',
-    cell: ({row}) => row.original?.medicalConcern?.name || 'Aucun motif spécifié',
-  },
-  {
-    header: 'Statut',
-    cell: ({row}) => {
-      const status = row.original.status
-      switch (status) {
-        case 'upcoming':
-          return 'À venir';
-        case 'confirmed':
-          return 'Confirmé';
-        case 'locked':
-          return 'Verrouillé';
-        case 'cancelled-excused':
-          return 'Annulé (excusé)';
-        case 'cancelled-unexcused':
-          return 'Annulé (non excusé)';
-        case 'completed':
-          return 'Terminé';
-        case 'waiting-room':
-          return 'En salle d’attente';
-        default:
-          return 'Inconnu';
+    {
+      accessorKey: 'patient',
+      header: 'Nom du patient',
+      accessorFn: (row) => row.patient?.name,
+      cell: ({row}) => `${row.original.patient.name}`,
+    },
+    {
+      accessorKey: 'start',
+      header: 'Date',
+      cell: ({row}) => {
+        return dayjs(row.original.start).format('DD/MM/YYYY') + ' ' + row.original.startHour;
       }
-    }
-  },
-  {
-    accessorKey: 'actions',
-    header: 'Actions',
-  },
-];
+    },
+    {
+      accessorKey: 'medicalConcern',
+      header: 'Motif de consultation',
+      cell: ({row}) => row.original?.medicalConcern?.name || 'Aucun motif spécifié',
+    },
+    {
+      header: 'Statut',
+      cell: ({row}) => {
+        const status = row.original.status
+        switch (status) {
+          case 'upcoming':
+            return 'À venir';
+          case 'confirmed':
+            return 'Confirmé';
+          case 'locked':
+            return 'Verrouillé';
+          case 'cancelled-excused':
+            return 'Annulé (excusé)';
+          case 'cancelled-unexcused':
+            return 'Annulé (non excusé)';
+          case 'completed':
+            return 'Terminé';
+          case 'waiting-room':
+            return 'En salle d’attente';
+          default:
+            return 'Inconnu';
+        }
+      }
+    },
+  ];
+
+  const showActions = getUser()?.user.role !== 'admin';
+  if (showActions) {
+    baseColumns.push({
+      accessorKey: 'actions',
+      header: 'Actions',
+    });
+  }
+
+  return baseColumns;
+});
 
 function onSelect(row: TableRow<Appointment>) {
   const patient = props.data[row.index];
@@ -209,7 +217,7 @@ async function onSearch() {
       <UTable
           ref="table"
           empty="Liste vide"
-          :columns="columns"
+          :columns="computedColumns"
           :data="tableData"
           sticky
           @select="onSelect"

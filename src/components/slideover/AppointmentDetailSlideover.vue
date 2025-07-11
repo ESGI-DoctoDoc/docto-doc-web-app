@@ -172,10 +172,6 @@ function formatPhoneNumber(phone: string): string {
           <div>Statut</div>
           <div>{{ formattedStatus }}</div>
         </div>
-        <div v-if="appointmentDetail.doctorNotes" class="flex justify-between space-y-1">
-          <div>Notes</div>
-          <div>{{ appointmentDetail.doctorNotes }}</div>
-        </div>
         <div class="flex justify-between space-y-1">
           <div>Note du médecin</div>
           <div>{{ appointmentDetail.doctorNotes ?? 'Pas de note.' }}</div>

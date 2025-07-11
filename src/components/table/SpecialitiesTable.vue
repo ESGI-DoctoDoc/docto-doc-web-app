@@ -37,11 +37,6 @@ const search = ref('')
 const table = ref('table')
 const columns: TableColumn<Speciality>[] = [
   {
-    id: 'id',
-    header: 'ID',
-    accessorKey: 'id',
-  },
-  {
     id: 'name',
     header: 'Nom',
     accessorKey: 'name',

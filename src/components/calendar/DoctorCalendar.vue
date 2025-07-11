@@ -22,6 +22,7 @@ import type {Appointment} from '~/types/appointment';
 import type {ContextMenuItem} from "#ui/components/ContextMenu.vue";
 import dayjs from "dayjs";
 import {useGlobalRequestApi} from "~/services/global-request.api";
+import {useSession} from "~/composables/auth/useSession";
 
 const props = defineProps({
   events: {
@@ -41,6 +42,7 @@ const {createAbsence, getAbsences, updateAbsence} = doctorAbsenceApi();
 const {createAppointment, cancelAppointment, updateAppointment, fetchAppointments, endAppointment} = appointmentApi();
 const {mapDoctorAbsenceToCalendarEvent, mapAppointmentToCalendarEvent} = useCalendar()
 const {deleteByPath} = useGlobalRequestApi()
+const {getUser} = useSession()
 
 const calendarRef = useTemplateRef('calendarRef');
 
@@ -58,7 +60,11 @@ const currentAppointment = ref<Appointment | null>(null);
 const selectedHours = ref<[string, string, string]>(); // [date, startHour, endHour]
 const items = [
   {label: 'Créer une absence', onSelect: () => onActions('absence')},
-  {label: 'Prendre un rendez-vous', onSelect: () => onActions('appointment')}
+  {
+    label: 'Prendre un rendez-vous',
+    onSelect: () => onActions('appointment'),
+    disabled: !getUser()?.doctor?.isLicenseActivated
+  }
 ] satisfies ContextMenuItem[];
 
 const calendarOptions = ref<CalendarOptions>({
@@ -319,7 +325,7 @@ async function onCreateAppointment(form: CreateAppointmentForm) {
     });
     showSuccess('Rendez-vous créé avec succès');
     showCreateAppointment.value = false;
-    // TODO: rafraîchir les événements du calendrier si besoin
+    await getAppointments(currentStartDate.value);
   } catch (error) {
     handleError("Erreur lors de la création du rendez-vous", error)
   } finally {

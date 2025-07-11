@@ -14,6 +14,15 @@ import {
     type GetDoctorAbsencesResponse,
     getDoctorAbsencesResponseSchema
 } from "~/services/absences/dto/get-absences.dto";
+import {
+    type GetAppointmentsOnAbsenceBody,
+    getAppointmentsOnAbsenceBodySchema,
+    type GetAppointmentsOnAbsenceDto,
+    type GetAppointmentsOnAbsenceResponse,
+    getAppointmentsOnAbsenceResponseSchema,
+    type GetAppointmentsOnDateAbsenceBody,
+    getAppointmentsOnDateAbsenceBodySchema
+} from "~/services/absences/dto/get-appointments.dto";
 
 
 export const doctorAbsenceApi = () => {
@@ -87,9 +96,38 @@ export const doctorAbsenceApi = () => {
             });
     }
 
+    async function fetchAppointmentsOnDateAbsence(date: string) {
+        return new RequestBuilder(BASE_API_URL)
+            .get(`/doctors/absences/appointments`)
+            .withBody<GetAppointmentsOnDateAbsenceBody>(getAppointmentsOnDateAbsenceBodySchema)
+            .withResponse<GetAppointmentsOnAbsenceResponse>(getAppointmentsOnAbsenceResponseSchema)
+            .execute({
+                body: {
+                    date: date
+                }
+            });
+    }
+
+    async function fetchAppointmentsOnAbsence(requestDto: GetAppointmentsOnAbsenceDto) {
+        return new RequestBuilder(BASE_API_URL)
+            .get(`/doctors/absences/appointments`)
+            .withBody<GetAppointmentsOnAbsenceBody>(getAppointmentsOnAbsenceBodySchema)
+            .withResponse<GetAppointmentsOnAbsenceResponse>(getAppointmentsOnAbsenceResponseSchema)
+            .execute({
+                body: {
+                    start: requestDto.start,
+                    startHour: requestDto.startHour,
+                    end: requestDto.end,
+                    endHour: requestDto.endHour
+                }
+            });
+    }
+
     return {
         createAbsence,
         updateAbsence,
-        getAbsences
+        getAbsences,
+        fetchAppointmentsOnDateAbsence,
+        fetchAppointmentsOnAbsence,
     };
 }

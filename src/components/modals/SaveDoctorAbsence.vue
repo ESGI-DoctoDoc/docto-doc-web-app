@@ -9,6 +9,7 @@ import {
 import type {Absence} from "~/types/absence";
 import InputAreaBase from "~/components/inputs/base/InputAreaBase.vue";
 import FormField from "~/components/inputs/base/FormField.vue";
+import {doctorAbsenceApi} from "~/services/absences/doctorAbsenceApi";
 
 const open = defineModel('open', {
   type: Boolean,
@@ -25,7 +26,7 @@ const emit = defineEmits<{
   (e: 'on-delete', id: string): void;
 }>()
 
-// const {} = doctorAbsenceApi(); //todo add 2 methods to check if absence overlaps with slots or appointments
+const {fetchAppointmentsOnDateAbsence, fetchAppointmentsOnAbsence} = doctorAbsenceApi();
 const {showPopupContinueModal} = useModals()
 const {showError} = useNotify()
 
@@ -45,13 +46,16 @@ const warningAppointments = ref<{ start: string, startHour: string, patient: { n
 
 async function checkIfAbsenceOverlapsAppointment() {
   if (allDay.value && form.value.date) {
-    // const data = {};
     showAppointmentWarning.value = true;
-    warningAppointments.value = [];
+    warningAppointments.value = await fetchAppointmentsOnDateAbsence(form.value.date);
   } else if (form.value.start && form.value.startHour && form.value.end && form.value.endHour) {
-    // const data = {};
     showAppointmentWarning.value = true;
-    warningAppointments.value = [];
+    warningAppointments.value = await fetchAppointmentsOnAbsence({
+      start: form.value.start,
+      startHour: form.value.startHour,
+      end: form.value.end,
+      endHour: form.value.endHour
+    });
   } else {
     showAppointmentWarning.value = false;
     warningAppointments.value = []
@@ -126,8 +130,10 @@ async function confirmDelete() {
           @error="onError"
           @submit.prevent="onSubmit"
       >
-        <div v-if="showAppointmentWarning && warningAppointments && warningAppointments.length > 0"
-             class="flex flex-col space-y-2 bg-yellow-100 text-yellow-800 p-4 rounded border border-yellow-300 mb-4">
+        <div
+            v-if="showAppointmentWarning && warningAppointments && warningAppointments.length > 0"
+            class="flex flex-col space-y-2 bg-yellow-100 text-yellow-800 p-4 rounded border border-yellow-300 mb-4"
+        >
           <div
               v-for="appointment in warningAppointments"
               :key="appointment.start + appointment.startHour"

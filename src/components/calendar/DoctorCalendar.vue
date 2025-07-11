@@ -302,7 +302,7 @@ async function onUpdateAbsence(form: CreateDoctorAbsenceForm) {
       description: form.description,
     });
     await fetchAbsences();
-    showSuccess('Absence créée avec succès');
+    showSuccess('Absence mise à jour avec succès');
     showCreateAbsence.value = false;
   } catch (error) {
     handleError("Erreur lors de la création de l'absence", error)

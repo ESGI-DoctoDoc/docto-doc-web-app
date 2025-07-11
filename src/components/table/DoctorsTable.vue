@@ -11,7 +11,7 @@ const props = defineProps<{
   loading: boolean
 }>()
 
-const emits = defineEmits(['onDetail', 'onLoadMore', 'onCoverage'])
+const emits = defineEmits(['onDetail', 'onLoadMore', 'onCoverage', 'onShowRecruitment'])
 const tableBodyRef = ref<HTMLElement | null>(null)
 
 const {handleError} = useNotify()
@@ -114,12 +114,20 @@ async function onSearch() {
         @update:search="onSearch()"
     >
       <template #left>
-        <UButton
-            icon="i-heroicons-chart-bar-20-solid"
-            label="Voir la couverture"
-            variant="subtle"
-            @click="$emit('onCoverage')"
-        />
+        <div class="flex space-x-2">
+          <UButton
+              icon="i-heroicons-chart-bar-20-solid"
+              label="Voir la couverture"
+              variant="ghost"
+              @click="$emit('onCoverage')"
+          />
+          <UButton
+              icon="i-heroicons-user-plus"
+              label="À recruter"
+              variant="subtle"
+              @click="$emit('onShowRecruitment')"
+          />
+        </div>
       </template>
     </TableHeaderDefault>
 

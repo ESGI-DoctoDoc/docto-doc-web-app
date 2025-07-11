@@ -28,6 +28,7 @@ import {
     getMedicalConcernsResponseSchema
 } from "~/services/medical-concerns/dto/get-medical-concers.dto";
 import {useSession} from "~/composables/auth/useSession";
+import {type GetRecruitmentResponse, getRecruitmentResponseSchema} from "~/services/doctors/dto/get-recruitment.dto";
 
 export const doctorsApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
@@ -171,6 +172,13 @@ export const doctorsApi = () => {
             });
     }
 
+    async function fetchDoctorRecruitments() {
+        return new RequestBuilder(BASE_API_URL)
+            .get('/admin/recruitments/doctors')
+            .withResponse<GetRecruitmentResponse>(getRecruitmentResponseSchema)
+            .execute();
+    }
+
     return {
         fetchDoctors,
         fetchDoctorById,
@@ -185,5 +193,6 @@ export const doctorsApi = () => {
         fetchDoctorReporting,
         fetchDoctorMedicalConcerns,
         searchDoctorsByName,
+        fetchDoctorRecruitments,
     }
 }

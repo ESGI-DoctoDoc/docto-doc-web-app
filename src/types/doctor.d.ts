@@ -70,3 +70,10 @@ export interface DoctorReporting {
     status: 'pending' | 'resolved' | 'rejected';
     createdAt: string;
 }
+
+export interface DoctorRecruitment {
+    id: string;
+    firstName: string;
+    lastName: string;
+    createdAt: string;
+}

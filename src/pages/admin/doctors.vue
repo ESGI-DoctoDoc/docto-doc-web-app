@@ -7,6 +7,7 @@ import DoctorDetailSlideover from "~/components/slideover/DoctorDetailSlideover.
 import DoctorsTable from "~/components/table/DoctorsTable.vue";
 import DoctorConfirmationModal from "~/components/modals/DoctorConfirmationModal.vue";
 import DoctorReportModal from "~/components/modals/DoctorReportModal.vue";
+import DoctorRecruitmentModal from "~/components/modals/DoctorRecruitmentModal.vue";
 
 definePageMeta({
   title: 'Tous les medécins',
@@ -23,6 +24,7 @@ const doctors = ref<Doctor[]>([])
 const currentDoctor = ref<Doctor>()
 const openDoctorDetail = ref(false)
 const openVerification = ref(false)
+const openRecruitment = ref(false)
 const openReport = ref(false)
 
 async function getDoctors() {
@@ -47,6 +49,10 @@ function onShowDetail(doctor: Doctor) {
 function onShowVerification(doctor: Doctor) {
   currentDoctor.value = doctor
   openVerification.value = true
+}
+
+function onShowRecruitments() {
+  openRecruitment.value = true
 }
 
 function onShowReport(doctor: Doctor) {
@@ -107,6 +113,7 @@ onMounted(() => {
         @on-detail="onShowDetail"
         @on-load-more="onLoadMore"
         @on-coverage="navigateTo('/admin/doctors/coverage')"
+        @on-show-recruitment="onShowRecruitments"
     />
 
     <DoctorDetailSlideover
@@ -130,6 +137,12 @@ onMounted(() => {
         v-model:open="openReport"
         :doctor="currentDoctor"
         @on-close="openReport = false; currentDoctor = undefined"
+    />
+
+    <DoctorRecruitmentModal
+        v-if="openRecruitment"
+        v-model:open="openRecruitment"
+        @on-close="openRecruitment = false"
     />
   </div>
 </template>

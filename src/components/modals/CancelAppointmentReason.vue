@@ -10,9 +10,10 @@ const emit = defineEmits(['close'])
 
 const reason = ref('')
 const reasons = [
-  {label: 'Raisons personnelles', value: 'personal'},
-  {label: 'Problème de santé', value: 'health'},
-  {label: 'Autre', value: 'other'}
+  {label: 'Raisons personnelles', value: 'Raisons personnelles'},
+  {label: 'Problème de santé', value: 'Problème de santé'},
+  {label: 'Le patient a souhaité annuler', value: 'Le patient a souhaité annuler'},
+  {label: 'Autre', value: 'Autre'}
 ]
 
 function confirm() {

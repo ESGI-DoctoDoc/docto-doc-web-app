@@ -18,7 +18,7 @@ definePageMeta({
 
 const {retrieveDeeplinkId, retrieveDeeplinkFilter, filterDeeplinkToQuery, resetDeeplink} = useDeeplink()
 const {showError, showSuccess, handleError} = useNotify()
-const {fetchAppointments, updateAppointment, cancelAppointment} = appointmentApi()
+const {fetchAppointments, updateAppointment, cancelAppointment, endAppointment} = appointmentApi()
 const {showCancelAppointmentReasonModal} = useModals()
 const {nextPage, resetPagination} = usePagination()
 
@@ -146,6 +146,24 @@ async function onLoadMore(stopLoading: () => void) {
   }
 }
 
+async function onEndAppointment() {
+  if (!currentAppointment.value) {
+    showError('Aucun rendez-vous sélectionné pour la fin');
+    return;
+  }
+
+  isLoading.value = true;
+  try {
+    await endAppointment(currentAppointment.value.id);
+    await getAppointments();
+    openAppointmentDetail.value = false;
+  } catch (error) {
+    handleError("Erreur lors de la fin du rendez-vous", error)
+  } finally {
+    isLoading.value = false;
+  }
+}
+
 onMounted(() => {
   resetPagination();
   const appointmentId = retrieveDeeplinkId()
@@ -189,6 +207,7 @@ onMounted(() => {
         @on-close="onClose()"
         @on-update="onShowUpdate($event)"
         @on-cancel="onShowCancel"
+        @on-end="onEndAppointment"
     />
   </div>
 </template>

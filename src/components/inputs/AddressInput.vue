@@ -36,6 +36,14 @@ watch(searchTerm, (term) => {
     suggestions.value = []
   }
 })
+
+onMounted(() => {
+  if (modelValue.value) {
+    searchTerm.value = modelValue.value
+    fetchAddresses(modelValue.value)
+  }
+})
+
 </script>
 
 <template>

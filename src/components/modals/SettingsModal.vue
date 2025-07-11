@@ -8,6 +8,7 @@ import {type ProfileForm, profileSchema} from "~/components/inputs/validators/us
 import type {FormErrorEvent} from "@nuxt/ui";
 import AvatarFileInput from "~/components/inputs/AvatarFileInput.vue";
 import FormField from "~/components/inputs/base/FormField.vue";
+import AddressInput from "~/components/inputs/AddressInput.vue";
 
 const open = defineModel('open', {
   type: Boolean,
@@ -36,6 +37,10 @@ const formattedPhone = computed(() => {
 async function getMe() {
   try {
     doctor.value = await fetchDoctorProfile();
+    form.value.firstname = doctor.value.firstName || '';
+    form.value.lastname = doctor.value.lastName || '';
+    form.value.bio = doctor.value.bio || '';
+    form.value.address = doctor.value.address?.formatted || '';
     profilePictureUrl.value = doctor.value?.profilePictureUrl || '';
   } catch (error) {
     handleError('Erreur lors du chargement des informations du médecin', error);
@@ -97,10 +102,10 @@ onMounted(() => {
         </FormField>
         <div class="flex flex-row gap-4">
           <FormField class="w-1/2" label="Prénom">
-            <UInput v-model="doctor.firstName" class="w-full"/>
+            <UInput v-model="form.firstname" class="w-full"/>
           </FormField>
           <FormField class="w-1/2" label="Nom">
-            <UInput v-model="doctor.lastName" class="w-full"/>
+            <UInput v-model="form.lastname" class="w-full"/>
           </FormField>
         </div>
         <FormField label="Email">
@@ -109,12 +114,10 @@ onMounted(() => {
         <FormField label="Téléphone">
           <UInput :model-value="formattedPhone" class="w-full text-left" disabled/>
         </FormField>
-        <FormField v-if="doctor.address" label="Adresse">
-          <UInput v-model="doctor.address.formatted" class="w-full text-left"/>
-        </FormField>
+        <AddressInput v-model="form.address" class="w-full"/>
         <FormField label="Biographie">
           <UTextarea
-              v-model="doctor.bio" :rows="4" class="w-full text-left"
+              v-model="form.bio" :rows="4" class="w-full text-left"
               placeholder="Parlez-nous de vous..."
           />
         </FormField>

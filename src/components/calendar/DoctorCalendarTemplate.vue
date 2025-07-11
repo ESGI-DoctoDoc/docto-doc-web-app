@@ -205,12 +205,13 @@ async function fetchSlots(start?: string) {
   }
 }
 
-async function onDelete(slotId: string) {
+async function onDelete(form: { allSlot: boolean, id: string }) {
   loading.value = true;
   try {
-    await deleteSlot(slotId);
+    await deleteSlot(form.id, form.allSlot);
     showSuccess('Créneau supprimé avec succès');
     currentSlotDetail.value = undefined;
+    showEventDetail.value = false;
     await fetchSlots(currentStartDate.value);
   } catch (error) {
     if (error instanceof Error) {

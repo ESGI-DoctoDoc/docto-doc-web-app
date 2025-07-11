@@ -130,10 +130,16 @@ export const slotApi = () => {
         }
     }
 
-    function deleteSlot(id: string) {
-        return new RequestBuilder(BASE_API_URL)
-            .delete(`/doctors/slots/${id}`)
-            .execute();
+    function deleteSlot(id: string, allSlot: boolean) {
+        if (allSlot) {
+            return new RequestBuilder(BASE_API_URL)
+                .delete(`/doctors/slots/${id}/recurrence`)
+                .execute();
+        } else {
+            return new RequestBuilder(BASE_API_URL)
+                .delete(`/doctors/slots/${id}`)
+                .execute();
+        }
     }
 
 

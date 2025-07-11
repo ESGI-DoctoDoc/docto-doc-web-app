@@ -13,10 +13,14 @@ const props = defineProps<{
   slotId: string
 }>()
 
-const emits = defineEmits(['on-close', 'on-update', 'on-delete'])
+const emit = defineEmits<{
+  (e: 'on-close' | 'on-cancel'): void;
+  (e: 'on-update', slotDetail: SlotDetail | undefined): void;
+  (e: 'on-delete', formData: { allSlot: boolean, id: string }): void;
+}>()
 
 
-const {showPopupContinueModal} = useModals();
+const {showPopupContinueModal, showUpdateOneOrAllSlot} = useModals();
 const {showError} = useNotify()
 const {getSlotById} = slotApi();
 
@@ -67,10 +71,30 @@ function formatDay(day: string): string {
 }
 
 async function onConfirmDeleteSlot() {
-  const instance = showPopupContinueModal('Confirmer la suppression');
-  const result = await instance.result;
-  if (result) {
-    emits('on-delete', props.slotId);
+  if (!slotDetail.value) {
+    showError('Aucun slot sélectionné', 'Veuillez sélectionner un slot pour le supprimer.');
+    return;
+  }
+
+  if (slotDetail.value.recurrence !== 'none') {
+    const instance = showUpdateOneOrAllSlot("Voulez-vous supprimer cette plage d'ouverture pour tous les créneaux récurrents ?");
+    const result = await instance.result;
+    if (result?.cancel === true || !result) {
+      emit('on-cancel');
+      return;
+    }
+
+    if (result?.allSlot === true) {
+      emit('on-delete', {allSlot: true, id: slotDetail.value.id});
+    } else {
+      emit('on-delete', {allSlot: false, id: slotDetail.value.id});
+    }
+  } else {
+    const instance = showPopupContinueModal("Voulez-vous modifier cette plage d'ouverture ?");
+    const result = await instance.result;
+    if (result) {
+      emit('on-delete', {allSlot: false, id: slotDetail.value.id});
+    }
   }
 }
 

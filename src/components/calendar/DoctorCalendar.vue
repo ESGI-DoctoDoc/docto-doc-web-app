@@ -508,6 +508,7 @@ onMounted(async () => {
         v-if="currentAppointment && showUpdateAppointment"
         v-model:open="showUpdateAppointment"
         :appointment="currentAppointment"
+        :patient-id="currentAppointment.patient.id"
         @on-submit="onUpdateAppointment"
     />
     <AppointmentDetailSlideover

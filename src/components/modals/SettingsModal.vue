@@ -133,6 +133,7 @@ onMounted(() => {
             block
             class="mt-4 w-full"
             color="primary"
+            type="submit"
         >
           Enregistrer les modifications
         </UButton>

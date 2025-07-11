@@ -44,6 +44,7 @@ export interface CareTracking {
     name: string;
     description?: string | null;
     patient: CareTrackingPatient;
+    owner: CareTrackingDoctor;
     closedAt?: string | null;
     createdAt: string;
 }

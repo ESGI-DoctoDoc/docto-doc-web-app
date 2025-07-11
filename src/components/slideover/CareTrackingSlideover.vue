@@ -3,11 +3,13 @@ import type {CareTracking, CareTrackingAppointment, CareTrackingDetail} from '~/
 import {careTrackingApi} from "~/services/care-tracking/care-tracking.api";
 import CareTrackingDocumentInputFile from "~/components/inputs/CareTrackingDocumentInputFile.vue";
 import AppointmentListItem, {type AppointmentListItemType} from "~/components/appointments/AppointmentListItem.vue";
+import {useSession} from "~/composables/auth/useSession";
 
 const isOpen = defineModel('open', {type: Boolean, required: true});
 const props = defineProps<{ careTracking: CareTracking, readonly?: boolean }>();
 defineEmits(['on-close', 'on-update', 'on-end', 'on-delete', 'on-add-appointment']);
 
+const {getUser} = useSession()
 const {showError, handleError} = useNotify();
 const {fetchCareTrackingById} = careTrackingApi();
 
@@ -17,6 +19,10 @@ const careTrackingDetail = ref<CareTrackingDetail>();
 
 const fileInput = ref<InstanceType<typeof CareTrackingDocumentInputFile>>();
 
+const isOwner = computed(() => {
+  const user = getUser();
+  return props.careTracking?.owner?.id === user?.doctor?.id;
+});
 async function getCareTrackingDetails() {
   loading.value = true;
 
@@ -180,15 +186,22 @@ function toAppointment(appointment: CareTrackingAppointment): AppointmentListIte
       </div>
     </template>
     <template #footer>
-      <div v-if="!readonly" class="fit flex flex-col space-y-2">
-        <UButton block color="primary" @click="$emit('on-update', props.careTracking)">
-          Modifier
-        </UButton>
-        <UButton v-if="!careTrackingDetail?.closedAt" block color="primary" variant="outline"
-                 @click="$emit('on-end', props.careTracking)">
-          Fermer le suivi de dossier
-        </UButton>
-      </div>
+      <template v-if="isOwner">
+        <div v-if="!readonly" class="fit flex flex-col space-y-2">
+          <UButton block color="primary" @click="$emit('on-update', props.careTracking)">
+            Modifier
+          </UButton>
+          <UButton
+              v-if="!careTrackingDetail?.closedAt"
+              block
+              color="primary"
+              variant="outline"
+              @click="$emit('on-end', props.careTracking)"
+          >
+            Fermer le suivi de dossier
+          </UButton>
+        </div>
+      </template>
     </template>
   </USlideover>
 </template>

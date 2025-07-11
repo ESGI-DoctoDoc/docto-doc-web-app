@@ -58,23 +58,23 @@ const columns: TableColumn<CareTracking>[] = [
 ]
 
 function getCareTrackingOptions(row: CareTracking) {
-  return [
-    {
-      label: 'Voir les messages',
-      icon: 'i-lucide-message-square',
-      onClick: () => emits('onMessage', row)
-    },
-    {
+  const options = [{
+    label: 'Voir les messages',
+    icon: 'i-lucide-message-square',
+    onClick: () => emits('onMessage', row)
+  }];
+
+  const user = getUser();
+  const isOwner = row?.owner?.id === user?.doctor?.id;
+  if (isOwner) {
+    options.push({
       label: 'Modifier le suivi',
       icon: 'i-lucide-edit',
       onClick: () => emits('onUpdate', row)
-    },
-    // {
-    //   label: 'Retirer le suivi',
-    //   icon: 'i-lucide-trash-2',
-    //   onClick: () => emits('onRemove', row)
-    // }
-  ]
+    })
+  }
+
+  return options;
 }
 
 function onAddClick() {

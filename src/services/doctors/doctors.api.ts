@@ -27,6 +27,7 @@ import {
     type GetMedicalConcernsResponse,
     getMedicalConcernsResponseSchema
 } from "~/services/medical-concerns/dto/get-medical-concers.dto";
+import {useSession} from "~/composables/auth/useSession";
 
 export const doctorsApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`;
@@ -102,16 +103,31 @@ export const doctorsApi = () => {
     }
 
     async function fetchNotifications() {
-        return new RequestBuilder(BASE_API_URL)
-            .get('/doctors/notifications')
-            .withResponse<FetchNotificationsResponse>(fetchNotificationsResponseSchema)
-            .execute();
+        const {getUser} = useSession()
+        if (getUser()?.user?.role === 'admin') {
+            return new RequestBuilder(BASE_API_URL)
+                .get('/admin/notifications')
+                .withResponse<FetchNotificationsResponse>(fetchNotificationsResponseSchema)
+                .execute();
+        } else {
+            return new RequestBuilder(BASE_API_URL)
+                .get('/doctors/notifications')
+                .withResponse<FetchNotificationsResponse>(fetchNotificationsResponseSchema)
+                .execute();
+        }
     }
 
     async function markAsReadNotification(notificationId: string) {
-        return new RequestBuilder(BASE_API_URL)
-            .patch(`/doctors/notifications/${notificationId}/read`)
-            .execute();
+        const {getUser} = useSession()
+        if (getUser()?.user?.role === 'admin') {
+            return new RequestBuilder(BASE_API_URL)
+                .patch(`/admin/notifications/${notificationId}/read`)
+                .execute();
+        } else {
+            return new RequestBuilder(BASE_API_URL)
+                .patch(`/doctors/notifications/${notificationId}/read`)
+                .execute();
+        }
     }
 
     async function updateDoctorProfile(requestDto: UpdateDoctorProfile) {

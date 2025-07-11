@@ -23,6 +23,10 @@ const isOwner = computed(() => {
   const user = getUser();
   return props.careTracking?.owner?.id === user?.doctor?.id;
 });
+const isEnded = computed(() => {
+  return !!careTrackingDetail.value?.closedAt;
+});
+
 async function getCareTrackingDetails() {
   loading.value = true;
 
@@ -122,7 +126,7 @@ function toAppointment(appointment: CareTrackingAppointment): AppointmentListIte
         <!-- Rendez-vous       -->
         <div class="flex justify-between items-baseline pt-6">
           <h3 class="text-lg font-semibold">Tous les rendez-vous</h3>
-          <div v-if="!readonly">
+          <div v-if="!readonly && !isEnded">
             <UButton
                 color="primary"
                 label="Ajouter un rendez-vous"
@@ -164,7 +168,7 @@ function toAppointment(appointment: CareTrackingAppointment): AppointmentListIte
         <div class="flex justify-between items-baseline pt-6">
           <h3 class="text-lg font-semibold">Documents</h3>
           <UModal v-model:open="addDocumentModal" close title="Ajouter des fichiers">
-            <UButton color="primary" size="sm" variant="outline">
+            <UButton v-if="!isEnded" color="primary" size="sm" variant="outline">
               Ajouter un fichier
             </UButton>
             <template #body>

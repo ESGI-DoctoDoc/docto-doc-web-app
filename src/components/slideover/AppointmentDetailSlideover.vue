@@ -176,6 +176,17 @@ function formatPhoneNumber(phone: string): string {
           <div>Notes</div>
           <div>{{ appointmentDetail.doctorNotes }}</div>
         </div>
+        <div class="flex justify-between space-y-1">
+          <div>Note du médecin</div>
+          <div>{{ appointmentDetail.doctorNotes ?? 'Pas de note.' }}</div>
+        </div>
+
+        <h2 v-if="appointmentDetail?.careTracking?.id" class="pt-6 text-xl font-medium">Suivi de dossier</h2>
+        <AppDivider v-if="appointmentDetail?.careTracking?.id" class="w-full pb-4 pt-2"/>
+        <div v-if="appointmentDetail?.careTracking?.id" class="flex justify-between space-y-1">
+          <div>Nom du suivi</div>
+          <div>{{ appointmentDetail.careTracking?.name }}</div>
+        </div>
       </div>
     </template>
     <template #footer>

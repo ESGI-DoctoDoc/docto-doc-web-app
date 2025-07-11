@@ -33,6 +33,10 @@ const permissions = ref({
 
 const isCancelled = computed(() => appointmentDetail.value?.status === 'cancelled-excused' || appointmentDetail.value?.status === 'cancelled-unexcused');
 const isEnded = computed(() => appointmentDetail.value?.status === 'completed');
+const isToday = computed(() => {
+  const start = appointmentDetail.value?.start;
+  return dayjs(start).isSame(dayjs(), 'day');
+});
 const isAdmin = computed(() => {
   const user = getUser();
   return user?.user.role === 'admin';
@@ -196,7 +200,7 @@ function formatPhoneNumber(phone: string): string {
           Modifier
         </UButton>
         <UButton
-            v-if="!isEnded && !isCancelled && !isAdmin"
+            v-if="!isEnded && !isCancelled && !isAdmin && isToday"
             block
             color="primary"
             variant="subtle"

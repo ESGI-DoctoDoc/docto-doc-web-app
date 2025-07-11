@@ -55,7 +55,7 @@ async function updateMe(form: ProfileForm) {
         lastname: form.lastname,
         bio: form.bio,
         address: form.address,
-        profilePictureUrl: form.profilePictureUrl,
+        profilePictureUrl: form.profilePictureUrl?.startsWith('doctors/') ? null : form.profilePictureUrl,
       });
       await getMe();
       showSuccess('Informations modifiées.');

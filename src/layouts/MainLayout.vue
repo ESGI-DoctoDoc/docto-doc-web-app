@@ -324,7 +324,7 @@ onUnmounted(() => {
                     :src="avatarUrl"
                     class="border border-gray-300"
                 />
-                <span class="text-gray-700">{{ fullName }}</span>
+                <span class="text-gray-700 capitalize">{{ fullName }}</span>
                 <UButton icon="i-heroicons-chevron-down" variant="ghost"/>
               </div>
             </UDropdownMenu>

@@ -5,7 +5,7 @@ export interface UpdateDoctorProfile {
     lastname: string;
     address: string;
     bio: string;
-    profilePictureUrl?: string;
+    profilePictureUrl?: string | null;
 }
 
 export const updateDoctorBodySchema = z.object({
@@ -13,6 +13,6 @@ export const updateDoctorBodySchema = z.object({
     lastname: z.string(),
     address: z.string(),
     bio: z.string(),
-    profilePictureUrl: z.string().optional(),
+    profilePictureUrl: z.string().nullable().optional(),
 })
 export type UpdateDoctorBody = z.infer<typeof updateDoctorBodySchema>;

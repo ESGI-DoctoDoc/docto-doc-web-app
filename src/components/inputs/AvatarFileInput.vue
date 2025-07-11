@@ -74,7 +74,7 @@ onMounted(() => {
         <InputFileBase
             v-model:files="files"
             v-model:loading="isLoading"
-            :max="3"
+            :max="1"
             :types="['image/*']"
             @on-files-selected="onUploadFiles($event)"
             @on-delete-file="onDeleteFile($event)"

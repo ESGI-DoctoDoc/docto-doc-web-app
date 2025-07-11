@@ -18,7 +18,7 @@ const {deleteFile} = useMediaApi()
 const {showError, handleError} = useNotify()
 const {uploadMessageFiles} = careTrackingApi();
 
-const files = ref<{ url: string, id: string }[]>([]);
+const files = ref<{ url: string, id: string, name?: string }[]>([]);
 const isLoading = ref(false);
 
 async function onUploadFiles(filesToUpload: File[]) {
@@ -35,10 +35,11 @@ async function onUploadFiles(filesToUpload: File[]) {
     }
 
     const uploadedFiles = await uploadMessageFiles(filesToUpload, props.careTrackingId);
-    uploadedFiles.forEach((file) => {
+    uploadedFiles.forEach((file, index) => {
       files.value.push({
         url: file.url,
-        id: file.id
+        id: file.id,
+        name: filesToUpload[index]?.name,
       })
     });
     modelValue.value = files.value.map(file => file.id);

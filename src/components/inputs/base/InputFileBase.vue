@@ -18,7 +18,7 @@ interface InputFileEmits {
 }
 
 const uploadedFiles = defineModel('files', {
-  type: Array as PropType<{ url: string; id: string }[]>,
+  type: Array as PropType<{ url: string; id: string; name?: string }[]>,
   required: true,
 })
 
@@ -102,10 +102,10 @@ async function handleMaxFiles(files: File[]) {
 }
 
 async function localUpload(files: File[]) {
-  const uploaded: { url: string; id: string }[] = files.map((file) => {
+  const uploaded: { url: string; id: string; name?: string }[] = files.map((file) => {
     const url = URL.createObjectURL(file);
     const id = Math.random().toString(36).substring(2, 9);
-    return {url, id};
+    return {url, id, name: file.name};
   });
 
   uploadedFiles.value = uploaded;
@@ -147,11 +147,21 @@ async function removeFile(id: string) {
             />
           </template>
           <template v-else>
-            <div class="h-16 w-16 flex items-center justify-center bg-gray-200 rounded-md border border-gray-300">
+            <div
+                class="h-16 w-36 flex flex-col space-y-1.5 items-center justify-center bg-gray-200 rounded-md border border-gray-300">
               <UIcon
-                  class="w-16 h-16 text-gray-500"
+                  class="w-16 h-16 text-gray-500 text-xl"
                   name="i-lucide-file-text"
               />
+              <small class="text-xs">
+                {{
+                  uploadedFile.name
+                      ? uploadedFile.name.length > 22
+                          ? uploadedFile.name.slice(0, 22) + '...'
+                          : uploadedFile.name
+                      : 'Fichier inconnu'
+                }}
+              </small>
             </div>
           </template>
         </div>

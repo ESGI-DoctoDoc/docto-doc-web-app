@@ -14,7 +14,7 @@ const {uploadDoctorDocuments} = doctorsApi();
 const {deleteFile} = useMediaApi()
 
 const isLoading = ref(false);
-const files = ref<{ url: string, id: string }[]>([]);
+const files = ref<{ url: string, id: string, name?: string }[]>([]);
 
 async function onUploadFiles(filesToUpload: File[]) {
   isLoading.value = true;
@@ -30,10 +30,11 @@ async function onUploadFiles(filesToUpload: File[]) {
       return;
     }
 
-    profilePicture.forEach(file => {
+    profilePicture.forEach((file, index) => {
       files.value.push({
         url: file.url,
-        id: file.id
+        id: file.id,
+        name: filesToUpload[index]?.name,
       })
     });
     modelValue.value = files.value.map(file => file.id);

@@ -6,7 +6,7 @@
 // import {appointmentsMockHandlers} from "~/mocks/handlers/appointments.handler";
 // import {slotsMockHandlers} from "~/mocks/handlers/slots.handler";
 // import {subscriptionMockHandlers} from "~/mocks/handlers/subscription.handler";
-import {doctorsMockHandlers} from "~/mocks/handlers/doctors.handler";
+// import {doctorsMockHandlers} from "~/mocks/handlers/doctors.handler";
 // import {autocompleteHandlers} from "~/mocks/handlers/autocomplete.handler";
 
 export const handlers = [
@@ -18,7 +18,7 @@ export const handlers = [
     // ...patientsMockHandlers,
     // ...appointmentsMockHandlers,
     // ...subscriptionMockHandlers,
-    ...doctorsMockHandlers,
+    // ...doctorsMockHandlers,
     // ...autocompleteHandlers,
     // ...mediaHandlers,
 ]

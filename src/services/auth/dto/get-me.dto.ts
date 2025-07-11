@@ -16,6 +16,7 @@ export const getDoctorMeSchema = z.object({
         lastName: z.string().nullable(),
         isOnboardingCompleted: z.boolean(),
         isLicenseActivated: z.boolean(),
+        avatarUrl: z.string().nullable().optional(),
     }).nullable().optional(),
 })
 export type GetDoctorMeResponse = z.infer<typeof getDoctorMeSchema>

@@ -14,5 +14,6 @@ export interface UserAuth {
         isVerified: boolean;
         isOnboardingCompleted: boolean;
         isLicenseActivated: boolean;
+        avatarUrl: string;
     } | null;
 }

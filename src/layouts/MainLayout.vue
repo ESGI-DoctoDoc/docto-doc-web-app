@@ -24,6 +24,11 @@ const fullName = computed(() => {
   return isAdmin.value ? 'Administrateur' : `${user?.doctor?.firstName || ''} ${user?.doctor?.lastName || ''}`
 })
 
+const avatarUrl = computed(() => {
+  const user = getUser()
+  return user?.doctor?.avatarUrl || ''
+})
+
 const pageTitle = computed(() => {
   return route.meta.title || route.name?.toString().replace('-', ' ') || 'Page'
 })
@@ -312,7 +317,8 @@ onUnmounted(() => {
                 <UAvatar
                     alt="User Avatar"
                     size="md"
-                    src="https://i.pravatar.cc/150?img=3"
+                    :src="avatarUrl"
+                    class="border border-gray-300"
                 />
                 <span class="text-gray-700">{{ fullName }}</span>
                 <UButton icon="i-heroicons-chevron-down" variant="ghost"/>

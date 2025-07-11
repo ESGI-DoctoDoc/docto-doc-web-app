@@ -32,6 +32,8 @@ export const careTrackingPatientSchema = z.object({
 export const careTrackingSchema = z.object({
     id: z.string(),
     name: z.string(),
+    description: z.string(),
+    owner: careTrackingDoctorSchema,
     patient: careTrackingPatientSchema,
     closedAt: z.string().nullable().optional(),
     createdAt: z.string(),
@@ -40,6 +42,7 @@ export const careTrackingSchema = z.object({
 export const getCareTrackingByIdResponseSchema = z.object({
     id: z.string(),
     name: z.string(),
+    description: z.string(),
     owner: careTrackingDoctorSchema,
     patient: careTrackingPatientSchema,
     appointments: z.array(z.object({

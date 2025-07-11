@@ -32,6 +32,7 @@ export const getDoctorsResponseSchema = z.array(doctorSchema)
 export type GetDoctorsResponse = z.infer<typeof getDoctorsResponseSchema>;
 
 export const getDoctorByIdResponseSchema = doctorSchema.extend({
+    isReported: z.boolean(),
     isEmailVerified: z.boolean(),
     subscriptions: z.array(z.object({
         id: z.string(),

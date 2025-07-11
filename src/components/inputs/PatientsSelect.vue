@@ -26,7 +26,7 @@ async function patientsToList() {
   try {
     const patients = await fetchPatients({
       page: 0,
-      size: 100,
+      size: 10000,
     });
     patientsItems.value = patients.map(patient => ({
       label: `${patient.firstname} ${patient.lastname}`,

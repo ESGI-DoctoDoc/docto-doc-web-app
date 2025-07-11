@@ -35,7 +35,7 @@ async function careTrackingToList() {
 
     const careTracking = await fetchCareTracking({
       page: 0,
-      size: 1000,
+      size: 10000,
       patientId: patientId.value,
     });
     careTrackingItems.value = careTracking.map(item => ({

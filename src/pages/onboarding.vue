@@ -117,7 +117,7 @@ async function onSubmit(event: FormSubmitEvent<OnboardingForm1>) {
       gender: event.data.gender,
       birthDate: event.data.birthDate,
       bio: event.data.bio,
-      profilePictureId: event.data.profilePictureUrl,
+      profilePictureUrl: event.data.profilePictureUrl,
       languages: event.data.languages,
       doctorDocuments: event.data.doctorDocuments,
       address: event.data.address

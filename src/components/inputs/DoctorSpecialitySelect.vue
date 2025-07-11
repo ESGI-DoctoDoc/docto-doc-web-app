@@ -20,7 +20,7 @@ async function fetchSpecialities() {
   try {
     const specialities = await getSpecialities({
       page: 0,
-      size: 1000,
+      size: 10000,
     });
     specialitiesItems.value = specialities.map(speciality => ({
       label: speciality.name,

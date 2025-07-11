@@ -9,7 +9,7 @@ const language = defineModel('language', {
 
 const languages = [
   {id: 'french', name: 'Français'},
-  {id: 'english', name: 'Englais'},
+  {id: 'english', name: 'Anglais'},
   {id: 'spanish', name: 'Espagnol'},
   {id: 'german', name: 'Allemand'},
 ];

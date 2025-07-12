@@ -66,7 +66,7 @@ const durations = [
             @submit.prevent="onSubmit"
         >
           <FormField class="w-full" label="Nom du motif" name="name" required>
-            <UInput v-model="form.name" class="w-full" placeholder="Entrez le nom de la spécialité" type="text"/>
+            <UInput v-model="form.name" class="w-full" placeholder="Entrez le nom du motif" type="text"/>
           </FormField>
           <FormField class="w-full" label="Durée de la consultation" name="duration" required>
             <USelect

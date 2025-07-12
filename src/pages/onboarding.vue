@@ -23,7 +23,7 @@ definePageMeta({
 
 const {logoutUser, getUser} = useSession()
 const {translate} = useTranslate()
-const {showSuccess, showError} = useNotify()
+const {showSuccess, showError, handleError} = useNotify()
 const {process, isLoading} = useOnboardingApi()
 
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
@@ -129,8 +129,7 @@ async function onSubmit(event: FormSubmitEvent<OnboardingForm1>) {
     isOnWaiting.value = true;
     currentStep.value = 3;
   } catch (e) {
-    console.log(e)
-    showError('Erreur', 'Onboarding échoué.')
+    handleError('Erreur lors de l\'envoi du formulaire', e);
   }
 }
 

@@ -17,7 +17,7 @@ const props = defineProps<{
   patient: Patient
 }>()
 
-const emits = defineEmits(['on-close', 'on-update', 'on-delete'])
+const emits = defineEmits(['on-close', 'on-update', 'on-delete', 'on-create-appointment'])
 
 const {navigateToResourceWithFilter} = useDeeplink()
 const {showError, showSuccess, handleError} = useNotify()
@@ -169,7 +169,8 @@ function toAppointment(appointment: PatientAppointment): AppointmentListItemType
     </template>
     <template #footer>
       <div class="fit flex flex-col space-y-2">
-        <UButton block color="primary" icon="i-lucide-calendar" variant="subtle">
+        <UButton block color="primary" icon="i-lucide-calendar" variant="subtle"
+                 @click="$emit('on-create-appointment', patientDetail!)">
           Prendre rendez-vous
         </UButton>
         <UButton v-if="permissions.canUpdate" block color="primary" @click="$emit('on-update', patientDetail!)">

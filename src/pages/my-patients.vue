@@ -5,6 +5,9 @@ import {useNotify} from '~/composables/useNotify'
 import type {Patient} from '~/types/patient'
 import PatientDetailSlideover from "~/components/slideover/PatientDetailSlideover.vue";
 import {usePagination} from "~/composables/usePagination";
+import type {CreateAppointmentForm} from "~/components/inputs/validators/appointment-form.validator";
+import SaveAppointmentModal from "~/components/modals/SaveAppointmentModal.vue";
+import {appointmentApi} from "~/services/appointments/appointment.api";
 
 definePageMeta({
   title: 'Mes patients',
@@ -12,14 +15,16 @@ definePageMeta({
   role: 'doctor',
 })
 
-const {showError, handleError} = useNotify()
+const {showError, handleError, showSuccess} = useNotify()
 const {fetchPatients} = patientsApi()
 const {nextPage, resetPagination} = usePagination()
+const {createAppointment} = appointmentApi()
 
 const isLoading = ref(true)
 const myPatients = ref<Patient[]>([])
 const currentPatient = ref<Patient>()
 const openPatientDetail = ref(false)
+const showCreateAppointment = ref(false)
 
 async function getPatients() {
   isLoading.value = true
@@ -52,8 +57,34 @@ async function onLoadMore(stopLoading: () => void) {
   }
 }
 
+async function onCreateAppointment(form: CreateAppointmentForm) {
+  isLoading.value = true;
+  try {
+    await createAppointment({
+      patientId: form.patient,
+      medicalConcernId: form.medicalConcern,
+      start: form.start,
+      startHour: form.startHour,
+      careTrackingId: form.careTracking,
+      notes: form.notes,
+      answers: form.answers,
+    });
+    showSuccess('Rendez-vous créé avec succès');
+    showCreateAppointment.value = false;
+    currentPatient.value = undefined;
+  } catch (error) {
+    handleError("Erreur lors de la création du rendez-vous", error)
+  } finally {
+    isLoading.value = false;
+  }
+}
+
+function onShowCreateAppointment(patient: Patient) {
+  currentPatient.value = patient
+  showCreateAppointment.value = true
+}
+
 function onDetail(patient: Patient) {
-  console.log('patient', currentPatient)
   currentPatient.value = patient
   openPatientDetail.value = true
 }
@@ -77,7 +108,15 @@ onMounted(() => {
         v-if="currentPatient"
         v-model:open="openPatientDetail"
         :patient="currentPatient"
+        @on-create-appointment="onShowCreateAppointment($event)"
         @on-close="currentPatient = undefined"
+    />
+
+    <SaveAppointmentModal
+        v-if="showCreateAppointment && currentPatient"
+        v-model:open="showCreateAppointment"
+        :patient-id="currentPatient.id"
+        @on-submit="onCreateAppointment"
     />
   </div>
 </template>

@@ -6,7 +6,6 @@ import dayjs from "dayjs";
 import {computed} from 'vue';
 import {type ProfileForm, profileSchema} from "~/components/inputs/validators/user-form.validator";
 import type {FormErrorEvent} from "@nuxt/ui";
-import AvatarFileInput from "~/components/inputs/AvatarFileInput.vue";
 import FormField from "~/components/inputs/base/FormField.vue";
 import AddressInput from "~/components/inputs/AddressInput.vue";
 
@@ -55,7 +54,7 @@ async function updateMe(form: ProfileForm) {
         lastname: form.lastname,
         bio: form.bio,
         address: form.address,
-        profilePictureUrl: form.profilePictureUrl?.startsWith('doctors/') ? null : form.profilePictureUrl,
+        profilePictureUrl: null,
       });
       await getMe();
       showSuccess('Informations modifiées.');
@@ -95,8 +94,6 @@ onMounted(() => {
           @error="onError"
           @submit.prevent="updateMe(form)"
       >
-
-        <AvatarFileInput v-model:avatar="form.profilePictureUrl" class="w-full" name="profilePictureUrl"/>
 
         <FormField class="w-full" label="Spécialité">
           <UInput v-model="doctor.speciality.name" class="w-full" disabled/>

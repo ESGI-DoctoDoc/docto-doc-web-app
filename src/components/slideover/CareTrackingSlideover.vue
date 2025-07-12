@@ -158,7 +158,7 @@ function toAppointment(appointment: CareTrackingAppointment): AppointmentListIte
           </div>
           <div v-else>
             <ul class="list-disc pl-5">
-              <li v-for="(doctor, index) in careTrackingDetail.doctors" :key="index">
+              <li v-for="(doctor, index) in careTrackingDetail.doctors" :key="index" class="capitalize">
                 {{ doctor.firstName }} {{ doctor.lastName }}
               </li>
             </ul>

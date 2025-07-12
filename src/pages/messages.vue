@@ -355,7 +355,7 @@ onBeforeUnmount(() => {
                   :files="message.content.files"
               />
               <div class="text-sm text-gray-500">
-                {{message.sentAt ? dayjs(message.sentAt).format('YYYY-MM-DD HH:mm') : ''}}
+                {{ message.sentAt ? dayjs(message.sentAt).format('YYYY/MM/DD HH:mm') : '' }}
               </div>
             </div>
           </div>

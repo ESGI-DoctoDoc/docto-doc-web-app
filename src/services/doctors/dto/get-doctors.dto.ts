@@ -25,6 +25,7 @@ const doctorSchema = z.object({
     }).nullable().optional(),
     birthdate: z.string().nullable().optional(),
     isVerified: z.boolean(),
+    bio: z.string().nullable().optional(),
     createdAt: z.string(),
 })
 

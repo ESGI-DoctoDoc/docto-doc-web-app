@@ -105,22 +105,23 @@ const items = ref([
               </FormField>
               <div class="flex flex-row gap-4">
                 <FormField class="w-1/2" label="Prénom">
-                  <UInput :model-value="doctor.firstName" class="w-full"/>
+                  <UInput :model-value="doctor.firstName" class="w-full" disabled/>
                 </FormField>
                 <FormField class="w-1/2" label="Nom">
-                  <UInput :model-value="doctor.lastName" class="w-full"/>
+                  <UInput :model-value="doctor.lastName" class="w-full" disabled/>
                 </FormField>
               </div>
               <FormField label="Email">
                 <UInput :model-value="doctor.email" class="w-full text-left" disabled/>
               </FormField>
               <FormField label="Adresse">
-                <UInput :model-value="doctor?.address?.formatted" class="w-full text-left"/>
+                <UInput :model-value="doctor?.address?.formatted" class="w-full text-left" disabled/>
               </FormField>
               <FormField label="Biographie">
                 <UTextarea
                     :model-value="doctor.bio" :rows="4" class="w-full text-left"
                     placeholder="Parlez-nous de vous..."
+                    disabled
                 />
               </FormField>
             </div>

@@ -261,7 +261,8 @@ async function onEndAppointment() {
   loading.value = true;
   try {
     await endAppointment(currentAppointment.value.id);
-    await getAppointments();
+    await getAppointments(currentStartDate.value);
+    await fetchAbsences(currentStartDate.value);
     showAppointmentDetail.value = false;
   } catch (error) {
     handleError("Erreur lors de la fin du rendez-vous", error)
@@ -274,7 +275,8 @@ async function onSaveAbsence(form: CreateDoctorAbsenceForm) {
   loading.value = true;
   try {
     await createAbsence(form);
-    await fetchAbsences();
+    await getAppointments(currentStartDate.value);
+    await fetchAbsences(currentStartDate.value);
     showSuccess('Absence créée avec succès');
     showCreateAbsence.value = false;
   } catch (error) {
@@ -301,7 +303,8 @@ async function onUpdateAbsence(form: CreateDoctorAbsenceForm) {
       endHour: form.endHour,
       description: form.description,
     });
-    await fetchAbsences();
+    await getAppointments(currentStartDate.value);
+    await fetchAbsences(currentStartDate.value);
     showSuccess('Absence mise à jour avec succès');
     showCreateAbsence.value = false;
   } catch (error) {
@@ -326,6 +329,7 @@ async function onCreateAppointment(form: CreateAppointmentForm) {
     showSuccess('Rendez-vous créé avec succès');
     showCreateAppointment.value = false;
     await getAppointments(currentStartDate.value);
+    await fetchAbsences(currentStartDate.value);
   } catch (error) {
     handleError("Erreur lors de la création du rendez-vous", error)
   } finally {
@@ -351,7 +355,8 @@ async function onUpdateAppointment(form: UpdateAppointmentForm) {
       notes: form.notes,
       answers: form.answers,
     });
-    // await getAppointments()
+    await getAppointments(currentStartDate.value);
+    await fetchAbsences(currentStartDate.value);
   } catch (error) {
     handleError("Erreur lors de la mise à jour du rendez-vous", error)
   } finally {
@@ -378,6 +383,7 @@ async function onShowCancel() {
     await cancelAppointment(currentAppointment.value.id, reason);
     showSuccess('Rendez-vous annulé avec succès');
     await getAppointments(currentStartDate.value);
+    await fetchAbsences(currentStartDate.value);
     showAppointmentDetail.value = false;
   } catch (error) {
     handleError("Erreur lors de l'annulation du rendez-vous", error)
@@ -395,7 +401,8 @@ async function onDeleteAbsence(id: string) {
   loading.value = true;
   try {
     await deleteByPath(`/doctors/absences/${id}`);
-    await fetchAbsences();
+    await getAppointments(currentStartDate.value);
+    await fetchAbsences(currentStartDate.value);
     showSuccess('Absence supprimée avec succès');
   } catch (error) {
     handleError("Erreur lors de la suppression de l'absence", error)

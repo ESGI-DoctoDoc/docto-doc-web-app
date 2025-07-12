@@ -197,7 +197,7 @@ async function confirmDelete() {
         <h3 class="text-lg font-semibold mt-4">Prévenir les patients</h3>
         <UCheckbox
             v-model="form.notifyPatients"
-            :disabled="showAppointmentWarning"
+            :disabled="!showAppointmentWarning"
             description="Si cette case est cochée, les patients ayant un rendez-vous pendant cette absence seront prévenus par email."
             label="Prévenir les patients de cette absence"
             name="notifyPatients"

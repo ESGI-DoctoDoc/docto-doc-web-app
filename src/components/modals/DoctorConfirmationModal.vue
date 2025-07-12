@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 
 import type {Doctor} from "~/types/doctor";
+import dayjs from "dayjs";
 
 const open = defineModel('open', {
   type: Boolean,
@@ -51,14 +52,18 @@ function onCompareToDirectory() {
     <template #body>
       <div class="space-y-6 text-sm text-gray-800">
         <!-- Informations personnelles -->
-        <div>
+        <div v-if="doctor">
           <h3 class="text-base font-semibold mb-3 text-gray-900">Informations personnelles</h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
             <div><span class="font-medium">Nom :</span> {{ doctor?.lastName }}</div>
             <div><span class="font-medium">Prénom :</span> {{ doctor?.firstName }}</div>
-            <div><span class="font-medium">Email :</span> {{ doctor?.email }}</div>
-            <div><span class="font-medium">Téléphone :</span> {{ doctor?.phone }}</div>
-            <div v-if="doctor?.birthdate"><span class="font-medium">Date de naissance :</span> {{ doctor.birthdate }}
+            <div class="sm:col-span-2"><span class="font-medium">Email :</span> {{ doctor?.email }}</div>
+            <div><span class="font-medium">Téléphone :</span> {{
+                doctor?.phone?.replace(/^\+33/, '0')?.replace(/(\d{2})(?=\d)/g, '$1 ')
+              }}
+            </div>
+            <div v-if="doctor?.birthdate"><span class="font-medium">Date de naissance :</span>
+              {{ dayjs(doctor.birthdate).format('DD/MM/YYYY') }}
             </div>
           </div>
         </div>
@@ -76,9 +81,8 @@ function onCompareToDirectory() {
         <!-- Documents fournis -->
         <div>
           <h3 class="text-base font-semibold mb-3 text-gray-900">Documents fournis</h3>
-          <div class="space-y-2">
-            <div class="p-3 rounded border border-gray-200 bg-gray-50">Carte identité</div>
-          </div>
+          <DocumentsPreview v-if="doctor.files" :files="doctor.files"/>
+          <div v-else class="text-gray-500">Aucun document fourni</div>
         </div>
 
         <UButton

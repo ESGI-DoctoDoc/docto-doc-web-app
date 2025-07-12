@@ -6,6 +6,7 @@ export interface Doctor {
     phone: string;
     rpps?: string | null;
     bio: string;
+    files?: string[];
     address: {
         formatted: string;
         latitude: number;

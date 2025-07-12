@@ -38,7 +38,7 @@ const form = ref<CreateDoctorAbsenceForm>({
   startHour: props?.absence?.startHour || props?.hours?.[1] || '',
   endHour: props?.absence?.endHour || props?.hours?.[2] || '',
   description: props?.absence?.description || '',
-  notifyPatients: false,
+  notifyPatients: true,
 });
 
 const showAppointmentWarning = ref(false);
@@ -193,15 +193,6 @@ async function confirmDelete() {
               placeholder="Entrez une description de l'absence"
           />
         </FormField>
-
-        <h3 class="text-lg font-semibold mt-4">Prévenir les patients</h3>
-        <UCheckbox
-            v-model="form.notifyPatients"
-            :disabled="!showAppointmentWarning"
-            description="Si cette case est cochée, les patients ayant un rendez-vous pendant cette absence seront prévenus par email."
-            label="Prévenir les patients de cette absence"
-            name="notifyPatients"
-        />
       </UForm>
     </template>
     <template #footer>

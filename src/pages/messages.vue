@@ -54,7 +54,6 @@ const dropdownItems = ref([
 const showDropZone = ref(false)
 const isLoading = ref(true);
 const isLoadingMore = ref(false);
-const previewError = ref<boolean[]>([]);
 const currentUrl = ref('');
 const lastCursor = ref<{ sentAt: string, id: string } | null>(null);
 const hasMore = ref(true);
@@ -126,20 +125,23 @@ async function loadMoreMessages() {
       },
       content: {
         text: message.content.text,
-        files: message.content.files,
+        files: message.content.files || null,
       },
-      sendAt: message.sentAt,
+      sentAt: message.sentAt,
     }));
+
+    if (newMessages.length === 0) {
+      hasMore.value = false;
+      return;
+    }
 
     messages.value.unshift(...[...newMessages].reverse());
 
-    if (newMessages.length > 0) {
-      const oldest = newMessages[0];
-      lastCursor.value = {
-        sentAt: oldest.sendAt,
-        id: oldest.id,
-      };
-    }
+    const oldest = newMessages[newMessages.length - 1];
+    lastCursor.value = {
+      sentAt: oldest.sentAt,
+      id: oldest.id,
+    };
 
     hasMore.value = newMessages.length === 8;
   } catch (error) {
@@ -216,7 +218,7 @@ async function sendMessage(formEvent: FormSubmitEvent<SendMessageForm>) {
       text: formEvent.data.message,
       files: formEvent.data.files ?? [],
     },
-    sentAt: dayjs().toDate(),
+    sentAt: dayjs().format("DD/MM/YYYY HH:mm"),
   };
 
   try {
@@ -353,7 +355,7 @@ onBeforeUnmount(() => {
                   :files="message.content.files"
               />
               <div class="text-sm text-gray-500">
-                {{ dayjs(message.sentAt).format("DD/MM/YYYY HH:mm") }}
+                {{message.sentAt ? dayjs(message.sentAt).format('YYYY-MM-DD HH:mm') : ''}}
               </div>
             </div>
           </div>

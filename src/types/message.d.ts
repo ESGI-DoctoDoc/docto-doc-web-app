@@ -1,7 +1,7 @@
 interface MessageSender {
     id: string;
     name: string;
-    avatarUrl?: string;
+    avatarUrl: string;
 }
 
 interface MessageContent {
@@ -13,5 +13,5 @@ export interface Message {
     id: string;
     sender: MessageSender;
     content: MessageContent;
-    sentAt: Date;
+    sentAt: string;
 }

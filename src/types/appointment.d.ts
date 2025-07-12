@@ -27,6 +27,7 @@ export interface AppointmentCareTracking {
 
 export interface AppointmentAnswer {
     id: string
+    question: string
     answer: string
 }
 

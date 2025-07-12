@@ -181,6 +181,19 @@ function formatPhoneNumber(phone: string): string {
           <div>{{ appointmentDetail.doctorNotes ?? 'Pas de note.' }}</div>
         </div>
 
+        <h2 v-if="appointmentDetail?.answers && appointmentDetail?.answers.length > 0" class="pt-6 text-xl font-medium">
+          Questions</h2>
+        <AppDivider v-if="appointmentDetail?.answers && appointmentDetail?.answers.length > 0"
+                    class="w-full pb-4 pt-2"/>
+        <div v-if="appointmentDetail?.answers && appointmentDetail?.answers.length > 0" class="flex flex-col">
+          <div v-for="(answer, index) in appointmentDetail.answers" :key="index" class="flex justify-between space-y-1">
+            <div>{{ answer.question }}</div>
+            <div v-if="answer.answer === 'yes'">Oui</div>
+            <div v-else-if="answer.answer === 'no'">Non</div>
+            <div v-else>{{ answer.answer }}</div>
+          </div>
+        </div>
+
         <h2 v-if="appointmentDetail?.careTracking?.id" class="pt-6 text-xl font-medium">Suivi de dossier</h2>
         <AppDivider v-if="appointmentDetail?.careTracking?.id" class="w-full pb-4 pt-2"/>
         <div v-if="appointmentDetail?.careTracking?.id" class="flex justify-between space-y-1">

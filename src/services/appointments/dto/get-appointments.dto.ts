@@ -126,15 +126,11 @@ export const getAppointmentByIdResponseSchema = z.object({
         })
         .nullable()
         .optional(),
-    answers: z
-        .array(
-            z.object({
-                id: z.string(),
-                answer: z.string(),
-            })
-        )
-        .nullable()
-        .optional(),
+    answers: z.array(z.object({
+        id: z.string(),
+        question: z.string(),
+        answer: z.string()
+    })).nullable().optional(),
     start: z.string(),
     startHour: z.string(),
     status: z.enum([

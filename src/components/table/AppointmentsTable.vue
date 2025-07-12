@@ -122,7 +122,7 @@ const computedColumns = computed<TableColumn<Appointment>[]>(() => {
 });
 
 function onSelect(row: TableRow<Appointment>) {
-  const patient = props.data[row.index];
+  const patient = tableData.value[row.index];
   emits('onDetail', patient);
 }
 

@@ -74,7 +74,7 @@ const columns: TableColumn<Patient>[] = [
 ]
 
 function onSelect(row: TableRow<Patient>) {
-  const patient = props.data[row.index];
+  const patient = tableData.value[row.index];
   emits('onDetail', patient);
 }
 

@@ -82,7 +82,7 @@ function onAddClick() {
 }
 
 function onSelect(row: TableRow<CareTracking>) {
-  const careTracking = props.data[row.index];
+  const careTracking = tableData.value[row.index];
   emits('onDetail', careTracking);
 }
 

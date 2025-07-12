@@ -6,7 +6,7 @@ const {getUser, logoutUser} = useSession()
 onMounted(() => {
   const userAuth = getUser();
   if (userAuth?.user?.role === 'admin') {
-    navigateTo('/admin/dashboard')
+    navigateTo('/admin/doctors')
   } else if (userAuth?.user?.role === 'doctor') {
     navigateTo('/my-calendar')
   } else {

@@ -18,7 +18,7 @@ export default defineNuxtConfig({
       global: 'window',
     },
     esbuild: {
-      drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : []
+      // drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : []
     }
   },
   runtimeConfig: {

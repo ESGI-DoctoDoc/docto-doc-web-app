@@ -13,7 +13,7 @@
       éditée par <strong>Docto Doc</strong>, société DOCTO DOC FRANCE au capital de 120 000 euros,
       immatriculée au RCS de Paris sous le numéro 120282839127, dont le siège social est situé au
       <mark class="inline-block rounded-md bg-primary/10 text-primary font-medium px-1.5 py-0.5">
-        18 sur-vingt du Grand Projet
+        18 sur-vingt du Grand Projet, 01820, France
       </mark>
       .
     </p>

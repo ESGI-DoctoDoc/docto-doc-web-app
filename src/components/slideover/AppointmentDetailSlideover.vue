@@ -209,7 +209,7 @@ function formatPhoneNumber(phone: string): string {
           Marquer comme terminé
         </UButton>
         <UButton
-            v-if="!isEnded && !isCancelled"
+            v-if="!isEnded && !isCancelled && !isAdmin"
             block
             color="error"
             icon="i-lucide-x-circle"

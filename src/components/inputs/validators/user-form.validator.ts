@@ -14,7 +14,7 @@ export const passwordSchema = z
     .min(6, "form.password.min")
     .regex(/[A-Z]/, "form.password.uppercase")
     .regex(/[0-9]/, "form.password.number")
-    .regex(/[@\-_#!*$]/, "form.password.special"); //todo add i18n et afficher le mot de passe
+    .regex(/[@\-_#!*$]/, "form.password.special");
 
 export const otpCodeSchema = z
     .array(z.string())

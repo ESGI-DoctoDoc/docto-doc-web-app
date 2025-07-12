@@ -1,5 +1,6 @@
 export default {
     "0.0": "",
+    "unknown": "Une erreur inconnue s'est produite.",
     "absence.conflict": "Conflit avec une autre absence existante.",
     "absence.exprired": "L'absence est expirée.",
     "absence.not-found": "Absence introuvable.",

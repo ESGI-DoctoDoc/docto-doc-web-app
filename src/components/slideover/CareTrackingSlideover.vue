@@ -100,13 +100,13 @@ function toAppointment(appointment: CareTrackingAppointment): AppointmentListIte
       <div v-else-if="careTrackingDetail" class="flex flex-col space-y-2">
         <div class="flex justify-between space-y-1">
           <div>Nom du suivi</div>
-          <div class="cursor-pointer">
+          <div class="cursor-pointer capitalize">
             {{ props.careTracking.name }}
           </div>
         </div>
         <div class="flex justify-between space-y-1">
           <div>Patient</div>
-          <div class="cursor-pointer">
+          <div class="cursor-pointer capitalize">
             {{ props.careTracking.patient.firstName }} {{ props.careTracking.patient.lastName }}
           </div>
         </div>

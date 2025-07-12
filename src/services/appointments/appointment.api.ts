@@ -30,23 +30,43 @@ export const appointmentApi = () => {
     const BASE_API_URL = `${import.meta.env.VITE_API_BASE}/v1`
 
     function createAppointment(requestDto: CreateAppointmentDto) {
-        return new RequestBuilder(BASE_API_URL)
-            .post('/doctors/appointments')
-            .withBody<CreateAppointmentBody>(saveAppointmentBodySchema)
-            .execute({
-                body: {
-                    patientId: requestDto.patientId,
-                    medicalConcernId: requestDto.medicalConcernId,
-                    start: requestDto.start,
-                    startHour: requestDto.startHour,
-                    careTrackingId: requestDto.careTrackingId,
-                    notes: requestDto.notes,
-                    answers: requestDto.answers?.map(answer => ({
-                        questionId: answer.questionId,
-                        answer: answer.answer
-                    }))
-                }
-            })
+        if (requestDto.careTrackingId) {
+            return new RequestBuilder(BASE_API_URL)
+                .post('/doctors/care-tracking/appointments')
+                .withBody<CreateAppointmentBody>(saveAppointmentBodySchema)
+                .execute({
+                    body: {
+                        patientId: requestDto.patientId,
+                        medicalConcernId: requestDto.medicalConcernId,
+                        start: requestDto.start,
+                        startHour: requestDto.startHour,
+                        careTrackingId: requestDto.careTrackingId,
+                        notes: requestDto.notes,
+                        answers: requestDto.answers?.map(answer => ({
+                            questionId: answer.questionId,
+                            answer: answer.answer
+                        }))
+                    }
+                })
+        } else {
+            return new RequestBuilder(BASE_API_URL)
+                .post('/doctors/appointments')
+                .withBody<CreateAppointmentBody>(saveAppointmentBodySchema)
+                .execute({
+                    body: {
+                        patientId: requestDto.patientId,
+                        medicalConcernId: requestDto.medicalConcernId,
+                        start: requestDto.start,
+                        startHour: requestDto.startHour,
+                        careTrackingId: requestDto.careTrackingId,
+                        notes: requestDto.notes,
+                        answers: requestDto.answers?.map(answer => ({
+                            questionId: answer.questionId,
+                            answer: answer.answer
+                        }))
+                    }
+                })
+        }
     }
 
     function updateAppointment(requestDto: UpdateAppointmentDto) {

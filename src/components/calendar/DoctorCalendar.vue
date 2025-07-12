@@ -355,6 +355,8 @@ async function onUpdateAppointment(form: UpdateAppointmentForm) {
       notes: form.notes,
       answers: form.answers,
     });
+    currentAppointment.value = null
+    showUpdateAppointment.value = false
     await getAppointments(currentStartDate.value);
     await fetchAbsences(currentStartDate.value);
   } catch (error) {

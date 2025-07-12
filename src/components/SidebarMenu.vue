@@ -13,10 +13,8 @@ const allLinks = {
     {label: 'Motifs', to: '/my-medical-concerns', icon: 'i-heroicons-clipboard-document-list'},
     {label: 'Suivis de dossier', to: '/care-tracking', icon: 'i-heroicons-document-magnifying-glass'},
     {label: 'Licence', to: '/my-license', icon: 'i-heroicons-credit-card'},
-    // { label: 'Paramètres', to: '/settings', icon: 'i-heroicons-cog-6-tooth' }
   ],
   admin: [
-    {label: 'Dashboard', to: '/admin/dashboard', icon: 'i-heroicons-home'},
     {label: 'Docteurs', to: '/admin/doctors', icon: 'i-heroicons-user'},
     {label: 'Rendez-vous', to: '/admin/appointments', icon: 'i-heroicons-calendar-days'},
     {label: 'Spécialités', to: '/admin/specialities', icon: 'i-heroicons-clipboard-document-list'},

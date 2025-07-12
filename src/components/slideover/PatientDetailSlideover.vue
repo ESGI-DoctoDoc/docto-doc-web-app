@@ -7,7 +7,6 @@ import {useSession} from "~/composables/auth/useSession";
 import {useClipboard} from "@vueuse/core";
 import AppointmentListItem, {type AppointmentListItemType} from "~/components/appointments/AppointmentListItem.vue";
 import {useDeeplink} from "~/composables/useDeeplink";
-import MedicalRecordInputFile from "~/components/inputs/MedicalRecordInputFile.vue";
 
 const isOpen = defineModel('isOpen', {
   type: Boolean,
@@ -166,26 +165,6 @@ function toAppointment(appointment: PatientAppointment): AppointmentListItemType
               :appointment="toAppointment(appointment)"
           />
         </div>
-
-        <!-- Documents       -->
-        <div class="flex justify-between items-baseline pt-6">
-          <h3 class="text-lg font-semibold">Documents</h3>
-          <UModal close title="Ajouter un fichier">
-            <UButton color="primary" label="Ajouter un fichier" size="sm" variant="outline"/>
-            <template #body>
-              <MedicalRecordInputFile
-                  :medical-record-id="patientDetail.id"
-                  @uploaded="(files) => {
-                  if(patientDetail) {
-                    (patientDetail.files ?? []).push(...files.map(file => file.url))
-                  }
-                }"
-              />
-            </template>
-          </UModal>
-        </div>
-        <AppDivider class="w-full pb-4 pt-2"/>
-        <DocumentsPreview v-if="patientDetail.files" :files="patientDetail.files" last-view-all/>
       </div>
     </template>
     <template #footer>

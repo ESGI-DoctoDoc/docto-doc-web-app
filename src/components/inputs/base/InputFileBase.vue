@@ -84,7 +84,15 @@ async function handleMaxFiles(files: File[]) {
     return;
   }
 
-  const filesToEmit = files.slice(0, remainingSlots);
+  const filesToEmit = files.slice(0, remainingSlots).filter((file) => {
+    const size = file.size / 1024 / 1024; // Convert to MB
+    if (size > 5) {
+      showError('Fichier trop volumineux', `Le fichier ${file.name} dépasse la taille maximale de 5 Mo.`);
+      return false;
+    }
+    return true;
+  });
+
   if (props.lazy) {
     await localUpload(filesToEmit)
   }
@@ -107,6 +115,10 @@ async function localUpload(files: File[]) {
     const id = Math.random().toString(36).substring(2, 9);
     return {url, id, name: file.name};
   });
+
+  if (uploaded.length === 0) {
+    return;
+  }
 
   uploadedFiles.value = uploaded;
 }

@@ -53,6 +53,7 @@ function toAppointment(appointment: CareTrackingAppointment): AppointmentListIte
   return {
     id: appointment.id,
     date: appointment.date,
+    start: appointment.start,
     status: appointment.status,
     startHour: appointment.startHour,
     endHour: appointment.endHour,

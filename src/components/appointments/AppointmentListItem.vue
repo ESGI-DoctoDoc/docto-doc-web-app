@@ -2,12 +2,12 @@
 
 import type {AppointmentStatus} from "~/types/appointment";
 import dayjs from "dayjs";
-import {useCalendar} from "~/composables/calendar/useCalendar";
 import {useDeeplink} from "~/composables/useDeeplink";
 
 export interface AppointmentListItemType {
   id: string
   date: string
+  start: string
   startHour: string
   endHour: string
   status: AppointmentStatus
@@ -22,12 +22,11 @@ const props = defineProps<{
   appointment: AppointmentListItemType
 }>()
 
-const {convertDateToIsoString} = useCalendar()
 const {navigateToResource} = useDeeplink()
 
 const appointmentDate = computed(() => {
-  const startDate = dayjs(convertDateToIsoString(props.appointment.date, props.appointment.startHour));
-  return `${startDate.format('ddd DD MMM YYYY HH:mm')}`;
+  const startDate = dayjs(props.appointment.start);
+  return `${startDate.format('ddd DD MMM YYYY')} à ${props.appointment.startHour}`;
 })
 
 const badgeColor = computed(() => {

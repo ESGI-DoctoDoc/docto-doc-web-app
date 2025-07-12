@@ -22,7 +22,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  (e: 'on-submit', value: CreateDoctorAbsenceForm): void;
+  (e: 'on-submit', value: CreateDoctorAbsenceForm, callback: () => void): void;
   (e: 'on-delete', id: string): void;
 }>()
 
@@ -30,9 +30,9 @@ const {fetchAppointmentsOnDateAbsence, fetchAppointmentsOnAbsence} = doctorAbsen
 const {showPopupContinueModal} = useModals()
 const {showError} = useNotify()
 
-const allDay = ref(props?.absence?.startHour === '00:00');
+const allDay = ref(props?.absence?.startHour === '00:00' && props?.absence?.endHour === '23:59');
 const form = ref<CreateDoctorAbsenceForm>({
-  date: props?.absence?.date || '',
+  date: allDay.value ? props?.absence?.date : '',
   start: props?.absence?.start || props?.hours?.[0] || dayjs().format('YYYY-MM-DD'),
   end: props?.absence?.end || props?.hours?.[0] || '',
   startHour: props?.absence?.startHour || props?.hours?.[1] || '',
@@ -41,6 +41,7 @@ const form = ref<CreateDoctorAbsenceForm>({
   notifyPatients: true,
 });
 
+const isAddLoading = ref(false);
 const showAppointmentWarning = ref(false);
 const warningAppointments = ref<{ start: string, startHour: string, patient: { name: string } }[]>();
 
@@ -63,7 +64,10 @@ async function checkIfAbsenceOverlapsAppointment() {
 }
 
 function onSubmit(form: FormSubmitEvent<CreateDoctorAbsenceForm>) {
-  emit('on-submit', form.data);
+  isAddLoading.value = true;
+  emit('on-submit', form.data, () => {
+    isAddLoading.value = false;
+  });
 }
 
 function onError(event: FormErrorEvent) {
@@ -75,7 +79,7 @@ async function onSetFullDay() {
   if (allDay.value) {
     form.value.date = form.value.start || dayjs(form.value.start).format('YYYY-MM-DD');
     form.value.start = '';
-    form.value.startHour = '';
+    form.value.startHour = '00:00';
     form.value.end = '';
     form.value.endHour = '';
   } else {
@@ -199,6 +203,8 @@ async function confirmDelete() {
       <div class="flex w-full space-x-2.5">
         <UButton
             block
+            :disabled="isAddLoading"
+            :loading="isAddLoading"
             form="create-absence-form"
             label="Enregistrer"
             type="submit"
@@ -207,7 +213,7 @@ async function confirmDelete() {
             v-if="absence"
             block
             color="error"
-            label="supprimer l'absence"
+            label="Supprimer l'absence"
             @click="confirmDelete"
         />
       </div>

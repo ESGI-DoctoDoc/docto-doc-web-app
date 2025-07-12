@@ -271,22 +271,24 @@ async function onEndAppointment() {
   }
 }
 
-async function onSaveAbsence(form: CreateDoctorAbsenceForm) {
+async function onSaveAbsence(form: CreateDoctorAbsenceForm, onStop: () => void) {
   loading.value = true;
   try {
     await createAbsence(form);
     await getAppointments(currentStartDate.value);
     await fetchAbsences(currentStartDate.value);
+    onStop();
     showSuccess('Absence créée avec succès');
     showCreateAbsence.value = false;
   } catch (error) {
     handleError("Erreur lors de la création de l'absence", error)
+    onStop();
   } finally {
     loading.value = false;
   }
 }
 
-async function onUpdateAbsence(form: CreateDoctorAbsenceForm) {
+async function onUpdateAbsence(form: CreateDoctorAbsenceForm, onStop: () => void) {
   loading.value = true;
   try {
     if (!currentAbsence.value) {
@@ -303,12 +305,15 @@ async function onUpdateAbsence(form: CreateDoctorAbsenceForm) {
       endHour: form.endHour,
       description: form.description,
     });
+    onStop();
     await getAppointments(currentStartDate.value);
     await fetchAbsences(currentStartDate.value);
     showSuccess('Absence mise à jour avec succès');
-    showCreateAbsence.value = false;
+    currentAbsence.value = undefined;
+    showUpdateAbsence.value = false;
   } catch (error) {
     handleError("Erreur lors de la création de l'absence", error)
+    onStop()
   } finally {
     loading.value = false;
   }
@@ -403,6 +408,8 @@ async function onDeleteAbsence(id: string) {
   loading.value = true;
   try {
     await deleteByPath(`/doctors/absences/${id}`);
+    currentAbsence.value = undefined;
+    showUpdateAbsence.value = false;
     await getAppointments(currentStartDate.value);
     await fetchAbsences(currentStartDate.value);
     showSuccess('Absence supprimée avec succès');

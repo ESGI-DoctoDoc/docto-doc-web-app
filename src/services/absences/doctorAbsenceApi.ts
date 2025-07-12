@@ -58,7 +58,7 @@ export const doctorAbsenceApi = () => {
     }
 
     function updateAbsence(requestDto: UpdateDoctorAbsenceDto) {
-        if (requestDto.date) {
+        if (requestDto.startHour === '00:00' && requestDto.date) {
             return new RequestBuilder(BASE_API_URL)
                 .put(`/doctors/absences/${requestDto.id}/single-day`)
                 .withBody<CreateDoctorAbsenceDateBody>(createDoctorAbsenceDateBodySchema)

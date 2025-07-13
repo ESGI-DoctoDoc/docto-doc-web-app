@@ -16,10 +16,7 @@ const show = ref(false)
 </script>
 
 <template>
-  <FormField label="Mot de passe" name="password" required>
-    <template #hint>
-      <NuxtLink v-if="forgotPassword" class="text-primary" to="/auth/forgotPassword">Oublié ?</NuxtLink>
-    </template>
+  <FormField forgot-password label="Mot de passe" name="password" required>
     <UInput
         v-model="modelValue"
         :type="show ? 'text' : 'password'"

@@ -2,10 +2,18 @@
 import {useTranslate} from '~/composables/useTranslate'
 
 const {translate} = useTranslate()
+
+defineProps<{
+  forgotPassword?: boolean
+}>()
+
 </script>
 
 <template>
   <UFormField v-bind="$attrs">
+    <template #hint>
+      <NuxtLink v-if="forgotPassword" class="text-primary" to="/auth/forgotPassword">Oublié ?</NuxtLink>
+    </template>
     <template #default>
       <slot/>
     </template>

@@ -16,7 +16,7 @@ const {setToken} = useSession()
 
 const image = new URL('@/assets/images/patient-pc.png', import.meta.url).href
 const form = reactive<Partial<OtpVerificationForm>>({
-  code: ['0', '0', '0', '0', '0', '0'],
+  code: ['', '', '', '', '', ''],
 })
 
 async function onSubmit(event: FormSubmitEvent<OtpVerificationForm>) {

@@ -1,75 +1,53 @@
-# Nuxt Minimal Starter
+# doctodoc_web
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+## Présentation
 
-## Setup
+Docto-doc Web est une application web développée avec Nuxt.js pour faciliter la gestion des soins médicaux. Elle permet
+aux utilisateurs de suivre leurs soins, gérer leurs rendez-vous médicaux, consulter les informations de leurs médecins
+traitants, et centraliser leurs documents médicaux de manière sécurisée.
 
-Make sure to install dependencies:
+## Fonctionnalités principales
+
+- Gestion des rendez-vous médicaux : visualisation des rendez-vous passés et à venir avec leurs détails.
+- Accès aux médecins traitants : affichage des informations des professionnels de santé suivis.
+- Gestion des documents médicaux : ajout et consultation des documents liés aux soins.
+- Historique des soins : aperçu complet des soins reçus ou en cours.
+- Interface moderne : application pensée pour un usage fluide et agréable sur le web.
+
+## Technologies utilisées
+
+- Langages : TypeScript, JavaScript
+- Framework : Nuxt.js 3 (Vue 3)
+- Architecture : Composition API, modularité par dossiers (services, stores, composables)
+- Gestion des dépendances : npm, pnpm ou yarn
+
+## Prérequis
+
+Avant de lancer le projet, vous devez avoir installé :
+
+- Node.js (version recommandée : >=18)
+- Un gestionnaire de paquets (npm, pnpm ou yarn)
+
+## Installation
+
+Pour lancer l’application en local :
 
 ```bash
-# npm
+git clone https://github.com/corentin-lechene/doctodoc_web.git
+cd doctodoc_web
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+Adaptez l’URL du dépôt si besoin. Ce modèle est prêt à être utilisé pour votre projet web Nuxt.js.
 
-Build the application for production:
+## Contribution
 
-```bash
-# npm
-npm run build
+Les contributions sont les bienvenues. Vous pouvez :
 
-# pnpm
-pnpm build
+- Ouvrir une issue pour signaler un problème ou proposer une amélioration
+- Soumettre une pull request avec une correction ou une nouvelle fonctionnalité
 
-# yarn
-yarn build
+## Licence
 
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus d’informations.

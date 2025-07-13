@@ -47,6 +47,6 @@ export default {
     "slot.hour.outOfRange": "L'heure sélectionnée est hors plage autorisée.",
     "slot.hour.required": "L'heure est requise.",
     "slot.medical-concern.required": "Veuillez sélectionner une préoccupation médicale.",
-    "slot.start-date.future": "La date de début ne peut pas être dans le futur.",
+    "slot.start-date.future": "La date de début ne peut pas être dans le passé.",
     "speciality.required": "La spécialité est requise."
 }

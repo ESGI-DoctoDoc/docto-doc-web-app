@@ -11,7 +11,7 @@ export default {
     "doctor-documents.required": "Veuillez fournir les documents nécessaires.",
     "doctorAbsence.date.past": "La date d'absence ne peut pas être dans le passé.",
     "doctorAbsence.date.required": "La date d'absence est requise.",
-    "doctorAbsence.description.max": "La description est trop longue.",
+    "doctorAbsence.description.max": "La description est trop longue (max 256).",
     "doctorAbsence.end.beforeStart": "La date de fin doit être postérieure à la date de début.",
     "doctorAbsence.end.invalid": "Date de fin invalide.",
     "doctorAbsence.start.invalid": "Date de début invalide.",
@@ -48,5 +48,13 @@ export default {
     "slot.hour.required": "L'heure est requise.",
     "slot.medical-concern.required": "Veuillez sélectionner une préoccupation médicale.",
     "slot.start-date.future": "La date de début ne peut pas être dans le passé.",
-    "speciality.required": "La spécialité est requise."
+    "speciality.required": "La spécialité est requise.",
+    "appointment.patient": "Le patient est requis.",
+    "appointment.medicalConcern": "Le motif de consultation est requis.",
+    "careTracking.name.required": "Le nom du suivi de dossier est requis.",
+    "careTracking.name.max": "Le nom du suivi de dossier ne doit pas dépasser 128 caractères.",
+    "careTracking.description.min": "La description du suivi de dossier est requis.",
+    "careTracking.description.max": "La description du suivi de dossier ne doit pas dépasser 256 caractères.",
+    "careTracking.patient.invalid": "Le patient sélectionné est invalide.",
+    "careTracking.description.required": "La description du suivi de dossier est requise.",
 }

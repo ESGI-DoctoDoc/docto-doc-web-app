@@ -28,7 +28,7 @@ const {process, isLoading} = useOnboardingApi()
 
 const image = new URL('@/assets/images/doctor-and-patient.png', import.meta.url).href
 const form = reactive<OnboardingForm1>({
-  rpps: '10000668540',
+  rpps: '',
   speciality: '',
   experienceYears: 0,
   gender: 'FEMALE',
@@ -42,8 +42,6 @@ const form = reactive<OnboardingForm1>({
   languages: [],
   doctorDocuments: []
 })
-
-const fileCache = reactive(new Map<string, string>())
 
 const currentStep = ref(0)
 const isOnWaiting = ref(false)

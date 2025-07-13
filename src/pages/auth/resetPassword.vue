@@ -15,8 +15,8 @@ const { translate } = useTranslate()
 const route = useRoute()
 
 const form = reactive<Partial<ResetPasswordForm>>({
-  password: 'Abd1234!',
-  passwordConfirm: 'Abd1234!'
+  password: '',
+  passwordConfirm: ''
 })
 
 async function onSubmit(event: FormSubmitEvent<ResetPasswordForm>) {

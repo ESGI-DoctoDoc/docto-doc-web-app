@@ -43,7 +43,6 @@ export const patientsApi = () => {
     }[]> {
         const promises = files.map(async (file) => {
             const {preUploadFile, getSignedUrl, uploadFile, getFile} = useMediaApi();
-            //todo abd changer l'url
             const document = await preUploadFile({
                 endPoint: `/doctors/care-tracking/${medicalRecordId}/documents`,
                 filename: file.name + '-' + Date.now(),

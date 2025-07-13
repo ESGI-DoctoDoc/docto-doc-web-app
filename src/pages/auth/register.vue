@@ -13,9 +13,9 @@ const {translate} = useTranslate()
 const {register, isLoading} = useAuthApi()
 
 const form = reactive<Partial<RegisterForm>>({
-  email: 'slimane.abdallah75@gmail.com',
-  password: 'Abd1234$',
-  phone: '0783476668',
+  email: '',
+  password: '',
+  phone: '',
 })
 
 const image = new URL('@/assets/images/patient.png', import.meta.url).href

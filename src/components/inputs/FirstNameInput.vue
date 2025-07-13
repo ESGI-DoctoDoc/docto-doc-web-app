@@ -4,7 +4,7 @@ import FormField from "~/components/inputs/base/FormField.vue";
 
 const modelValue = defineModel('modelValue', {
   type: String,
-  default: 'Abdallah'
+  default: ''
 })
 </script>
 

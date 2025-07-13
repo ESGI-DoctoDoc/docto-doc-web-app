@@ -12,7 +12,7 @@ const {requestResetPassword, isLoading} = useAuthApi()
 const image = new URL('@/assets/images/patient-pc.png', import.meta.url).href
 
 const form = reactive<Partial<ForgotPasswordForm>>({
-  email: 'slimane.abdallah75@gmail.com',
+  email: '',
 })
 
 async function onSubmit(event: FormSubmitEvent<ForgotPasswordForm>) {

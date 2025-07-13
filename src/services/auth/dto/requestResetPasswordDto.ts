@@ -2,7 +2,6 @@ import {z} from "zod";
 
 export interface RequestResetPasswordDto {
     email: string;
-    verificationUrl: string;
 }
 
 export const requestResetPasswordBodySchema = z.object({
